@@ -1,0 +1,86 @@
+/* body{
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+#container{
+    margin: 0 auto;
+} */
+
+.head{
+    height: 700px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: black;
+    color: white;
+}
+.box-container{
+  margin:  20px 0; 
+  width: 100%;
+  padding: 6px 0;
+   background-image: url(background/b2.png);
+    background-repeat: no-repeat;
+    background-size: 50% 90%;
+    background-position-x: center;
+    background-position-y: center;
+    background-attachment: fixed;
+    background-color: black;
+}
+.box-left{
+    
+    border-left: black solid 20px;
+    border-right: black solid 15px;
+    border-top: solid black 20px;
+    border-bottom: solid black 20px;
+    height:500px;
+    width: 30%;
+    margin-left: 18%;
+    margin-right: -0.5%;
+    margin-top: -0.5%;
+    margin-bottom:-0.5%;
+    display: inline-block;
+
+}
+.box-right{
+    border-left: black solid 15px;
+    border-right: black solid 20px;
+    border-top: solid black 20px;
+    border-bottom: solid black 20px;
+    height:500px;
+    width: 30%;
+    margin-left: -0.5%;
+    margin-right: 5%;
+    margin-top: -0.5%;
+    margin-bottom:-0.5%;
+    display: inline-block;
+
+}
+.art{
+    background: none;
+    
+    
+}
+.education{
+    background: none;
+  
+}
+.motivation{
+    background: none;
+    
+}
+.home{
+    background: none;
+    
+}
+.projects{
+    background: none;
+   
+    
+}
+.blog{
+    background: none;
+    
+    
+}
+
+
