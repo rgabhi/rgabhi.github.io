@@ -6,6 +6,50 @@
     background-color: black;
     color: white;
 }
+.head-part{
+    height: 233px;
+    width: 100%;
+    box-sizing: border-box;
+}
+#top-name {
+    box-sizing: border-box;
+    margin: auto;
+    text-align: center;
+    width: 100%; 
+}
+.spacing{
+    width: 20%;
+}
+#top-name h1{
+    margin: 0 auto;
+    font-size: 5em;
+    font-family: 'Montserrat Alternates', sans-serif;  
+    height: 100px;
+    width: 60%;  
+}
+.flip-lettter-eng, .flip-name-eng{
+    font-family: 'Montserrat Alternates', sans-serif;    
+}
+.flip-lettter-hin, .flip-name-hin{
+    font-family: 'Gotu', sans-serif;
+}
+/* HEADING NAME FLIP  */
+.flip-lettter-eng , .flip-name-hin{
+    display: none;
+}
+#top-name h1:hover .flip-lettter-eng{
+    display: initial;
+}
+#top-name h1:hover  .flip-name-hin{
+    display: initial;
+} 
+#top-name h1:hover .flip-lettter-hin{
+    display: none;
+}
+#top-name h1:hover .flip-name-eng{
+    display: none;
+}
+
 /* TILE FORMATION */
 .box-container{
   margin:  20px 0; 
@@ -81,7 +125,6 @@
     width: 100%;
     height: 100%;
     box-sizing: border-box;
-    /* border: 1px solid #f1f1f1; */
     perspective: 1000px; /* Remove this if you don't want the 3D effect */
   }
   .object {
