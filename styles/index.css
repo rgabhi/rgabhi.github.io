@@ -25,7 +25,7 @@
     font-size: 5em;
     font-family: 'Montserrat Alternates', sans-serif;  
     height: 100px;
-    width: 60%;  
+    width: 58%;  
 }
 .flip-lettter-eng, .flip-name-eng{
     font-family: 'Montserrat Alternates', sans-serif;    
@@ -92,26 +92,28 @@
     display: inline-block;
 
 }
-.art{
+.address{
     background: transparent;
+    font-size: 1.5em;
     
     
 }
 .education{
     background: transparent;
+    font-size: 1.5em;
   
+}
+.projects{
+    background: transparent;
+    font-size: 1.5em;
+    
 }
 .motivation{
     background: transparent;
     
 }
-.home{
+.art{
     background: transparent;
-    
-}
-.projects{
-    background: transparent;
-   
     
 }
 .blog{
