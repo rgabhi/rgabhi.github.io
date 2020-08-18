@@ -1,161 +1,99 @@
 
-.head{
-    height: 700px;
-    margin: 0 auto;
-    text-align: center;
+/* .carousel-item img{
+    height: 600px;
+    width: 1000px;
+} */
+
+.tiles {
+    height: 400px;
     background-color: black;
     color: white;
-}
-.head-part{
-    height: 233px;
-    width: 100%;
-    box-sizing: border-box;
-}
-#top-name {
-    box-sizing: border-box;
-    margin: auto;
-    text-align: center;
-    width: 100%; 
-}
-.spacing{
-    width: 20%;
-}
-#top-name h1{
-    margin: 0 auto;
-    font-size: 5em;
-    font-family: 'Montserrat Alternates', sans-serif;  
-    height: 100px;
-    width: 58%;  
-}
-.flip-lettter-eng, .flip-name-eng{
-    font-family: 'Montserrat Alternates', sans-serif;    
-}
-.flip-lettter-hin, .flip-name-hin{
-    font-family: 'Gotu', sans-serif;
-}
-/* HEADING NAME FLIP  */
-.flip-lettter-eng , .flip-name-hin{
-    display: none;
-}
-#top-name h1:hover .flip-lettter-eng{
-    display: initial;
-}
-#top-name h1:hover  .flip-name-hin{
-    display: initial;
-} 
-#top-name h1:hover .flip-lettter-hin{
-    display: none;
-}
-#top-name h1:hover .flip-name-eng{
-    display: none;
+    border: white solid;
+    border-radius: 1em;
 }
 
-/* TILE FORMATION */
-.box-container{
-  margin:  20px 0; 
-  width: 100%;
-  padding: 6px 0;
-   background-image: url(background/q3.jpg);
-    background-repeat: no-repeat;
-    background-size: 60%;
-    background-position-x: center;
-    background-position-y: center;
-    background-attachment: fixed;
-    background-color: black;
-}
-.box-left{
-    
-    border-left: black solid 20px;
-    border-right: black solid 15px;
-    border-top: solid black 20px;
-    border-bottom: solid black 20px;
-    height:500px;
-    width: 30%;
-    margin-left: 18%;
-    margin-right: -0.5%;
-    margin-top: -0.5%;
-    margin-bottom:-0.5%;
-    display: inline-block;
-
-}
-.box-right{
-    border-left: black solid 15px;
-    border-right: black solid 20px;
-    border-top: solid black 20px;
-    border-bottom: solid black 20px;
-    height:500px;
-    width: 30%;
-    margin-left: -0.5%;
-    margin-right: 5%;
-    margin-top: -0.5%;
-    margin-bottom:-0.5%;
-    display: inline-block;
-
-}
-.address{
+/* ---------FLIP TILE EFFECT------------  */
+.flip-tile
+{
+    height: 400px;
     background: transparent;
-    font-size: 1.5em;
-    
-    
+    border: white solid;
+    perspective: 1000px; /* 3d-effect*/
 }
-.education{
-    background: transparent;
-    font-size: 1.5em;
-  
-}
-.projects{
-    background: transparent;
-    font-size: 1.5em;
-    
-}
-.motivation{
-    background: transparent;
-    
-}
-.art{
-    background: transparent;
-    
-}
-.blog{
-    background: transparent;
-    
-    
-}
-/* FLIPPING THE TILE */
-.flip-box {
-    background-color: transparent;
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
-    perspective: 1000px; /* Remove this if you don't want the 3D effect */
-  }
-  .object {
+/* container to position front and back */
+.flip-tile-inner
+{
     position: relative;
     width: 100%;
     height: 100%;
-    text-align: center;
+    /* text-align: center; */
     transition: transform 0.8s;
     transform-style: preserve-3d;
-  }
-  .flip-box:hover .object{
+}
+/* do horizontal flip on mouse hover */
+.flip-tile:hover .flip-tile-inner
+{
     transform: rotateY(180deg);
-  }
-  .front-card, .back-card {
+}
+/* position of front and back */
+.flip-tile-front, .flip-tile-back 
+{
     position: absolute;
     width: 100%;
     height: 100%;
-    -webkit-backface-visibility: hidden; /* Safari */
+    -webkit-backface-visibility: hidden; /*safari*/
     backface-visibility: hidden;
-  }
-  .front-card {
-    background:transparent;
-    color: black;
-  }
-  .back-card {
+}
+/* style - front-side*/
+.flip-tile-front
+{
     background-color: black;
     color: white;
+    border-radius: 1em;
+}
+.flip-tile-back
+{
+    background-color: dodgerblue;
+    color: white;
+    border-radius: 1em;
     transform: rotateY(180deg);
-  }
-  
+}
 
 
+/*------------------------------- HEADING NAME FLIP------------------------------  */
+
+.flipLetter-eng,  .flipSuffix-hin{
+   display: none;
+}
+.flipName:hover .flipLetter-eng{
+    display: initial;
+}
+.flipName:hover .flipSuffix-hin{
+    display: initial;
+} 
+.flipName:hover .flipLetter-hin{
+    display: none;
+}
+.flipName:hover .flipSuffix-eng{
+    display: none;
+}
+
+
+/* --------------------------PROJECTS------------------------ */
+.projectHeading{
+    letter-spacing: 0.5rem;
+    border-radius: 0em 5em 0em;
+}
+/* 
+.projectHeading h1{
+    transform: rotate(-25deg);
+} */
+
+.card
+{
+    border-radius: 0.5em !important;
+    border: none !important;
+}
+.card img{
+    border-radius: 0.5em !important;
+}
