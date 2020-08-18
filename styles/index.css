@@ -84,6 +84,12 @@
     letter-spacing: 0.5rem;
     border-radius: 0em 5em 0em;
 }
+@media (max-width: 576px) {
+    .jumbotron h1 {
+    font-size: 4rem !important;
+  } 
+} 
+  
 /* 
 .projectHeading h1{
     transform: rotate(-25deg);
