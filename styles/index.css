@@ -3,13 +3,75 @@
     height: 600px;
     width: 1000px;
 } */
+/* -------------------------FONTS------------------------ */
 
+/*-----------HINDI-----------------------
+font-family: 'Amita', cursive;
+font-family: 'Arya', sans-serif;
+font-family: 'Kalam', cursive;
+font-family: 'Rozha One', serif;
+*/
+/*-------------------- English--------------------------
+
+font-family: 'Damion', cursive;
+font-family: 'Fredericka the Great', cursive;
+font-family: 'Kaushan Script', cursive;
+font-family: 'Merienda', cursive;
+font-family: 'Mystery Quest', cursive;
+font-family: 'Permanent Marker', cursive;
+*/
+
+/*------------------------- NAVBAR -------------------------------*/
+nav{
+    border-radius: 0.5em 0.5em 0 0 !important;
+}
+/* --------------------------------HEADER --------------------------------*/
+header h1{
+    border-radius: 0 0 0.5em 0.5em !important;
+    font-family: 'Amita', cursive;
+}
+
+@media (max-width: 576px) {
+    .jumbotron h1 {
+    font-size: 4rem !important;
+  } 
+} 
+
+/*------------------------------- HEADING NAME FLIP------------------------------  */
+
+.flipLetter-eng,  .flipSuffix-hin{
+    display: none;
+ }
+ .flipName:hover .flipLetter-eng{
+     display: initial;
+ }
+ .flipName:hover .flipSuffix-hin{
+     display: initial;
+ } 
+ .flipName:hover .flipLetter-hin{
+     display: none;
+ }
+ .flipName:hover .flipSuffix-eng{
+     display: none;
+ }
+ 
+/* --------------------------------TILES -------------------------------------------------*/
+#aboutMe h2{
+    font-family: 'Fredericka the Great', cursive;
+}
 .tiles {
     height: 400px;
     background-color: black;
     color: white;
     border: white solid;
     border-radius: 1em;
+}
+.card{
+    border-radius: 0.5em !important;
+    border: none !important;
+}
+.card img{
+    border-radius: 0.5em !important;
 }
 
 /* ---------FLIP TILE EFFECT------------  */
@@ -60,46 +122,11 @@
 }
 
 
-/*------------------------------- HEADING NAME FLIP------------------------------  */
-
-.flipLetter-eng,  .flipSuffix-hin{
-   display: none;
-}
-.flipName:hover .flipLetter-eng{
-    display: initial;
-}
-.flipName:hover .flipSuffix-hin{
-    display: initial;
-} 
-.flipName:hover .flipLetter-hin{
-    display: none;
-}
-.flipName:hover .flipSuffix-eng{
-    display: none;
-}
-
-
 /* --------------------------PROJECTS------------------------ */
 .projectHeading{
     letter-spacing: 0.5rem;
     border-radius: 0em 5em 0em;
+    font-family: 'Fredericka the Great', cursive;
 }
-@media (max-width: 576px) {
-    .jumbotron h1 {
-    font-size: 4rem !important;
-  } 
-} 
-  
-/* 
-.projectHeading h1{
-    transform: rotate(-25deg);
-} */
 
-.card
-{
-    border-radius: 0.5em !important;
-    border: none !important;
-}
-.card img{
-    border-radius: 0.5em !important;
-}
+  
