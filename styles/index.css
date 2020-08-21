@@ -1,8 +1,4 @@
 
-/* .carousel-item img{
-    height: 600px;
-    width: 1000px;
-} */
 /* -------------------------FONTS------------------------ */
 
 /*-----------HINDI-----------------------
@@ -26,8 +22,10 @@ nav{
     border-radius: 0.5em 0.5em 0 0 !important;
 }
 /* --------------------------------HEADER --------------------------------*/
-header h1{
+header{
     border-radius: 0 0 0.5em 0.5em !important;
+}
+header h1{
     font-family: 'Amita', cursive;
 }
 
@@ -55,6 +53,26 @@ header h1{
      display: none;
  }
  
+
+ /* --------------------QUOTES--------------------------------------- */
+
+ .carousel
+ {
+     height: 8rem;
+ }
+ .carousel ol{
+     top: 8em;
+ }
+ .carousel-inner{
+     height: 95% !important;
+     font-family: 'Arya', sans-serif;
+ }
+ blockquote p{
+     font-size: 1.4rem !important;
+ }
+ blockquote footer{
+     font-size: 90% !important;
+ }
 /* --------------------------------TILES -------------------------------------------------*/
 #aboutMe h2{
     font-family: 'Fredericka the Great', cursive;
