@@ -145,6 +145,16 @@ header h1{
     letter-spacing: 0.5rem;
     border-radius: 0em 5em 0em;
     font-family: 'Fredericka the Great', cursive;
+    /* vertical-align: middle !important; */
 }
+.projectHeading h1{
+    position: relative;
+    top: 35%;
+}
+/* @media (max-width: 576px) {
+    .projectHeading h1 {
+    font-size: 2.5rem !important;
+  }  */
+} 
 
   
