@@ -117,6 +117,7 @@ header h1{
 /* --------------------------------TILES -------------------------------------------------*/
 #aboutMe h2{
     font-family: 'Fredericka the Great', cursive;
+    font-weight: bold;
 }
 .tiles {
     height: 400px;
@@ -126,11 +127,11 @@ header h1{
     border-radius: 1.6em;
 }
 .card{
-    border-radius: 0.5em !important;
+    border-radius: 1em !important;
     border: none !important;
 }
 .card img{
-    border-radius: 0.5em !important;
+    border-radius: 1em !important;
     
 }
 
@@ -175,23 +176,23 @@ header h1{
 {
     background-color: black;
     color: white;
-    border: solid 0.3em #edf5e1;
+    border: solid 0.4em #edf5e1;
     border-radius: 1em;
     
 }
 .flip-tile-back
 {
     background-color:#05386b;
-    color: white;
-    border-radius: 1em;
+    border: solid 1em  #379683;
+    border-radius: 1.6em;
     transform: rotateY(180deg);
-    font-size: 1em;
+    font-size: 1.5em;
 }
 
 
 /* --------------------------PROJECTS------------------------ */
 .projectHeading{
-    letter-spacing: 0.5rem;
+    letter-spacing: 0.3rem;
     border-radius: 0em 5em 0em;
     font-family: 'Fredericka the Great', cursive;
     /* vertical-align: middle !important; */
@@ -200,13 +201,9 @@ header h1{
 {
     position: relative;
     top: 35%;
-    font-size: 2.2em;
+    font-size: 9vh;
     
 }
-/* @media (max-width: 576px) {
-    .projectHeading h1 {
-    font-size: 2.5rem !important;
-  }  */
  
 
   
