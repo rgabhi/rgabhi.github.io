@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Abhinav Gupta</title>
     <link rel="stylesheet" href="styles/index.css">
+    <link rel="stylesheet" href="styles/custom.css">
     <!-- Google fonts -->
     <link
         href="https://fonts.googleapis.com/css2?family=Amita:wght@400;700&family=Arya:wght@400;700&family=Kalam:wght@300;400;700&family=Rozha+One&display=swap"
@@ -22,11 +23,11 @@
     <title>Hello, world!</title>
 </head>
 
-<body>
+<body class="bgd2">
     <div class="container-fluid px-2 pt-2">
         <!-- NAVBAR -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <a class="navbar-brand" href="#">AG</a>
+        <nav class="navbar navbar-expand-lg navbar-dark bgd1">
+            <a class="navbar-brand fs1 f2 font-weight-bold" href="#">AG</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -38,7 +39,7 @@
                         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Link</a>
+                        <a class="nav-link f3" href="#">Contact</a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -56,13 +57,13 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                        <a class="nav-link disabled f3" href="#" tabindex="-1" aria-disabled="true">About</a>
                     </li>
                 </ul>
             </div>
         </nav>
         <!-- HEADER -->
-        <header class="jumbotron bg-dark text-white mb-2">
+        <header class="jumbotron bgd1 text-white mb-2">
             <h1 class="display-1 text-center">
                 <div class="d-block d-lg-inline-flex justify-content-center flex-lg-row flex-sm-column flipName">
                     <div class="d-inline-flex justify-content-center">
@@ -71,13 +72,13 @@
                         <span class="flipSuffix-hin">भिनव</span>
                         <span class="flipSuffix-eng mt-1">BHINAV</span>
                     </div>
-                    <div class="d-block d-lg-inline-flex justify-content-center">
+                    <div class="d-block d-lg-inline-flex justify-content-center text-wrap">
                         <span class="ml-5">GUPTA</span>
                     </div>
                 </div>
 
             </h1>
-            <hr class="my-4 bg-light">
+            <hr class="my-4 bgd3">
             <!-- QUOTE CAROUSEL -->
             <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-ride="carousel"
                 data-pause="false" data-interval="7000">
@@ -88,7 +89,7 @@
                     <li data-target="#carouselExampleCaptions" data-slide-to="3"></li>
 
                 </ol>
-                <div class="carousel-inner px-4">
+                <div class="carousel-inner px-4 f2">
                     <div class="carousel-item active">
                         <blockquote class="blockquote text-center">
                             <p class="mb-0">"If you set your goals ridiculously high and it's a failure, you will fail
@@ -126,36 +127,57 @@
 
     <div class="container-fluid px-4">
         <div class="row">
-            <div id="aboutMe" class="col-lg-8 col-md-6 col-sm-12 pt-4 tiles">
-                <h2 class="text-center">ABOUT ME...</h2>
-                <p class="lead text-center">
-                    <span>Hi,</span>
-                    I am Final year B. Tech student from Indian Institute of Technology, Guwahati.
-                </p>
-                <p>
-                    I am development enthusiast who loves mixing-up tech with art.
-                </p>
-                <p>
-                    Belonging to the foothills of Himalayas, I love spending my time in greeneries. While not coding, I
-                    enjoy painting, skethching and spending time with my family.
-                </p>
+            <div id="aboutMe" class="col-lg-8 col-md-8 col-sm-12 p-0">
+                <div class="tiles overflow-auto my-1 mr-md-3">
+                    <h2 class="text-center">ABOUT ME...</h2>
+                    <p class="lead text-center">
+                        <span>Hi,</span>
+                        I am Final year B. Tech student from Indian Institute of Technology, Guwahati.
+                    </p>
+                    <p>
+                        I am development enthusiast who loves mixing-up tech with art.
+                    </p>
+                    <p>
+                        Belonging to the foothills of Himalayas, I love spending my time in greeneries. While not
+                        coding, I
+                        enjoy painting, skethching and spending time with my family.
+                    </p>
+                </div>
+
             </div>
 
-            <div class="col-lg-4 col-md-6 col-sm-12 tiles">
+            <div class="col-lg-4 col-md-4 col-sm-12 tiles my-1">
                 <div class="row" style="height: 200px;">
-                    <div class="col-sm-12" style="border-bottom: white solid;">
-                        Connect with me
+                    <div class="col-sm-12 fs1" style="border-bottom: #379683 solid 1em;">
+                        <p class="text-center" style="font-weight: bold;">Connect with me</p>
+                        <div class="text-center">
+                            <a href="https://www.linkedin.com/in/abhinav-gupta01/" target="blank">
+                                <i class="fab fa-linkedin mx-sm-2 mx-lg-3" onmouseout="this.style.color='#05386b'"
+                                    onmouseover="this.style.color='#379683'" style="font-size: 3em;color:#05386b;"></i>
+                            </a>
+                            <a href="https://github.com/rgabhi" target="blank">
+                                <i class="fab fa-github-square mx-sm-2 mx-lg-3" onmouseout="this.style.color='#05386b'"
+                                    onmouseover="this.style.color='#379683'" style="font-size: 3em;color:#05386b;"></i>
+                            </a>
+                            <a href="https://www.facebook.com/abhinav01.gupta" target="blank">
+                                <i class="fab fa-facebook-square mx-sm-2 mx-lg-3"
+                                    onmouseout="this.style.color='#05386b'" onmouseover="this.style.color='#379683'"
+                                    style="font-size: 3em;color:#05386b;"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div class="row" style=" height: 200px;">
-                    <div class="col-sm-12" style="border-bottom: white solid;">
-                        Resume
+                    <div class="col-sm-12 fs1">
+                        <a class="btn resume-btn w-75 rounded-pill d-block mx-auto mt-4"
+                            href="./views/resume/Resume_Abhinav.pdf" target="blank" download="Resume_Abhinav">My
+                            Resume</a>
                     </div>
                 </div>
             </div>
 
             <!----------------------------------PROJECTS--------------------------------------------------->
-            <div class="col-lg-4 col-md-6 col-sm-12 tiles projectHeading">
+            <div class="col-lg-4 col-md-6 col-sm-12 mt-2 tiles projectHeading">
                 <h1 class="text-center display-4">PROJECTS
                 </h1>
             </div>
@@ -171,9 +193,9 @@
                         </div>
                     </div>
                     <div class="flip-tile-back">
-                        <div class="card bg-dark h-100">
-                            <div class="card-body">
-                                <h4 class="card-title">Himachal Undiscovered</h4>
+                        <div class="card bgd1 f2 h-100">
+                            <div class="card-body overflow-auto">
+                                <h4 class="card-title fs1">Himachal Undiscovered</h4>
                                 <p class="card-text">
                                 <ul>
                                     <li>
@@ -187,13 +209,14 @@
                                     </li> -->
                                 </ul>
                                 </p>
+
                                 <a class="btn btn-outline-success float-right"
                                     href="https://github.com/rgabhi/Himachal_undiscovered" role="button" target="blank">
                                     <i class="fab fa-github" style="font-size: 1.5em;"></i>
                                     Github
                                 </a>
                                 <a class="btn btn-outline-light float-right mr-2"
-                                    href="https://stormy-brushlands-14511.herokuapp.com/" role="button" target="blank">
+                                    href="https://himachal-undiscovered.herokuapp.com/" role="button" target="blank">
                                     <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-globe"
                                         fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                                         <path fill-rule="evenodd"
@@ -201,6 +224,7 @@
                                     </svg>
                                     Website
                                 </a>
+
                             </div>
                         </div>
                     </div>
@@ -211,15 +235,15 @@
                 <div class="flip-tile-inner">
                     <div class="flip-tile-front">
                         <div class="card bg-dark h-100 text-center">
-                            <img class="card-img h-100" src="" alt="">
+                            <img class="card-img h-100" src="./views/project_images/diary.jpg" alt="Memories">
                             <h3 class="card-title card-img-overlay my-5">Memories App</h3>
                         </div>
 
                     </div>
                     <div class="flip-tile-back">
-                        <div class="card bg-dark h-100">
-                            <div class="card-body">
-                                <h3 class="card-title">Memories App</h3>
+                        <div class="card bgd1 f2 h-100">
+                            <div class="card-body overflow-auto">
+                                <h3 class="card-title fs1">Memories App</h3>
                                 <p class="card-text">
                                 <ul>
                                     <li>
@@ -253,15 +277,15 @@
                 <div class="flip-tile-inner">
                     <div class="flip-tile-front">
                         <div class="card bg-dark h-100 text-center">
-                            <img class="card-img h-100" src="" alt="">
+                            <img class="card-img h-100" src="./views/project_images/to-do.png" alt="To-do-App">
                             <h3 class="card-title card-img-overlay my-5">To-do App</h3>
                         </div>
 
                     </div>
                     <div class="flip-tile-back">
-                        <div class="card bg-dark h-100">
+                        <div class="card bgd1 f2 h-100">
                             <div class="card-body">
-                                <h4 class="card-title">To-do App</h4>
+                                <h4 class="card-title fs1">To-do App</h4>
                                 <p class="card-text">
                                     A simple todo list app built in HTML, CSS and JavaScript.
                                 </p>
@@ -294,9 +318,9 @@
 
                     </div>
                     <div class="flip-tile-back">
-                        <div class="card bg-dark h-100">
+                        <div class="card bgd1 f2 h-100">
                             <div class="card-body">
-                                <h4 class="card-title">Color Game</h4>
+                                <h4 class="card-title fs1">Color Game</h4>
                                 <p class="card-text">
                                     A game where you have to guess the color from it's given RGB format
                                     by choosing among different color grids.
@@ -323,14 +347,15 @@
                 <div class="flip-tile-inner">
                     <div class="flip-tile-front">
                         <div class="card bg-dark h-100 text-center">
-                            <img class="card-img h-100" src="" alt="">
+                            <img class="card-img h-100" src="./views/project_images/recipe-finder.jpg"
+                                alt="recipe-finder">
                             <h3 class="card-title card-img-overlay my-5">Recipe Finder</h3>
                         </div>
                     </div>
                     <div class="flip-tile-back">
-                        <div class="card bg-dark h-100">
+                        <div class="card bgd1 f2 h-100">
                             <div class="card-body">
-                                <h4 class="card-title">Recipe Finder</h4>
+                                <h4 class="card-title fs1">Recipe Finder</h4>
                                 <p class="card-text">
                                     a responsive website that displays recipes and health information for the food
                                     ingredients input by the user.

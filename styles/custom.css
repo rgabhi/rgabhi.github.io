@@ -1,0 +1,52 @@
+
+/* -------------------------FONTS------------------------ */
+
+/*-----------HINDI-----------------------
+font-family: 'Amita', cursive;
+font-family: 'Arya', sans-serif;
+font-family: 'Kalam', cursive;
+font-family: 'Rozha One', serif;
+*/
+/*-------------------- English--------------------------
+
+font-family: 'Damion', cursive;
+font-family: 'Fredericka the Great', cursive;
+font-family: 'Kaushan Script', cursive;
+font-family: 'Merienda', cursive;
+font-family: 'Mystery Quest', cursive;
+font-family: 'Permanent Marker', cursive;
+*/
+
+/* BACKGROUND */
+.bgd1{
+    background-color: #5cdb95!important;
+}
+.bgd2{
+    background-color: #05386b!important;
+}
+.bgd3{
+    background-color: #379683!important;
+}
+.bgd4{
+    background-color: #8ee4af!important;
+}
+.bgd5{
+    background-color: #edf5e1!important;
+}
+.f2{
+    color: #05386b!important;
+}
+.f3{
+    color: #379683!important;
+}
+.f4{
+    color: #8ee4af!important;
+}
+.f5{
+    color: #edf5e1!important;
+}
+.fs1{
+    font-family: 'Fredericka the Great', cursive;
+    /* font-weight: 500; */
+    /* background-color: #379683!important; ; */
+}

@@ -27,13 +27,37 @@ header{
 }
 header h1{
     font-family: 'Amita', cursive;
+    background: -webkit-linear-gradient(45deg, #05386b,  black);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 @media (max-width: 576px) {
     .jumbotron h1 {
-    font-size: 4rem !important;
+    font-size: 4rem!important;
   } 
+  blockquote p{
+    font-size: 1rem !important;
+}
 } 
+@media (min-width: 576px) {
+    .jumbotron h1 {
+    font-size: 5rem !important;
+  } 
+  .jumbotron hi .flipName
+  {
+      display: block;
+  }
+}
+@media (min-width: 1200px) {
+    .jumbotron h1 {
+    font-size: 7rem !important;
+  } 
+  .jumbotron hi .flipName
+  {
+      display: block;
+  }
+}
 
 /*------------------------------- HEADING NAME FLIP------------------------------  */
 
@@ -73,16 +97,33 @@ header h1{
  blockquote footer{
      font-size: 90% !important;
  }
+/* ---------------------RESUME-------------- */
+.resume-btn
+{
+    background-color:#379683!important;
+    color: #edf5e1!important;
+    border: #05386b solid 5px!important;
+    font-weight: bold!important;
+}
+.resume-btn:hover
+{
+    background-color: #8ee4af!important;
+    color: #05386b!important;
+    border: #379683 solid 5px!important;
+    /* font-weight: bold; */
+    /* font-size: larger; */
+}
+
 /* --------------------------------TILES -------------------------------------------------*/
 #aboutMe h2{
     font-family: 'Fredericka the Great', cursive;
 }
 .tiles {
     height: 400px;
-    background-color: black;
-    color: white;
-    border: white solid;
-    border-radius: 1em;
+    background-color:#5cdb95;
+    color:#05386b;
+    border: #379683 solid 1em;
+    border-radius: 1.6em;
 }
 .card{
     border-radius: 0.5em !important;
@@ -90,6 +131,7 @@ header h1{
 }
 .card img{
     border-radius: 0.5em !important;
+    
 }
 
 /* ---------FLIP TILE EFFECT------------  */
@@ -97,8 +139,10 @@ header h1{
 {
     height: 400px;
     background: transparent;
-    border: white solid;
+    border: transparent solid 0.5em;
+    
     perspective: 1000px; /* 3d-effect*/
+    margin-top: 0.8em;
 }
 /* container to position front and back */
 .flip-tile-inner
@@ -115,6 +159,8 @@ header h1{
 {
     transform: rotateY(180deg);
 }
+
+
 /* position of front and back */
 .flip-tile-front, .flip-tile-back 
 {
@@ -129,14 +175,17 @@ header h1{
 {
     background-color: black;
     color: white;
+    border: solid 0.3em #edf5e1;
     border-radius: 1em;
+    
 }
 .flip-tile-back
 {
-    background-color: dodgerblue;
+    background-color:#05386b;
     color: white;
     border-radius: 1em;
     transform: rotateY(180deg);
+    font-size: 1em;
 }
 
 
@@ -147,14 +196,17 @@ header h1{
     font-family: 'Fredericka the Great', cursive;
     /* vertical-align: middle !important; */
 }
-.projectHeading h1{
+.projectHeading h1
+{
     position: relative;
     top: 35%;
+    font-size: 2.2em;
+    
 }
 /* @media (max-width: 576px) {
     .projectHeading h1 {
     font-size: 2.5rem !important;
   }  */
-} 
+ 
 
   
