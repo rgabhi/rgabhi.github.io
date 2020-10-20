@@ -20,6 +20,26 @@ font-family: 'Permanent Marker', cursive;
 /*------------------------- NAVBAR -------------------------------*/
 nav{
     border-radius: 0.5em 0.5em 0 0 !important;
+    font-size: 1.3em;
+}
+
+nav div ul li a:hover
+{
+    background-color:#05386b!important;
+    color:#edf5e1!important;
+    border-radius: 0.5em;
+}
+.navbar-brand
+{
+    letter-spacing: 0.1em;
+    font-size: 1.2em!important;
+    
+}
+.navbar-brand:hover
+{
+    background-color:#05386b!important;
+    color:#8ee4af!important;
+    
 }
 /* --------------------------------HEADER --------------------------------*/
 header{
@@ -27,7 +47,8 @@ header{
 }
 header h1{
     font-family: 'Amita', cursive;
-    background: -webkit-linear-gradient(45deg, #05386b,  black);
+    background: -webkit-linear-gradient(left,black, #05386b,black,#05386b);
+    background: linear-gradient(to right,black,#05386b,black,#05386b);
     background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -98,6 +119,26 @@ header h1{
  blockquote footer{
      font-size: 90% !important;
  }
+ /* ----------CONNECT WITH ME---------------------------------- */
+ .fa-linkedin, .fa-github-square, .fa-facebook-square
+ {
+    color:#05386b;
+ }
+ .fa-linkedin:hover, .fa-github-square:hover, .fa-facebook-square:hover
+ {
+    background-color:#05386b!important;
+    color:#8ee4af!important;
+ }
+
+ /* MY IMAGE */
+ .my-image
+ {
+    height: 250px;
+    width: auto;
+    /* margin: 1em 4em 1em 4em; */
+    border: 0.5em solid wheat;
+    border-radius: 1em;
+ }
 /* ---------------------RESUME-------------- */
 .resume-btn
 {
@@ -105,6 +146,7 @@ header h1{
     color: #edf5e1!important;
     border: #05386b solid 5px!important;
     font-weight: bold!important;
+    letter-spacing: 0.1em;
 }
 .resume-btn:hover
 {
