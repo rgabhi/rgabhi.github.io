@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Freezing the evidence — Abhinav Gupta</title>
+<meta name="description" content="Separating transcription error from judgement error when a language model scores a clinical assessment from audio, and what an artifact has to be for the separation to hold." />
+<link rel="canonical" href="https://rgabhi.github.io/writing/freezing-the-evidence.html" />
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Freezing the evidence" />
+<meta property="og:description" content="Separating transcription error from judgement error in a clinical scoring benchmark." />
+<meta property="og:url" content="https://rgabhi.github.io/writing/freezing-the-evidence.html" />
+<meta name="twitter:card" content="summary" />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23FBFBF9'/><text x='16' y='23' font-family='Georgia,serif' font-size='21' font-weight='600' text-anchor='middle' fill='%232D4A3E'>A</text></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../portfolio/site.css?v=202609081927" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="article topbar-in">
+    <a class="tb-name" href="../index.html">Abhinav Gupta</a>
+    <nav class="tb-nav" aria-label="Site">
+      <a href="../index.html#research">Research</a>
+      <a href="../index.html#writing">Writing</a>
+      <a class="cv" href="../Abhinav_Gupta_Resume.pdf">CV &darr;</a>
+    </nav>
+  </div>
+</div>
+
+<article class="article">
+
+  <header class="article-head">
+    <p class="kicker">Notes on method</p>
+    <h1>Freezing the evidence</h1>
+    <p class="standfirst">
+      Separating transcription error from judgement error when a language model scores a
+      clinical assessment from audio &mdash; and what an artifact has to be for the separation
+      to hold.
+    </p>
+    <div class="byline">
+      <span>Abhinav Gupta</span>
+      <span>September 2026</span>
+      <span>~6 min</span>
+    </div>
+  </header>
+
+  <div class="prose">
+
+    <p>
+      A language model scores a picture-naming test from a recording. It returns 11 out of 15.
+      The clinician's reference says 13. Where did the two points go?
+    </p>
+
+    <p>
+      There are at least two answers and they call for different work. The model may have heard
+      the participant correctly and judged the response wrongly &mdash; counted a semantic
+      paraphasia as correct, or missed a delayed self-correction that a clinician would have
+      accepted. Or it may have judged impeccably, on a transcript that never contained the word
+      the participant actually said.
+    </p>
+
+    <p>
+      Those two failures live in different systems. A benchmark that cannot tell them apart
+      cannot report anything useful about either.
+    </p>
+
+    <h2>Why the obvious design fails</h2>
+
+    <p>
+      The obvious pipeline runs end to end: take the audio, transcribe it, hand the transcript
+      to a scoring model, compare the result against the clinical reference. Repeat for each
+      model you want to compare, and for each speech recogniser.
+    </p>
+
+    <p>
+      The design is factorial &mdash; ASR system crossed with scoring model crossed with input
+      condition &mdash; and it only works if the transcript is a <em>fixed factor</em>. If each
+      run transcribes afresh, you are no longer comparing scoring models on the same evidence.
+      You are comparing (transcript, scorer) pairs, and any difference between them is
+      unattributable to either half.
+    </p>
+
+    <p>
+      Nor is re-transcription free of drift in practice. Hosted endpoints change underneath you.
+      Local decoding is not always bit-identical between runs. Provider retries return different
+      output than the attempt they replaced. Over the weeks an experiment actually takes,
+      "the same audio through the same system" is not a stable object unless you deliberately
+      make it one.
+    </p>
+
+    <h2>Two stages, one artifact</h2>
+
+    <p>
+      So the pipeline splits. Stage 1 acquires transcripts and stops. For each combination of
+      task, participant and ASR system it writes exactly one artifact, and freezes it. Stage 2
+      reads that artifact &mdash; the same bytes &mdash; for every scoring model, every prompt
+      condition, and every rerun thereafter.
+    </p>
+
+    <p>
+      The transcript is now a fixed factor. Seven scoring models crossed with two recognisers
+      gives fourteen cells, and every cell in a column shares its evidence exactly. Differences
+      down a column are scorer effects. Differences across a row are ASR effects. Because the
+      participants are the same in every cell, the comparisons can be paired.
+    </p>
+
+    <h2>What "frozen" has to mean</h2>
+
+    <p>
+      An artifact that has been tidied is not frozen; it is a different transcript. Holding the
+      line turns out to require several rules that all feel, individually, like leaving the work
+      half-done.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Provider-native output is preserved as returned.</strong> Whisper's artifact
+        keeps its transcript and timestamped segments with <code>speaker: null</code>. No
+        diarizer is bolted on afterwards to make it resemble Deepgram's. Deepgram's keeps its
+        native utterances, timings and diarization clusters, including a null speaker when the
+        provider returns one. The two artifacts are not normalised into a common shape, because
+        the difference in shape is part of what is being measured.
+      </li>
+      <li>
+        <strong>Empty segments are retained.</strong> A whitespace-only span is evidence.
+        Silence where a response should be is a finding, not a defect to be swept out.
+      </li>
+      <li>
+        <strong>Diarization clusters stay hypotheses.</strong> Nothing maps cluster 0 to
+        "examiner" and cluster 1 to "participant". That mapping is precisely the inference
+        under test; performing it in advance would hand the model the answer to half the
+        problem.
+      </li>
+      <li>
+        <strong>Nothing is corrected from the answer key.</strong> Not a word, not an item
+        boundary, not a speaker label. The moment a transcript is repaired using the target,
+        the benchmark is measuring the repair.
+      </li>
+    </ul>
+
+    <p>
+      Where evidence is genuinely missing or ambiguous &mdash; an unclear item boundary, an
+      absent timestamp &mdash; the required output is clinical uncertainty, not reconstruction.
+      A system that guesses confidently through a gap is worse than one that reports the gap,
+      and the benchmark should be able to say so.
+    </p>
+
+    <h2>What the surrounding code may do</h2>
+
+    <p>
+      The same discipline applies on the other side of the model. Local code is restricted to
+      work that ought to be reproducible: validating that an output matches a declared contract,
+      binding item numbers to fixed protocol metadata, translating declared decisions into
+      protocol scores, aggregation, hashing the evidence, computing comparison metrics.
+    </p>
+
+    <p>
+      It does not repair, reinterpret or replace a clinical answer. If a model returns something
+      invalid, that is a result.
+    </p>
+
+    <p>
+      This is harder to hold to than it sounds. Every malformed response is an invitation to
+      write one small rescue heuristic, and each one is individually defensible &mdash; the
+      intent was obvious, the parse was nearly right. Collectively they amount to the harness
+      scoring the assessment and the model receiving the credit.
+    </p>
+
+    <blockquote>
+      Every rescue heuristic moves a little of the decision from the system under test into the
+      system doing the testing.
+    </blockquote>
+
+    <h2>Failures stay visible</h2>
+
+    <p>
+      Invalid, missing and unresolved outputs remain in the coverage and validity metrics rather
+      than being dropped from the denominator. Quietly discarding them is the most reliable way
+      to publish a number better than the system that produced it.
+    </p>
+
+    <p>
+      Agreement is therefore always reported next to coverage. A model that answers 60% of items
+      with high agreement and abandons the rest has not outperformed one that answers all of
+      them slightly less well. It has done a different thing, and the pair of numbers is what
+      says so.
+    </p>
+
+    <h2>The reference is read last</h2>
+
+    <p>
+      Ground-truth workbooks open during evaluation and never during inference. Participant
+      identifiers, file paths, hashes, model settings and reference scores live in experiment
+      metadata, structurally separate from anything a prompt can reach. What the model receives
+      is genuine scoring evidence and nothing else.
+    </p>
+
+    <p>
+      Keeping those two stores apart is mundane engineering, and it is the only reason any
+      resulting number means what it appears to mean.
+    </p>
+
+    <h2>What this measures, and what it does not</h2>
+
+    <p>
+      One consequence is worth stating plainly. This design compares the downstream utility of a
+      <em>complete</em> speech recognition system &mdash; word recognition, segmentation, timing
+      and whatever diarization it offers, all at once &mdash; rather than isolating a
+      word-error-rate effect.
+    </p>
+
+    <p>
+      That is deliberate. A scoring model never consumes a WER figure. It consumes an artifact
+      carrying all of that system's properties simultaneously, and it succeeds or fails on the
+      whole of it. Reporting WER alongside would describe a component that nobody uses in
+      isolation.
+    </p>
+
+    <p>
+      The cost is a claim you give up. You cannot say that a lower word error rate caused an
+      improvement in scoring agreement. You can say that one complete system produced evidence
+      that scored closer to the clinician's judgement &mdash; which is the claim a deployment
+      decision would rest on in any case.
+    </p>
+
+    <h2>A note on ambition</h2>
+
+    <p>
+      None of this is sophisticated. It is bookkeeping: one artifact per participant per system,
+      written once, never edited, read many times. It took far longer to get right than the
+      prompting did.
+    </p>
+
+    <p>
+      But the entire comparison rests on it. A benchmark whose evidence shifts between
+      conditions is not measuring the thing its column headings claim to measure, and no amount
+      of careful statistics downstream will recover what was lost upstream.
+    </p>
+
+  </div>
+
+  <footer class="article-foot">
+    <span><a href="../index.html">&larr; Back</a></span>
+    <span>&copy; 2026 Abhinav Gupta</span>
+  </footer>
+
+</article>
+</body>
+</html>

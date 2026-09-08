@@ -11,197 +11,297 @@
 <meta property="og:title" content="Abhinav Gupta" />
 <meta property="og:description" content="Software engineer and researcher. M.Tech Computer Science, IIT Delhi." />
 <meta property="og:url" content="https://rgabhi.github.io/" />
+<meta property="og:image" content="https://rgabhi.github.io/assets/portrait.jpg" />
 <meta name="twitter:card" content="summary" />
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23FBFBF9'/><text x='16' y='23' font-family='Georgia,serif' font-size='21' font-weight='600' text-anchor='middle' fill='%232D4A3E'>A</text></svg>" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="portfolio/site.css" />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="portfolio/site.css?v=202609081927" />
 </head>
 <body>
 
-<main class="wrap">
-
-  <!-- ─────────────── masthead ─────────────── -->
-  <header class="masthead">
-    <h1>Abhinav Gupta</h1>
-    <p class="descriptor">Software engineer and researcher</p>
-    <p class="affil">M.Tech Computer Science &middot; IIT Delhi &middot; New Delhi, India</p>
-
-    <div class="intro">
-      <p>
-        I am a Master's student in Computer Science at IIT Delhi. My thesis, supervised by
-        Prof.&nbsp;Rahul Garg and Prof.&nbsp;N&nbsp;M&nbsp;Anoop Krishnan, measures how closely
-        audio language models reproduce clinician-assigned scores on standardised aphasia
-        assessments.
-      </p>
-      <p>
-        Before graduate school I spent close to four years building distributed data systems
-        &mdash; three years at Fractal.ai on portfolio optimisation and performance analytics,
-        then at American Express on the global prospect data platform. My interests sit where
-        systems work meets measurement: query engines, evaluation design, and the parts of
-        machine learning that have to be verified rather than asserted.
-      </p>
+<!-- ═══════════════ masthead ═══════════════ -->
+<header class="masthead wrap" id="top">
+  <div class="masthead-top">
+    <div>
+      <h1>Abhinav Gupta</h1>
+      <p class="descriptor">Software Engineering<span class="sep">&middot;</span>Research<span class="sep">&middot;</span><a href="#sidequests">Sidequests</a></p>
+      <p class="affil">M.TECH COMPUTER SCIENCE &middot; IIT DELHI &middot; NEW DELHI</p>
     </div>
+    <figure class="portrait">
+      <img src="assets/portrait.jpg" width="440" height="440" alt="Abhinav Gupta" />
+    </figure>
+  </div>
 
-    <nav class="utility" aria-label="Sections">
+  <p class="lede">
+    I work in the space between building systems and proving they work &mdash; query engines,
+    evaluation design, and the parts of machine learning that have to be measured rather than
+    asserted.
+  </p>
+
+  <div class="intro">
+    <p>
+      My M.Tech thesis at IIT Delhi measures how closely audio language models reproduce
+      clinician-assigned scores on standardised aphasia assessments. Before graduate school I
+      spent close to four years building distributed data systems &mdash; three years at
+      Fractal.ai on portfolio optimisation and performance analytics, then at American Express
+      on the global prospect data platform.
+    </p>
+  </div>
+
+  <div class="currently">
+    <p class="k">Currently</p>
+    <p>
+      Running the audio-English arm of the benchmark &mdash; comparing Whisper and Deepgram
+      transcripts as scoring evidence across the four assessment tasks.
+      <span class="when">September 2026</span>
+    </p>
+  </div>
+
+  <nav class="utility" aria-label="Sections">
+    <a href="#research">Research</a>
+    <a href="#experience">Experience</a>
+    <a href="#projects">Projects</a>
+    <a href="#writing">Writing</a>
+    <a href="#contact">Contact</a>
+    <a href="Abhinav_Gupta_Resume.pdf">CV (PDF)</a>
+  </nav>
+</header>
+
+<!-- ═══════════════ sticky bar (appears once the masthead scrolls away) ═══════════════ -->
+<div class="topbar">
+  <div class="wrap topbar-in">
+    <a class="tb-name" href="#top">Abhinav Gupta</a>
+    <nav class="tb-nav" aria-label="Page sections">
       <a href="#research">Research</a>
       <a href="#experience">Experience</a>
       <a href="#projects">Projects</a>
+      <a href="#writing">Writing</a>
       <a href="#contact">Contact</a>
-      <a href="Abhinav_Gupta_Resume.pdf">CV (PDF)</a>
+      <a class="cv" href="Abhinav_Gupta_Resume.pdf">CV &darr;</a>
     </nav>
-  </header>
+  </div>
+</div>
 
-  <!-- ─────────────── research ─────────────── -->
-  <section class="sec research" id="research">
-    <h2>Research</h2>
+<!-- ═══════════════ research ═══════════════ -->
+<section class="sec-research" id="research">
+  <div class="wrap">
+    <div class="grid sec-head">
+      <h2><span class="num">01</span>Research</h2>
+      <div class="hr"></div>
+    </div>
 
-    <article class="entry">
-      <h3>Aphasia&#8209;LLM: benchmarking audio language models against clinical aphasia assessment</h3>
-      <p class="line">M.Tech thesis &middot; Prof. Rahul Garg and Prof. N M Anoop Krishnan &middot; M3RG, IIT Delhi</p>
-      <p class="when">MAY 2026 — PRESENT</p>
-
-      <div class="body">
-        <p>
-          Aphasia is an acquired language disorder, most often following stroke. Its severity is
-          graded by trained clinicians administering standardised instruments. This work asks a
-          deliberately narrow question: given the same recordings, how closely do current audio
-          and text language models reproduce those clinical scores?
-        </p>
-        <p>
-          The benchmark covers four AphasiaBank instruments &mdash; a repetition battery, the
-          15&#8209;item Boston Naming Test short form, and two administrations of a 22&#8209;item
-          verb naming test &mdash; over cohorts of roughly 110 to 130 participants. Seven
-          prespecified scoring models are crossed with two ASR systems (Whisper large&#8209;v3 and
-          Deepgram Nova&#8209;3) and five input conditions, from direct audio through to
-          pre&#8209;segmented phonemic transcription.
-        </p>
-        <p>
-          The design separates evidence from judgement. A transcript is frozen once per
-          participant and reused unchanged across every scoring condition, so ASR effects and
-          scorer effects can be attributed independently rather than confounded. Local code is
-          restricted to work that should be reproducible &mdash; contract validation, protocol
-          lookup, aggregation, evidence hashing &mdash; and never repairs or reinterprets a
-          model's clinical answer. Reference scores are read at evaluation time only, never
-          during inference. Invalid and missing outputs stay visible in coverage and validity
-          metrics instead of being dropped.
-        </p>
-        <p>
-          A separate downstream study regresses Western Aphasia Battery measures from the
-          resulting feature matrices under nested cross&#8209;validation, reporting SHAP
-          attribution and bootstrap confidence intervals alongside inference latency and compute
-          telemetry.
-        </p>
-        <p class="note">
-          The benchmark is a measurement study. It is not a treatment system or a clinical
-          decision tool.
-        </p>
+    <article class="entry grid">
+      <div class="rail">
+        <p class="when">MAY 2026 — PRESENT</p>
+        <p class="where">M.Tech thesis<br />M3RG, IIT Delhi</p>
+        <p class="sup">Supervised by<br />Rahul Garg,<br />N M Anoop Krishnan</p>
+        <p class="stack">Python · PyTorch<br />Whisper · Deepgram<br />scikit-learn · SHAP</p>
       </div>
-
-      <p class="tools">Python &middot; PyTorch &middot; Whisper &middot; Deepgram &middot; scikit-learn &middot; SHAP &middot; HPC</p>
+      <div class="col">
+        <h3>Aphasia&#8209;LLM</h3>
+        <p class="role">Benchmarking audio language models against clinical aphasia assessment</p>
+        <div class="body">
+          <p>
+            Aphasia is an acquired language disorder, most often following stroke, and its
+            severity is graded by clinicians administering standardised assessments. This work
+            measures how closely current audio and text language models reproduce those scores
+            from the same recordings.
+          </p>
+          <p>
+            The benchmark spans four AphasiaBank instruments over cohorts of 110 to 130
+            participants, crossing seven scoring models with two ASR systems and five input
+            conditions. Transcripts are frozen once per participant and reused unchanged across
+            every condition, so ASR effects and scorer effects can be separated rather than
+            confounded. Reference scores are read at evaluation only.
+          </p>
+          <div class="spec">
+            <div><p class="n">4</p><p class="l">AphasiaBank<br />instruments</p></div>
+            <div><p class="n">7</p><p class="l">scoring<br />models</p></div>
+            <div><p class="n">2</p><p class="l">ASR<br />systems</p></div>
+            <div><p class="n">5</p><p class="l">input<br />conditions</p></div>
+          </div>
+        </div>
+      </div>
     </article>
-  </section>
+  </div>
+</section>
 
-  <!-- ─────────────── experience ─────────────── -->
-  <section class="sec" id="experience">
-    <h2>Experience</h2>
+<!-- ═══════════════ experience ═══════════════ -->
+<section class="sec wrap" id="experience">
+  <div class="grid sec-head">
+    <h2><span class="num">02</span>Experience</h2>
+    <div class="hr"></div>
+  </div>
 
-    <article class="entry">
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">DEC 2024 — JUN 2025</p>
+      <p class="where">Gurgaon</p>
+      <p class="stack">Python · SQL<br />PySpark · Hadoop<br />GCP</p>
+    </div>
+    <div class="col">
       <h3>American Express</h3>
-      <p class="line">Software Engineer &mdash; Global Data Platform &amp; Prospect Intelligence</p>
-      <p class="when">DEC 2024 — JUN 2025 &middot; GURGAON</p>
+      <p class="role">Software Engineer — Global Data Platform &amp; Prospect Intelligence</p>
       <ul class="points">
         <li>Built ingestion pipelines for the global prospect data platform, orchestrating workflows over <strong>5.6M+ records</strong>.</li>
         <li>Implemented fuzzy-matching to reconcile multi-source vendor records against internal CRM databases.</li>
-        <li>Added automated deduplication, raising downstream batch compute throughput by roughly <strong>40%</strong>.</li>
-      </ul>
-      <p class="tools">Python &middot; SQL &middot; PySpark &middot; Hadoop &middot; GCP</p>
-    </article>
-
-    <article class="entry">
-      <h3>Fractal.ai</h3>
-      <p class="line">Software Engineer &mdash; Portfolio Optimisation &amp; Performance Analytics</p>
-      <p class="when">AUG 2021 — DEC 2024 &middot; BENGALURU</p>
-      <ul class="points">
-        <li>Built distributed PySpark systems over <strong>10M+ records</strong>; custom partitioning reduced job latency by <strong>75%</strong>.</li>
-        <li>Built a SKU recommendation engine combining KNN clustering with MINLP optimisation for a Fortune 500 client.</li>
-        <li>Architected ETL batch pipelines and automated portfolio refresh services, removing a standing manual operational step.</li>
-        <li>Received the internal Star Award in 2022 and 2023.</li>
-      </ul>
-      <p class="tools">Python &middot; PySpark &middot; Azure &middot; Databricks</p>
-    </article>
-  </section>
-
-  <!-- ─────────────── projects ─────────────── -->
-  <section class="sec" id="projects">
-    <h2>Projects</h2>
-
-    <article class="entry">
-      <h3>Memory-constrained relational query engine</h3>
-      <p class="line">Prof. Kaustubh Beedkar, IIT Delhi</p>
-      <p class="when">JAN 2026 — APR 2026</p>
-      <ul class="points">
-        <li>Out-of-core TPC&#8209;H query engine operating under a <strong>64&nbsp;MB</strong> memory ceiling, backed by an O(1) LRU buffer pool.</li>
-        <li>Volcano-style iterators with projection pushdown and hybrid joins over pipe-based I/O, to keep disk traffic bounded.</li>
-        <li>Executes multi-gigabyte workloads with no memory spills across nested relational operators.</li>
-      </ul>
-      <p class="tools">Rust &middot; TPC-H <a class="src" href="https://github.com/rgabhi/db55">Source &#8599;</a></p>
-    </article>
-
-    <article class="entry">
-      <h3>Shell, compiler and virtual machine</h3>
-      <p class="line">Prof. Kolin Paul, IIT Delhi</p>
-      <p class="when">DEC 2025 — MAR 2026</p>
-      <ul class="points">
-        <li>POSIX-compliant shell in C++ with multi-stage pipelines, process isolation, signal handling and job control.</li>
-        <li>Flex/Bison compiler lowering a C-like source language to an AST and then to a custom bytecode.</li>
-        <li>64&#8209;bit stack virtual machine with <strong>mark-and-sweep garbage collection</strong> for dynamic memory.</li>
-      </ul>
-      <p class="tools">C++ &middot; Flex &middot; Bison &middot; Linux <a class="src" href="https://github.com/rgabhi/Systems_Project">Source &#8599;</a></p>
-    </article>
-
-    <article class="entry">
-      <h3>Distributed e-commerce platform</h3>
-      <p class="line">Scaler</p>
-      <p class="when">FEB 2025 — APR 2025</p>
-      <ul class="points">
-        <li>Event-driven services for order, inventory and payment, over FastAPI, PostgreSQL, Redis and Kafka.</li>
-        <li>Saga pattern for distributed transactions, with idempotent consumers and automated retries.</li>
-        <li>Held <strong>p95 latency under 50&nbsp;ms at ~2,000 req/s</strong> using Redis caching, multi-column indexing and async event loops.</li>
-      </ul>
-      <p class="tools">Python &middot; FastAPI &middot; PostgreSQL &middot; Redis &middot; Kafka</p>
-    </article>
-
-    <article class="entry">
-      <h3>Adversarial game agent — Rivers &amp; Stones</h3>
-      <p class="line">Prof. Mausam, IIT Delhi</p>
-      <p class="when">SEP 2025 — NOV 2025</p>
-      <ul class="points">
-        <li>Iterative-deepening minimax with &alpha;&ndash;&beta; pruning under fixed per-move time budgets.</li>
-        <li>Zobrist hashing, transposition tables and move-ordering heuristics to extend effective search depth.</li>
-        <li>Domain-specific evaluation combining positional mobility with Manhattan-distance territory control.</li>
-      </ul>
-      <p class="tools">C++ <a class="src" href="https://github.com/rgabhi/Rivers_and_Stones_Game">Source &#8599;</a></p>
-    </article>
-
-    <div class="entry">
-      <h3>Earlier work</h3>
-      <p class="line">IIT Guwahati, 2019&ndash;2021</p>
-      <ul class="points">
-        <li><a href="https://github.com/rgabhi/Minimal_Debugger">Linux process debugger</a> &mdash; breakpoints, register inspection and single-stepping over the <code>ptrace</code> syscall.</li>
-        <li><a href="https://github.com/rgabhi/augmented_reality">AR tag detection</a> &mdash; contour detection, homography and perspective warping implemented from first principles.</li>
-        <li><a href="https://github.com/rgabhi/contactless_fingerprint_recognition">Contactless fingerprint recognition</a> &mdash; image enhancement and a minutiae-matching pipeline.</li>
-        <li>Protein toxicity prediction &mdash; feature-engineering pipeline over ~42K UniProtKB proteins; ANN reaching ~93% validation accuracy.</li>
+        <li>Added automated deduplication, raising downstream batch throughput by roughly <strong>40%</strong>.</li>
       </ul>
     </div>
-  </section>
+  </article>
 
-  <!-- ─────────────── education ─────────────── -->
-  <section class="sec" id="education">
-    <h2>Education &amp; teaching</h2>
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">AUG 2021 — DEC 2024</p>
+      <p class="where">Bengaluru</p>
+      <p class="stack">Python · PySpark<br />Azure · Databricks</p>
+    </div>
+    <div class="col">
+      <h3>Fractal.ai</h3>
+      <p class="role">Software Engineer — Portfolio Optimisation &amp; Performance Analytics</p>
+      <ul class="points">
+        <li>Built distributed PySpark systems over <strong>10M+ records</strong>; custom partitioning cut job latency by <strong>75%</strong>.</li>
+        <li>Built a SKU recommendation engine combining KNN clustering with MINLP optimisation for a Fortune 500 client.</li>
+        <li>Architected ETL batch pipelines and automated portfolio refresh, removing a standing manual step.</li>
+        <li>Received the internal Star Award in 2022 and 2023.</li>
+      </ul>
+    </div>
+  </article>
+</section>
+
+<!-- ═══════════════ projects ═══════════════ -->
+<section class="sec wrap" id="projects">
+  <div class="grid sec-head">
+    <h2><span class="num">03</span>Projects</h2>
+    <div class="hr"></div>
+  </div>
+
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">JAN — APR 2026</p>
+      <p class="where">IIT Delhi<br />Kaustubh Beedkar</p>
+      <p class="stack">Rust · TPC-H</p>
+      <a class="src" href="https://github.com/rgabhi/db55">Source &#8599;</a>
+    </div>
+    <div class="col">
+      <h3>Memory-constrained query engine</h3>
+      <ul class="points">
+        <li>Out-of-core TPC&#8209;H engine under a <strong>64&nbsp;MB</strong> ceiling, backed by an O(1) LRU buffer pool.</li>
+        <li>Volcano-style iterators with projection pushdown and hybrid joins over pipe-based I/O.</li>
+        <li>Executes multi-gigabyte workloads with no memory spills across nested operators.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">DEC 2025 — MAR 2026</p>
+      <p class="where">IIT Delhi<br />Kolin Paul</p>
+      <p class="stack">C++ · Flex<br />Bison · Linux</p>
+      <a class="src" href="https://github.com/rgabhi/Systems_Project">Source &#8599;</a>
+    </div>
+    <div class="col">
+      <h3>Shell, compiler and virtual machine</h3>
+      <ul class="points">
+        <li>POSIX-compliant shell in C++ with multi-stage pipelines, process isolation, signal handling and job control.</li>
+        <li>Flex/Bison compiler lowering a C-like language to an AST and then to a custom bytecode.</li>
+        <li>64&#8209;bit stack VM with <strong>mark-and-sweep garbage collection</strong>.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">SEP — NOV 2025</p>
+      <p class="where">IIT Delhi<br />Mausam</p>
+      <p class="stack">C++</p>
+      <a class="src" href="https://github.com/rgabhi/Rivers_and_Stones_Game">Source &#8599;</a>
+    </div>
+    <div class="col">
+      <h3>Adversarial game agent</h3>
+      <p class="role">Rivers &amp; Stones</p>
+      <ul class="points">
+        <li>Iterative-deepening minimax with &alpha;&ndash;&beta; pruning under fixed per-move time budgets.</li>
+        <li>Zobrist hashing, transposition tables and move-ordering heuristics to extend search depth.</li>
+        <li>Evaluation combining positional mobility with Manhattan-distance territory control.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="entry grid">
+    <div class="rail">
+      <p class="when">FEB — APR 2025</p>
+      <p class="where">Scaler</p>
+      <p class="stack">Python · FastAPI<br />PostgreSQL · Redis<br />Kafka</p>
+    </div>
+    <div class="col">
+      <h3>Distributed e-commerce platform</h3>
+      <ul class="points">
+        <li>Event-driven services for order, inventory and payment.</li>
+        <li>Saga pattern for distributed transactions, with idempotent consumers and automated retries.</li>
+        <li>Held <strong>p95 latency under 50&nbsp;ms at ~2,000 req/s</strong> via Redis caching, multi-column indexing and async event loops.</li>
+      </ul>
+    </div>
+  </article>
+
+  <article class="entry grid" id="sidequests">
+    <div class="rail">
+      <p class="when">2019 — 2021</p>
+      <p class="where">IIT Guwahati</p>
+    </div>
+    <div class="col">
+      <h3>Sidequests</h3>
+      <p class="role">Undergraduate detours that taught me the most</p>
+      <ul class="points">
+        <li><a href="https://github.com/rgabhi/Minimal_Debugger">Linux process debugger</a> &mdash; breakpoints, register inspection and single-stepping over <code>ptrace</code>.</li>
+        <li><a href="https://github.com/rgabhi/augmented_reality">AR tag detection</a> &mdash; contour detection, homography and perspective warping from first principles.</li>
+        <li><a href="https://github.com/rgabhi/contactless_fingerprint_recognition">Contactless fingerprint recognition</a> &mdash; image enhancement and minutiae matching.</li>
+        <li>Protein toxicity prediction &mdash; pipeline over ~42K UniProtKB proteins; ANN at ~93% validation accuracy.</li>
+      </ul>
+    </div>
+  </article>
+</section>
+
+<!-- ═══════════════ writing ═══════════════ -->
+<section class="sec wrap" id="writing">
+  <div class="grid sec-head">
+    <h2><span class="num">04</span>Writing</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="grid">
+    <div class="notes">
+      <article class="note">
+        <h3><a href="writing/from-objects-to-services.html">From objects to services</a></h3>
+        <p class="d">SEP 2026</p>
+        <p class="sub">
+          The SOLID principles stated plainly, then the harder question &mdash; which of them
+          still mean anything once the method call becomes a network call.
+        </p>
+      </article>
+      <article class="note">
+        <h3><a href="writing/freezing-the-evidence.html">Freezing the evidence</a></h3>
+        <p class="d">SEP 2026</p>
+        <p class="sub">
+          Separating transcription error from judgement error when a language model scores a
+          clinical assessment from audio &mdash; and what an artifact has to be for the
+          separation to hold.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ education ═══════════════ -->
+<section class="sec wrap" id="education">
+  <div class="grid sec-head">
+    <h2><span class="num">05</span>Education</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="grid">
     <div class="rows">
       <div class="row">
         <p class="t"><b>IIT Delhi</b> <span>&mdash; M.Tech, Computer Science &amp; Engineering</span></p>
@@ -211,7 +311,7 @@
       <div class="row">
         <p class="t"><b>IIT Guwahati</b> <span>&mdash; B.Tech, Chemical Science &amp; Technology</span></p>
         <p class="d">2017 — 2021</p>
-        <p class="sub">CGPA 8.48 &middot; Samsung Fellowship 2021, awarded to the top 10% of bachelor theses</p>
+        <p class="sub">CGPA 8.48 &middot; Samsung Fellowship 2021, top 10% of bachelor theses</p>
       </div>
       <div class="row">
         <p class="t"><span>Teaching assistant &mdash;</span> <b>COL106</b> <span>Data Structures &amp; Algorithms,</span> <b>COL7001</b> <span>System Concepts</span></p>
@@ -219,11 +319,16 @@
         <p class="sub">Lab tutorials, assignment design and grading.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ─────────────── recognition ─────────────── -->
-  <section class="sec" id="recognition">
-    <h2>Recognition</h2>
+<!-- ═══════════════ recognition ═══════════════ -->
+<section class="sec wrap" id="recognition">
+  <div class="grid sec-head">
+    <h2><span class="num">06</span>Recognition</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="grid">
     <div class="rows">
       <div class="row">
         <p class="t">Department rank 5, M.Tech Computer Science &amp; Engineering</p>
@@ -242,39 +347,100 @@
         <p class="d">2017</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- ─────────────── skills ─────────────── -->
-  <section class="sec" id="skills">
-    <h2>Technical</h2>
+<!-- ═══════════════ technical ═══════════════ -->
+<section class="sec wrap" id="technical">
+  <div class="grid sec-head">
+    <h2><span class="num">07</span>Technical</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="grid">
     <dl class="skills">
       <div class="skill"><dt>Languages</dt><dd>Python, C, C++, Rust, SQL, Java</dd></div>
       <div class="skill"><dt>Systems</dt><dd>Linux, PostgreSQL, Redis, Kafka, FastAPI, PySpark, Databricks, Azure</dd></div>
       <div class="skill"><dt>Machine learning</dt><dd>PyTorch, scikit-learn, NumPy, Pandas, SHAP</dd></div>
       <div class="skill"><dt>Foundations</dt><dd>Data structures &amp; algorithms, operating systems, databases, system design</dd></div>
     </dl>
-  </section>
+  </div>
+</section>
 
-  <!-- ─────────────── contact ─────────────── -->
-  <section class="sec" id="contact">
-    <h2>Contact</h2>
-    <p>
-      I am open to research collaborations and to software and machine learning internships.
-      The most reliable way to reach me is email.
-    </p>
-    <div class="contact-links">
-      <a href="mailto:mcs252089@iitd.ac.in">mcs252089@iitd.ac.in</a>
-      <a href="https://github.com/rgabhi">GitHub</a>
-      <a href="https://www.linkedin.com/in/abhinav-gupta01/">LinkedIn</a>
-      <a href="Abhinav_Gupta_Resume.pdf">CV (PDF)</a>
+<!-- ═══════════════ contact ═══════════════ -->
+<section class="sec wrap" id="contact">
+  <div class="grid sec-head">
+    <h2><span class="num">08</span>Contact</h2>
+    <div class="hr"></div>
+  </div>
+  <div class="grid">
+    <div class="contact-body">
+      <p>
+        I am open to research collaborations and to software and machine learning internships.
+        Email is the most reliable way to reach me.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:mcs252089@iitd.ac.in">mcs252089@iitd.ac.in</a>
+        <a href="mailto:abhinavrgupta98@gmail.com">abhinavrgupta98@gmail.com</a>
+        <span class="cl-sep" aria-hidden="true"></span>
+        <a href="https://github.com/rgabhi">GitHub</a>
+        <a href="https://www.linkedin.com/in/abhinav-gupta01/">LinkedIn</a>
+        <a href="Abhinav_Gupta_Resume.pdf">CV (PDF)</a>
+      </div>
     </div>
-  </section>
+  </div>
+
+  <div class="epigraph" id="epigraph">
+    <blockquote id="q-text">The first principle is that you must not fool yourself &mdash; and you are the easiest person to fool.</blockquote>
+    <p class="attr">
+      <span class="attr-name" id="q-who">Richard Feynman</span>
+      <button class="q-next" id="q-next" type="button" aria-label="Show another quote" title="Another">&#8635;</button>
+    </p>
+  </div>
 
   <footer class="colophon">
     <span>&copy; 2026 Abhinav Gupta</span>
     <span>Set in Newsreader and JetBrains Mono</span>
   </footer>
+</section>
 
-</main>
+<script>
+(function () {
+  var Q = [
+    ["The first principle is that you must not fool yourself \u2014 and you are the easiest person to fool.", "Richard Feynman"],
+    ["Testing shows the presence, not the absence of bugs.", "Edsger W. Dijkstra"],
+    ["The purpose of computing is insight, not numbers.", "Richard Hamming"],
+    ["All models are wrong, but some are useful.", "George Box"],
+    ["Far better an approximate answer to the right question than an exact answer to the wrong question.", "John Tukey"],
+    ["A distributed system is one in which the failure of a computer you didn't know existed can render your own computer unusable.", "Leslie Lamport"],
+    ["Programs must be written for people to read, and only incidentally for machines to execute.", "Abelson and Sussman"],
+    ["Simplicity is a prerequisite for reliability.", "Edsger W. Dijkstra"],
+    ["Nothing in life is to be feared, it is only to be understood.", "Marie Curie"]
+  ];
+
+  var box  = document.getElementById('epigraph');
+  var text = document.getElementById('q-text');
+  var who  = document.getElementById('q-who');
+  var btn  = document.getElementById('q-next');
+  if (!box || !text || !who || !btn) return;
+
+  // one quote per day, so returning visitors get a new one but it never flickers
+  var i = Math.floor(Date.now() / 86400000) % Q.length;
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function paint() {
+    text.textContent = Q[i][0];
+    who.textContent  = Q[i][1];
+  }
+  paint();
+
+  btn.addEventListener('click', function () {
+    i = (i + 1) % Q.length;
+    if (reduce) { paint(); return; }
+    box.classList.add('swap');
+    setTimeout(function () { paint(); box.classList.remove('swap'); }, 220);
+  });
+})();
+</script>
+
 </body>
 </html>

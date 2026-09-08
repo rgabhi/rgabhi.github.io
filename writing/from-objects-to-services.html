@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>From objects to services — Abhinav Gupta</title>
+<meta name="description" content="The SOLID principles stated plainly, then the harder question: which of them still mean anything once the method call becomes a network call." />
+<link rel="canonical" href="https://rgabhi.github.io/writing/from-objects-to-services.html" />
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="From objects to services" />
+<meta property="og:description" content="SOLID stated plainly, and what survives the network boundary." />
+<meta property="og:url" content="https://rgabhi.github.io/writing/from-objects-to-services.html" />
+<meta name="twitter:card" content="summary" />
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23FBFBF9'/><text x='16' y='23' font-family='Georgia,serif' font-size='21' font-weight='600' text-anchor='middle' fill='%232D4A3E'>A</text></svg>" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="../portfolio/site.css?v=202609081927" />
+</head>
+<body>
+
+<div class="topbar">
+  <div class="article topbar-in">
+    <a class="tb-name" href="../index.html">Abhinav Gupta</a>
+    <nav class="tb-nav" aria-label="Site">
+      <a href="../index.html#research">Research</a>
+      <a href="../index.html#writing">Writing</a>
+      <a class="cv" href="../Abhinav_Gupta_Resume.pdf">CV &darr;</a>
+    </nav>
+  </div>
+</div>
+
+<article class="article">
+
+  <header class="article-head">
+    <p class="kicker">Notes on design</p>
+    <h1>From objects to services</h1>
+    <p class="standfirst">
+      The SOLID principles stated plainly, then the harder question &mdash; which of them still
+      mean anything once the method call becomes a network call.
+    </p>
+    <div class="byline">
+      <span>Abhinav Gupta</span>
+      <span>September 2026</span>
+      <span>~8 min</span>
+    </div>
+  </header>
+
+  <div class="prose">
+
+    <p>
+      Most introductions to system design begin with load balancers. I think that is the wrong
+      end. Sharding and caching are answers, and they only make sense once you can say what
+      question a component exists to answer &mdash; which is a design problem long before it is
+      an infrastructure one.
+    </p>
+
+    <p>
+      So this starts with five principles that predate distributed systems entirely, collected
+      by Robert C. Martin from earlier work and given the SOLID acronym by Michael Feathers.
+      They were written about classes. The interesting part is what happens to each one when the
+      boundary between two pieces of code stops being a function call and becomes a network hop.
+    </p>
+
+    <h2>The five, plainly</h2>
+
+    <p>
+      <strong>Single responsibility.</strong> A module should have one reason to change. The
+      usual gloss &mdash; "do one thing" &mdash; is vaguer than the original and less useful.
+      "One reason to change" points at people: if the finance team and the fulfilment team can
+      each independently force you to edit the same class, that class has two responsibilities
+      no matter how coherent it looks.
+    </p>
+
+    <p>
+      <strong>Open/closed.</strong> Open for extension, closed for modification. Adding a new
+      payment method should mean adding a file, not editing a switch statement that six other
+      features also depend on. In practice this is a claim about where you put your variation
+      points, decided before you know what will vary &mdash; which is why it is the principle
+      most often applied too early and at too much cost.
+    </p>
+
+    <p>
+      <strong>Liskov substitution.</strong> Barbara Liskov's formulation is about behaviour, not
+      shape: if <code>S</code> is a subtype of <code>T</code>, anything true of a
+      <code>T</code> must remain true when an <code>S</code> is substituted. A subclass that
+      satisfies the interface but throws where the parent returned, or narrows what inputs it
+      accepts, has broken it. Compilers check the shape. Nothing checks the behaviour but you.
+    </p>
+
+    <p>
+      <strong>Interface segregation.</strong> No client should be forced to depend on methods it
+      does not use. A fat interface couples unrelated callers together: change it for one and
+      you recompile, retest and redeploy all of them.
+    </p>
+
+    <p>
+      <strong>Dependency inversion.</strong> High-level policy should not depend on low-level
+      detail; both should depend on an abstraction. Your order logic should not import a
+      PostgreSQL driver. It should name what it needs &mdash; something that can persist an
+      order &mdash; and let the concrete adapter be supplied from outside.
+    </p>
+
+    <h2>What changes at the boundary</h2>
+
+    <p>
+      Now make each of those boundaries a network call. Three things become true that were not
+      true before.
+    </p>
+
+    <p>
+      The call can <em>fail on its own</em>, independently of both parties. It can <em>take
+      arbitrarily long</em>. And the two sides can be running <em>different versions of the
+      code at the same time</em> &mdash; which, inside a single process, essentially never
+      happens.
+    </p>
+
+    <p>
+      Those three facts are what separate distributed design from object design, and they do
+      not affect the five principles equally.
+    </p>
+
+    <h2>The ones that get stronger</h2>
+
+    <p>
+      <strong>Single responsibility survives, and its stakes go up.</strong> At class level, a
+      muddled responsibility costs you some confusing code. At service level it costs you a
+      deployment coupling: two teams that must now ship together, coordinate migrations, and
+      share an on-call rotation. The question "what is the one reason this changes?" is the
+      question that draws service boundaries, and getting it wrong is expensive in a way that
+      refactoring a class is not.
+    </p>
+
+    <p>
+      <strong>Dependency inversion survives almost unchanged</strong>, and becomes the reason
+      you can test any of this. If the order service depends on an interface rather than on a
+      live payment provider, you can exercise its logic without the network. The pattern gets
+      new names at this scale &mdash; ports and adapters, hexagonal architecture &mdash; but it
+      is the same idea.
+    </p>
+
+    <p>
+      <strong>Interface segregation survives and sharpens into API design.</strong> A bloated
+      endpoint is worse than a bloated interface, because you cannot see who depends on which
+      field. Every attribute you return is one a client may come to rely on, and one you can
+      then no longer remove. Narrow interfaces are how you keep the right to change your mind.
+    </p>
+
+    <h2>The one that changes meaning</h2>
+
+    <p>
+      <strong>Liskov substitution becomes versioning.</strong>
+    </p>
+
+    <p>
+      In a single process, substitutability is about class hierarchies. Across a network it is
+      about time: version 2 of your service must be substitutable for version 1, because
+      version 1's clients are still running and you cannot make them stop. That is the same
+      contract obligation with a different axis.
+    </p>
+
+    <p>
+      And it is stricter, because you no longer control both sides. Adding a required field,
+      narrowing an accepted range, tightening validation &mdash; each is a Liskov violation with
+      a deployment attached. The practical rules people arrive at (add fields, never remove;
+      widen inputs, never narrow; keep defaults for anything new) are Liskov applied to a
+      contract you cannot recompile.
+    </p>
+
+    <blockquote>
+      Substitutability across time is the version of Liskov that will page you at 3am.
+    </blockquote>
+
+    <h2>The one to be careful with</h2>
+
+    <p>
+      <strong>Open/closed is the principle most likely to hurt you at this scale.</strong>
+    </p>
+
+    <p>
+      Applied to a class, guessing your extension points wrong costs a refactor. Applied to
+      service boundaries, it produces a plugin architecture, a configuration language and a
+      generic pipeline for a system that turned out to need exactly two behaviours. The
+      abstraction is now load-bearing, deployed, and depended upon by other teams.
+    </p>
+
+    <p>
+      The cheaper order of operations is to write the second case concretely, and only then look
+      at what the two cases actually share. Two examples tell you more about the shape of a
+      variation than any amount of forecasting from one.
+    </p>
+
+    <h2>What the principles do not cover</h2>
+
+    <p>
+      SOLID is a set of principles about <em>coupling</em>. It has nothing to say about the
+      three facts above, and there is a corresponding set of concerns that only appear once you
+      cross a process boundary:
+    </p>
+
+    <ul>
+      <li>
+        <strong>Idempotency.</strong> Any call that can time out will be retried, and a retry is
+        indistinguishable from a duplicate. Every write endpoint needs a key that makes the
+        second attempt a no-op.
+      </li>
+      <li>
+        <strong>Distributed transactions.</strong> There is no cross-service rollback. What you
+        have instead is a sequence of local commits with defined compensating actions &mdash;
+        the saga pattern &mdash; which means failure handling is a design artifact, not an
+        error path you add later.
+      </li>
+      <li>
+        <strong>Backpressure.</strong> A caller that retries a struggling service without limit
+        converts a slowdown into an outage. Timeouts, bounded retries with jitter, and circuit
+        breakers are the difference between degradation and collapse.
+      </li>
+      <li>
+        <strong>Observability.</strong> Inside a process, a stack trace tells you where you are.
+        Across services, nothing does unless you propagate a trace identifier deliberately.
+      </li>
+    </ul>
+
+    <h2>Where the load balancers come in</h2>
+
+    <p>
+      Only now. Caching, sharding, replication, queueing and read replicas are answers to
+      measured problems &mdash; this query is slow, this table is hot, this consumer is behind.
+      Each buys throughput or latency by spending consistency, operational complexity, or both.
+    </p>
+
+    <p>
+      Applied before the boundaries are right, they mostly add moving parts to a design whose
+      real problem was that two things that change for different reasons were living in the same
+      place. That is not an infrastructure problem, and no amount of infrastructure will fix it.
+    </p>
+
+    <h2>The short version</h2>
+
+    <p>
+      Single responsibility tells you where to cut. Dependency inversion makes the cut testable.
+      Interface segregation keeps the cut narrow enough that you can change your mind later.
+      Liskov, read as a rule about versions rather than subclasses, is what lets you deploy on
+      Tuesday without breaking a client that shipped in March. Open/closed is worth having and
+      worth delaying.
+    </p>
+
+    <p>
+      Everything after that is measurement.
+    </p>
+
+  </div>
+
+  <footer class="article-foot">
+    <span><a href="../index.html#writing">&larr; Writing</a></span>
+    <span>&copy; 2026 Abhinav Gupta</span>
+  </footer>
+
+</article>
+</body>
+</html>
