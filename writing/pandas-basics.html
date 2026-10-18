@@ -1,0 +1,1298 @@
+<!doctype html>
+<html lang="en" data-accent="blue"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pandas Basics — Abhinav Gupta</title>
+<link rel="canonical" href="https://rgabhi.github.io/writing/pandas-basics.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pandas Basics — Abhinav Gupta">
+<meta property="og:description" content="An illustrated guide to learning and revising pandas, with 15 worked exercises and practical parameter references.">
+<meta property="og:url" content="https://rgabhi.github.io/writing/pandas-basics.html">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/portrait.jpg">
+
+<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script>
+<link rel="stylesheet" href="assets/fonts/fonts.css?v=c06e84a11049">
+<link rel="stylesheet" href="assets/article-notes.css?v=67754db9d545">
+<script src="assets/article-guide.js?v=cb8337f7c13e" defer></script>
+<meta name="description" content="An illustrated pandas learning guide: tables, selection, cleaning, grouping, joins and 15 exercises with hidden solutions.">
+</head><body>
+<header class="topbar"><a class="brand" href="../index.html">Abhinav Gupta<span class="brand-dot">.</span></a><div class="header-tools"><nav class="links" aria-label="Article links"><a href="../index.html#writing">Writing</a><a href="#fifteen-exercises-with-hidden-solutions">Practice</a><a href="#sources-and-next-steps">References</a></nav><div class="palette-toggle" role="group" aria-label="Article colour palette"><button type="button" data-accent-option="blue" aria-pressed="true" aria-label="Blue palette" title="Blue palette"><span class="palette-dot blue" aria-hidden="true"></span></button><button type="button" data-accent-option="orange" aria-pressed="false" aria-label="Orange palette" title="Orange palette"><span class="palette-dot orange" aria-hidden="true"></span></button></div></div></header><div class="progress" aria-hidden="true"></div>
+<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#what-is-pandas"><span>01</span>What is pandas?</a><a href="#set-up-your-environment"><span>02</span>Set up your environment</a><a href="#read-a-dataframe"><span>03</span>Read a DataFrame</a><a href="#select-and-transform"><span>04</span>Select and transform</a><a href="#clean-without-losing-meaning"><span>05</span>Clean without losing meaning</a><a href="#summarize-combine-and-reshape"><span>06</span>Summarize, combine, and reshape</a><a href="#worked-example-summarize-benchmark-runs"><span>07</span>Worked example: summarize benchmark runs</a><a href="#fifteen-exercises-with-hidden-solutions"><span>08</span>Fifteen exercises, with hidden solutions</a><a href="#interview-questions-and-quick-reference"><span>09</span>Interview questions and quick reference</a><a href="#sources-and-next-steps"><span>10</span>Sources and next steps</a></nav><div class="note">Read with an editor open.<br>Try the exercises before revealing the solutions.<br><button id="solutions" type="button">Reveal all answers</button></div></aside>
+<main id="article"><div class="eyebrow hero-kicker">Learning guide / Python & data</div><h1>Pandas Basics</h1>
+<p><em>A self-help guide to understanding, practising, and revising pandas.</em></p>
+<p><strong>Python for data work · Learning guide 01 · Updated 18 October 2026</strong></p>
+<p>A table becomes useful when I can answer a question with it: which rows match a condition, what needs cleaning, or how a group compares with another. pandas gives these recurring tasks a small, consistent vocabulary.</p>
+<p>The guide follows a practical sequence: understand the table, select data, make changes, clean carefully, then summarize. Read it once to build the ideas; return to the parameter tables and worked exercises when you need to revise or solve a similar problem.</p>
+<p><strong>Before you begin:</strong> basic Python lists, dictionaries, functions, and comparisons. No NumPy, SQL, or machine learning background is required. Read sections 1–5 first; return to the exercises and reference tables over several short sessions.</p>
+<p>Before choosing a method, ask <strong>what one row represents</strong>. That tells you whether an operation should retain individual records, combine them, or turn them into summaries.</p>
+<h2 id="what-is-pandas">What is pandas?</h2>
+<p>pandas is an open-source Python library for working with <mark>labelled data</mark>, particularly tables. It provides tools to read files, inspect columns, select records, handle missing values, calculate summaries, and combine datasets.</p>
+<p>Its two central objects are a <strong>DataFrame</strong>, a two-dimensional table, and a <strong>Series</strong>, a one-dimensional collection of values with an index. A DataFrame can hold different types in different columns: names, integer counts, decimal measurements, dates, or categories.</p>
+<p>A useful comparison:</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Where it fits</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Python lists and dictionaries</td>
+<td>General-purpose structures; convenient for small custom tasks</td>
+</tr>
+<tr>
+<td>NumPy</td>
+<td>Arrays and numerical operations, especially when array shape and numeric computation dominate</td>
+</tr>
+<tr>
+<td>pandas</td>
+<td>Labelled tables: cleaning, exploration, joins, grouping, and reporting</td>
+</tr>
+<tr>
+<td>SQL/database</td>
+<td>Persistent data, queries close to storage, transactions, and shared access</td>
+</tr>
+</tbody></table></div>
+<p>These tools often work together. You might query PostgreSQL, inspect the result in pandas, and pass numeric features to a model.</p>
+<p>pandas usually works with data in memory. A CSV&#39;s file size is not a reliable estimate of the memory its parsed table will consume. If a dataset is large, read fewer columns, process suitable operations in chunks, or push work into a database. The <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/">official beginner tutorials</a> are a useful companion to this guide.</p>
+<h2 id="set-up-your-environment">Set up your environment</h2>
+<p>Use a project-specific virtual environment so experiments do not interfere with other projects. A compatible Python installation is required; if Python is missing, begin with the <a href="https://www.python.org/downloads/">official Python downloads</a>.</p>
+<p><strong>macOS or Linux</strong></p>
+<div class="cell input"><div class="cell-bar"><span>$</span><span class="kind">Terminal</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-bash">python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install pandas
+</code></pre></div>
+<p><strong>Windows PowerShell</strong></p>
+<div class="cell input"><div class="cell-bar"><span>PS></span><span class="kind">PowerShell</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-powershell">py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install pandas
+</code></pre></div>
+<p>On Windows you can use the environment&#39;s interpreter directly, without changing PowerShell&#39;s script policy:</p>
+<div class="cell input"><div class="cell-bar"><span>PS></span><span class="kind">PowerShell</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-powershell">.\.venv\Scripts\python.exe your_script.py
+</code></pre></div>
+<p>Check the interpreter you intend to use:</p>
+<div class="cell input"><div class="cell-bar"><span>$</span><span class="kind">Terminal</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-bash">python -c &quot;import pandas as pd; print(pd.__version__)&quot;
+</code></pre></div>
+<p>For Windows without an activated environment, replace <code>python</code> with <code>.\.venv\Scripts\python.exe</code>. In a notebook, select the kernel belonging to that same environment.</p>
+<p>Import pandas using its conventional short name:</p>
+<div class="cell input"><div class="cell-bar"><span>In [1]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python"><span class="tok-keyword">import</span> pandas <span class="tok-keyword">as</span> pd
+</code></pre></div>
+<p><strong>Version note.</strong> The accompanying examples were checked with pandas 2.2.3; assignment examples were also checked with its Copy-on-Write option enabled. Current pandas 3.x uses Copy-on-Write by default. The patterns here avoid chained assignment, but exact inferred string dtypes and printed formatting can vary between versions. See the <a href="https://pandas.pydata.org/docs/getting_started/install.html">installation guide</a> and <a href="https://pandas.pydata.org/docs/user_guide/copy_on_write.html">Copy-on-Write guide</a>.</p>
+<h2 id="read-a-dataframe">Read a DataFrame</h2>
+<h3 id="one-small-table-to-learn-with">One small table to learn with</h3>
+<p>Imagine Harry, Ron, Hermione, and Neville at a coding workshop. The scores and ages in these examples are invented practice data; the characters simply make the rows easier to remember.</p>
+<p>Use this setup for the examples in sections 3–6. Each later example starts from this table unless it defines another input. Examples that modify a table make a copy so you can try them independently.</p>
+<div class="cell input"><div class="cell-bar"><span>In [2]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">students = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"student_id"</span>: [<span class="tok-number">101</span>, <span class="tok-number">102</span>, <span class="tok-number">103</span>, <span class="tok-number">104</span>],
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-string">"Hermione"</span>, <span class="tok-string">"Neville"</span>],
+    <span class="tok-string">"track"</span>: [<span class="tok-string">"SDE"</span>, <span class="tok-string">"ML"</span>, <span class="tok-string">"SDE"</span>, <span class="tok-string">"ML"</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-number">82</span>, <span class="tok-number">65</span>, <span class="tok-number">91</span>, <span class="tok-number">74</span>],
+}, index=[<span class="tok-number">10</span>, <span class="tok-number">20</span>, <span class="tok-number">30</span>, <span class="tok-number">40</span>])
+<span class="tok-function">print</span>(students)
+</code></pre></div>
+<div class="cell output"><div class="cell-bar"><span>Out:</span><span class="kind">result</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-text">    student_id      name track  score
+10         101     Harry   SDE     82
+20         102       Ron    ML     65
+30         103  Hermione   SDE     91
+40         104   Neville    ML     74
+</code></pre></div>
+<p>The leftmost labels, <code>10, 20, 30, 40</code>, are the <strong>index</strong>. They are not a fifth data column. Here, a row represents one student; <code>student_id</code> is an ordinary column containing the application&#39;s identifier.</p>
+<figure><a href="assets/pandas-basics/01-anatomy.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img src="assets/pandas-basics/01-anatomy.svg" alt="DataFrame anatomy: column labels, row labels, and selecting a score Series." data-blue-src="assets/pandas-basics/01-anatomy.svg" data-orange-src="assets/pandas-basics/01-anatomy-orange.svg" loading="lazy"></a><figcaption>Original diagram <span>Open full size ↗</span></figcaption></figure>
+<h3 id="the-vocabulary">The vocabulary</h3>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning in this example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Row / observation</td>
+<td>One student&#39;s record</td>
+</tr>
+<tr>
+<td>Column / variable</td>
+<td>One field, such as <code>score</code></td>
+</tr>
+<tr>
+<td>Index</td>
+<td>Labels used to identify rows in pandas; labels need not be consecutive or unique</td>
+</tr>
+<tr>
+<td>Series</td>
+<td>One labelled dimension; <code>students[&quot;score&quot;]</code> returns a Series</td>
+</tr>
+<tr>
+<td>DataFrame</td>
+<td>A table; <code>students[[&quot;score&quot;]]</code> returns a one-column DataFrame</td>
+</tr>
+<tr>
+<td><code>dtype</code></td>
+<td>A column&#39;s storage/type representation</td>
+</tr>
+<tr>
+<td>Missing value</td>
+<td>An unavailable value, represented differently according to dtype</td>
+</tr>
+<tr>
+<td>Axis</td>
+<td>Rows are axis 0; columns are axis 1</td>
+</tr>
+</tbody></table></div>
+<p class="hand-note">Filtering removes rows, not their labels. If label 20 disappears, the remaining labels are still 10, 30, 40; the third row is reached by position 2 or label 40. Resetting the index is a separate choice.</p>
+
+<p>The index is <strong>not automatically a database primary key</strong>. If uniqueness matters, check it with <code>students.index.is_unique</code>, or validate an explicit ID column.</p>
+<h3 id="inspect-before-changing-anything">Inspect before changing anything</h3>
+<div class="cell input"><div class="cell-bar"><span>In [3]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python"><span class="tok-function">print</span>(students.shape)           <span class="tok-comment"># (4, 4): rows, columns</span>
+<span class="tok-function">print</span>(students.size)            <span class="tok-comment"># 16: total cells, including missing cells</span>
+<span class="tok-function">print</span>(<span class="tok-function">len</span>(students))            <span class="tok-comment"># 4: rows</span>
+<span class="tok-function">print</span>(students.columns.tolist())
+<span class="tok-function">print</span>(students.head(<span class="tok-number">2</span>))
+<span class="tok-function">print</span>(students.dtypes)
+students.info()                 <span class="tok-comment"># prints structure and non-missing counts</span>
+<span class="tok-function">print</span>(students.describe())      <span class="tok-comment"># numeric summary by default</span>
+</code></pre></div>
+<p><code>info()</code> prints its report and returns <code>None</code>; use <code>students.info()</code>, rather than <code>print(students.info())</code>. <code>describe()</code> does not establish that the data is valid. Look for impossible values, duplicate identifiers, and unexpected units yourself.</p>
+<h3 id="read-and-write-files">Read and write files</h3>
+<div class="cell input"><div class="cell-bar"><span>In [4]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python"><span class="tok-keyword">from</span> io <span class="tok-keyword">import</span> StringIO
+
+csv_text = <span class="tok-string">"student_id,name,score\n101,Harry,82\n102,Ron,65\n"</span>
+loaded = pd.read_csv(StringIO(csv_text))
+<span class="tok-function">print</span>(loaded.shape)             <span class="tok-comment"># (2, 3)</span>
+</code></pre></div>
+<p>With a real file, replace <code>StringIO(csv_text)</code> with a path. These lines expect an input file and write an output file:</p>
+<div class="cell input"><div class="cell-bar"><span>In [5]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">loaded = pd.read_csv(<span class="tok-string">"students.csv"</span>, usecols=[<span class="tok-string">"student_id"</span>, <span class="tok-string">"name"</span>, <span class="tok-string">"score"</span>])
+loaded.to_csv(<span class="tok-string">"students_clean.csv"</span>, index=<span class="tok-keyword">False</span>)
+</code></pre></div>
+<p><code>index=False</code> leaves pandas&#39; row labels out of the CSV. Include an index deliberately if it carries useful information. For identifiers such as <code>&quot;0012&quot;</code>, specify a string dtype while reading so leading zeros survive.</p>
+<p>Useful CSV arguments when moving beyond the toy input:</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Purpose</th>
+<th>Example choice</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>usecols</code></td>
+<td>Read only needed fields</td>
+<td><code>[&#39;student_id&#39;, &#39;name&#39;, &#39;score&#39;]</code></td>
+</tr>
+<tr>
+<td><code>dtype</code></td>
+<td>Preserve an intended representation</td>
+<td><code>{&#39;student_id&#39;: &#39;string&#39;}</code> keeps leading zeros</td>
+</tr>
+<tr>
+<td><code>na_values</code></td>
+<td>Recognize extra missing-value tokens</td>
+<td><code>[&#39;absent&#39;, &#39;?&#39;]</code>, if those tokens mean missing in this file</td>
+</tr>
+<tr>
+<td><code>parse_dates</code></td>
+<td>Request date parsing for selected fields</td>
+<td><code>[&#39;recorded_at&#39;]</code>; check the resulting dtype if input is inconsistent</td>
+</tr>
+<tr>
+<td><code>chunksize</code></td>
+<td>Read batches through an iterator</td>
+<td><code>10000</code> rows per chunk; later operations must combine chunk results correctly</td>
+</tr>
+</tbody></table></div>
+<p>These options describe an input contract; they do not establish that the values are valid. See <a href="https://pandas.pydata.org/docs/reference/api/pandas.read_csv.html">read_csv parameters</a>.</p>
+<p>pandas also supports JSON, Excel, Parquet, and SQL inputs. Some formats need optional dependencies; CSV is enough to begin. See the <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/02_read_write.html">reading and writing tutorial</a>.</p>
+<h2 id="select-and-transform">Select and transform</h2>
+<h3 id="labels-and-positions-answer-different-questions">Labels and positions answer different questions</h3>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>students[&quot;name&quot;]</code></td>
+<td>A Series of names</td>
+</tr>
+<tr>
+<td><code>students[[&quot;name&quot;, &quot;score&quot;]]</code></td>
+<td>A DataFrame with two columns</td>
+</tr>
+<tr>
+<td><code>students.loc[20, &quot;name&quot;]</code></td>
+<td><code>&quot;Ron&quot;</code>: row <strong>label</strong> 20</td>
+</tr>
+<tr>
+<td><code>students.iloc[1, 1]</code></td>
+<td><code>&quot;Ron&quot;</code>: second row, second column by <strong>position</strong></td>
+</tr>
+<tr>
+<td><code>students.loc[10:30]</code></td>
+<td>Labels 10 through 30, including 30 in this ordered index</td>
+</tr>
+<tr>
+<td><code>students.iloc[0:2]</code></td>
+<td>Positions 0 and 1; stop position 2 is excluded</td>
+</tr>
+</tbody></table></div>
+<p>Use <code>.loc[row_selector, column_selector]</code> when labels or conditions express the task. Use <code>.iloc</code> when positions express it. For a single cell, <code>.at[label, column]</code> and <code>.iat[row_position, column_position]</code> are also available. Details: <a href="https://pandas.pydata.org/docs/user_guide/indexing.html">indexing and selection</a>.</p>
+<h3 id="a-filter-is-a-sequence-of-decisions">A filter is a sequence of decisions</h3>
+<div class="cell input"><div class="cell-bar"><span>In [6]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">mask = students[<span class="tok-string">"score"</span>] &gt;= <span class="tok-number">80</span>
+selected = students.loc[mask, [<span class="tok-string">"name"</span>, <span class="tok-string">"score"</span>]]
+<span class="tok-function">print</span>(selected)
+</code></pre></div>
+<div class="cell output"><div class="cell-bar"><span>Out:</span><span class="kind">result</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-text">        name  score
+10     Harry     82
+30  Hermione     91
+</code></pre></div>
+<figure><a href="assets/pandas-basics/02-selection.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img src="assets/pandas-basics/02-selection.svg" alt="A score comparison creates a boolean mask that keeps Harry and Hermione." data-blue-src="assets/pandas-basics/02-selection.svg" data-orange-src="assets/pandas-basics/02-selection-orange.svg" loading="lazy"></a><figcaption>Original diagram <span>Open full size ↗</span></figcaption></figure>
+<p>Combine conditions with <code>&amp;</code> for AND, <code>|</code> for OR, and <code>~</code> for NOT. Parenthesize each comparison:</p>
+<div class="cell input"><div class="cell-bar"><span>In [7]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">selected = students.loc[
+    (students[<span class="tok-string">"track"</span>] == <span class="tok-string">"SDE"</span>) &amp; (students[<span class="tok-string">"score"</span>] &gt;= <span class="tok-number">85</span>),
+    [<span class="tok-string">"name"</span>, <span class="tok-string">"score"</span>],
+]
+<span class="tok-function">print</span>(selected[<span class="tok-string">"name"</span>].tolist())   <span class="tok-comment"># ['Hermione']</span>
+</code></pre></div>
+<p>Python&#39;s <code>and</code> and <code>or</code> expect a single truth decision; a Series contains many. To test membership, use <code>.isin([&quot;SDE&quot;, &quot;ML&quot;])</code>.</p>
+<h3 id="work-on-whole-columns">Work on whole columns</h3>
+<div class="cell input"><div class="cell-bar"><span>In [8]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">scored = students.copy()
+scored[<span class="tok-string">"score_fraction"</span>] = scored[<span class="tok-string">"score"</span>] / <span class="tok-number">100</span>
+scored[<span class="tok-string">"passed"</span>] = scored[<span class="tok-string">"score"</span>] &gt;= <span class="tok-number">70</span>
+<span class="tok-function">print</span>(scored[<span class="tok-string">"passed"</span>].tolist())   <span class="tok-comment"># [True, False, True, True]</span>
+</code></pre></div>
+<p>This style expresses a column operation directly instead of writing an explicit row loop. Prefer built-in arithmetic, comparisons, <code>.str</code> operations, and aggregations before reaching for <code>.apply()</code>.</p>
+<p>Vectorized syntax is not a universal speed guarantee; memory, dtype, and the particular operation matter. For custom logic, <code>.apply()</code> can be useful, but <code>axis=1</code> often invokes Python once per row.</p>
+<h3 id="make-assignments-explicit">Make assignments explicit</h3>
+<div class="cell input"><div class="cell-bar"><span>In [9]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">updated = students.copy()
+updated.loc[updated[<span class="tok-string">"student_id"</span>] == <span class="tok-number">102</span>, <span class="tok-string">"score"</span>] = <span class="tok-number">70</span>
+</code></pre></div>
+<p>Avoid writing through an intermediate selection such as <code>updated[updated[&quot;student_id&quot;] == 102][&quot;score&quot;] = 70</code>. Under Copy-on-Write it does not update the original table. Select the intended rows and column in a <strong>single <code>.loc</code> assignment</strong>.</p>
+<h3 id="sort-rename-and-chain">Sort, rename, and chain</h3>
+<div class="cell input"><div class="cell-bar"><span>In [10]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">ranked = (
+    students
+    .sort_values([<span class="tok-string">"score"</span>, <span class="tok-string">"student_id"</span>], ascending=[<span class="tok-keyword">False</span>, <span class="tok-keyword">True</span>])
+    .rename(columns={<span class="tok-string">"score"</span>: <span class="tok-string">"marks"</span>})
+    .reset_index(drop=<span class="tok-keyword">True</span>)
+)
+<span class="tok-function">print</span>(ranked[<span class="tok-string">"name"</span>].tolist())   <span class="tok-comment"># ['Hermione', 'Harry', 'Neville', 'Ron']</span>
+</code></pre></div>
+<p>A secondary sort key makes ties predictable. <code>reset_index(drop=True)</code> gives the result consecutive row labels; it does not sort anything. Chaining reads as a sequence of transformations, but naming intermediate results is often easier while debugging.</p>
+<p>Most transformations return an object you must use or assign. <code>inplace=True</code> is not a general promise of lower memory use or better performance.</p>
+<h2 id="clean-without-losing-meaning">Clean without losing meaning</h2>
+<p>Real tables contain inconsistent text, missing entries, duplicate records, and numbers stored as strings. Cleaning requires decisions about what those entries mean.</p>
+<h3 id="missing-is-different-from-zero">Missing is different from zero</h3>
+<div class="cell input"><div class="cell-bar"><span>In [11]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">raw = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"name"</span>: [<span class="tok-string">" Harry "</span>, <span class="tok-string">"Ron"</span>, <span class="tok-keyword">None</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-string">"82"</span>, <span class="tok-string">"absent"</span>, <span class="tok-string">"91"</span>],
+})
+raw[<span class="tok-string">"name"</span>] = raw[<span class="tok-string">"name"</span>].astype(<span class="tok-string">"string"</span>).str.strip()
+raw[<span class="tok-string">"score"</span>] = pd.to_numeric(raw[<span class="tok-string">"score"</span>], errors=<span class="tok-string">"coerce"</span>).astype(<span class="tok-string">"Int64"</span>)
+<span class="tok-function">print</span>(raw[<span class="tok-string">"score"</span>].isna().tolist())    <span class="tok-comment"># [False, True, False]</span>
+<span class="tok-function">print</span>(raw[<span class="tok-string">"score"</span>].mean())            <span class="tok-comment"># 86.5: missing values are skipped</span>
+</code></pre></div>
+<p class="hand-note">The two known scores, 82 and 91, average to 86.5. Filling the missing score with zero changes that average to 57.67. The operation succeeds either way; the meaning of the result changes.</p>
+
+<p><code>errors=&quot;coerce&quot;</code> converts an unparseable number into a missing entry. That is convenient, but it can hide bad input: count or preserve the original invalid values if quality matters.</p>
+<p><code>Int64</code>, with a capital <code>I</code>, is pandas&#39; nullable integer dtype; it can hold integers and <code>pd.NA</code>. Plain <code>int64</code> cannot directly represent missing integers. Other dtypes can use <code>NaN</code>, <code>NaT</code>, or <code>None</code>-like values. Use <code>.isna()</code> and <code>.notna()</code> to detect missing entries rather than equality comparisons. The <a href="https://pandas.pydata.org/docs/user_guide/missing_data.html">missing-data guide</a> explains the representations.</p>
+<p>Choose an action based on the task:</p>
+<div class="cell input"><div class="cell-bar"><span>In [12]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">with_names = raw.dropna(subset=[<span class="tok-string">"name"</span>])
+labelled = raw.assign(name=raw[<span class="tok-string">"name"</span>].fillna(<span class="tok-string">"Unknown"</span>))
+</code></pre></div>
+<p>Dropping a missing name may be appropriate for a name directory. Replacing an absent exam score with zero changes its meaning. Filling a feature with the mean might be reasonable in an ML pipeline, but the fill value must be learned from the training split to avoid leakage.</p>
+<p>For a group, <code>.size()</code> counts rows while <code>.count()</code> counts non-missing values in the selected column. Report both when missingness matters.</p>
+<h3 id="duplicate-according-to-which-key">Duplicate according to which key?</h3>
+<div class="cell input"><div class="cell-bar"><span>In [13]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">contacts = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-string">"Harry revised"</span>],
+    <span class="tok-string">"email"</span>: [<span class="tok-string">"harry@example.test"</span>, <span class="tok-string">"ron@example.test"</span>, <span class="tok-string">"harry@example.test"</span>],
+})
+unique = contacts.drop_duplicates(subset=[<span class="tok-string">"email"</span>], keep=<span class="tok-string">"first"</span>)
+<span class="tok-function">print</span>(<span class="tok-function">len</span>(unique))   <span class="tok-comment"># 2</span>
+</code></pre></div>
+<p>Two rows can be duplicates by email even when their names differ. Define the business key first. If you intend to retain the latest record, sort by a trustworthy timestamp before using <code>keep=&quot;last&quot;</code>.</p>
+<h3 id="text-dates-and-types">Text, dates, and types</h3>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Pattern</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Trim and normalize case</td>
+<td><code>s.astype(&quot;string&quot;).str.strip().str.lower()</code></td>
+</tr>
+<tr>
+<td>Literal substring search</td>
+<td><code>s.str.contains(&quot;sql&quot;, case=False, regex=False, na=False)</code></td>
+</tr>
+<tr>
+<td>Parse dates</td>
+<td><code>pd.to_datetime(s, errors=&quot;coerce&quot;)</code></td>
+</tr>
+<tr>
+<td>Extract a date component</td>
+<td><code>dates.dt.year</code></td>
+</tr>
+<tr>
+<td>Convert validated numeric values</td>
+<td><code>s.astype(&quot;float64&quot;)</code></td>
+</tr>
+<tr>
+<td>Investigate memory</td>
+<td><code>df.memory_usage(deep=True).sum()</code></td>
+</tr>
+</tbody></table></div>
+<p><code>astype()</code> converts to a type; it does not validate your domain. A negative age may be a perfectly valid integer and still be invalid data. An <code>object</code> dtype can also hold mixed Python values; it does not mean “definitely a clean string column.”</p>
+<h2 id="summarize-combine-and-reshape">Summarize, combine, and reshape</h2>
+<h3 id="group-by-a-question">Group by a question</h3>
+<p>“What is the average score in each track?” changes our unit of analysis: one student per row becomes one track per row.</p>
+<div class="cell input"><div class="cell-bar"><span>In [14]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">summary = (
+    students.groupby(<span class="tok-string">"track"</span>, as_index=<span class="tok-keyword">False</span>)
+    .agg(students=(<span class="tok-string">"student_id"</span>, <span class="tok-string">"size"</span>), mean_score=(<span class="tok-string">"score"</span>, <span class="tok-string">"mean"</span>))
+)
+<span class="tok-function">print</span>(summary)
+</code></pre></div>
+<div class="cell output"><div class="cell-bar"><span>Out:</span><span class="kind">result</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-text">  track  students  mean_score
+0    ML         2        69.5
+1   SDE         2        86.5
+</code></pre></div>
+<figure><a href="assets/pandas-basics/03-groupby.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img src="assets/pandas-basics/03-groupby.svg" alt="Grouping splits scores by track, averages each group, and combines the results." data-blue-src="assets/pandas-basics/03-groupby.svg" data-orange-src="assets/pandas-basics/03-groupby-orange.svg" loading="lazy"></a><figcaption>Original diagram <span>Open full size ↗</span></figcaption></figure>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Argument / operation</th>
+<th>Used here</th>
+<th>What changes if I choose differently?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>by</code></td>
+<td><code>&#39;track&#39;</code></td>
+<td>A list such as <code>[&#39;track&#39;, &#39;year&#39;]</code> groups by combinations of fields</td>
+</tr>
+<tr>
+<td><code>as_index</code></td>
+<td><code>False</code></td>
+<td>Keeps keys as ordinary columns; the default <code>True</code> uses group keys as the aggregate result&#39;s index</td>
+</tr>
+<tr>
+<td><code>sort</code></td>
+<td>Default <code>True</code></td>
+<td>Sorts group keys; <code>False</code> keeps groups in encounter order for these ordinary string keys</td>
+</tr>
+<tr>
+<td><code>dropna</code></td>
+<td>Default <code>True</code></td>
+<td>Excludes missing grouping keys; <code>False</code> includes them as a group</td>
+</tr>
+<tr>
+<td>Named aggregation</td>
+<td><code>mean_score=(&#39;score&#39;, &#39;mean&#39;)</code></td>
+<td>Names the output, selects the input column, and chooses the reduction</td>
+</tr>
+</tbody></table></div>
+<p>The field named <code>students</code> counts rows using <code>size</code>; it does not count distinct IDs. Use <code>nunique</code> when the question is about distinct students. See <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.groupby.html">groupby parameters</a>.</p>
+<p>An aggregation reduces a group to a summary. If you need the group mean beside <strong>every original row</strong>, use <code>students.groupby(&quot;track&quot;)[&quot;score&quot;].transform(&quot;mean&quot;)</code>. By default, missing grouping keys are excluded; specify <code>dropna=False</code> if they should form a group. See the <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/06_calculate_statistics.html">grouping tutorial</a>.</p>
+<h3 id="concatenate-batches-merge-related-tables">Concatenate batches; merge related tables</h3>
+<p><code>concat</code> stacks compatible batches. <code>merge</code> matches rows using keys.</p>
+<div class="cell input"><div class="cell-bar"><span>In [15]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">first_batch = students.iloc[:<span class="tok-number">2</span>]
+second_batch = students.iloc[<span class="tok-number">2</span>:]
+combined = pd.concat([first_batch, second_batch], ignore_index=<span class="tok-keyword">True</span>)
+</code></pre></div>
+<p>Concatenation does not automatically remove duplicates. Collect batches and concatenate once instead of repeatedly growing a DataFrame inside a loop.</p>
+<p>For a join, attach track information to each student:</p>
+<div class="cell input"><div class="cell-bar"><span>In [16]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">tracks = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"track"</span>: [<span class="tok-string">"SDE"</span>, <span class="tok-string">"ML"</span>],
+    <span class="tok-string">"focus"</span>: [<span class="tok-string">"Systems"</span>, <span class="tok-string">"Models"</span>],
+})
+enriched = students.merge(tracks, on=<span class="tok-string">"track"</span>, how=<span class="tok-string">"left"</span>, validate=<span class="tok-string">"many_to_one"</span>)
+<span class="tok-function">print</span>(enriched[<span class="tok-string">"focus"</span>].tolist())   <span class="tok-comment"># ['Systems', 'Models', 'Systems', 'Models']</span>
+</code></pre></div>
+<p><code>how=&quot;left&quot;</code> retains every student. <code>validate=&quot;many_to_one&quot;</code> checks that the right-side key is unique, helping catch joins that unexpectedly multiply rows. An inner join retains matched keys; an outer join retains keys from both sides. With duplicate keys on both sides, matches can form a Cartesian expansion within each key.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Useful alternatives</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>on</code></td>
+<td><code>&#39;track&#39;</code></td>
+<td>Matching column present on both sides; use <code>left_on</code> and <code>right_on</code> when names differ</td>
+</tr>
+<tr>
+<td><code>how</code></td>
+<td><code>&#39;left&#39;</code></td>
+<td><code>&#39;inner&#39;</code> keeps matched keys; <code>&#39;outer&#39;</code> keeps keys from both sides</td>
+</tr>
+<tr>
+<td><code>validate</code></td>
+<td><code>&#39;many_to_one&#39;</code></td>
+<td>Checks right-key uniqueness; <code>&#39;one_to_one&#39;</code> requires unique keys on both sides</td>
+</tr>
+<tr>
+<td><code>indicator</code></td>
+<td>Default <code>False</code></td>
+<td><code>True</code> adds an origin field showing left-only, right-only, or matched rows</td>
+</tr>
+<tr>
+<td><code>suffixes</code></td>
+<td>Default <code>(&#39;_x&#39;, &#39;_y&#39;)</code></td>
+<td>Distinguishes overlapping non-key column names</td>
+</tr>
+</tbody></table></div>
+<p>See <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.merge.html">merge parameters</a> when specifying a join contract.</p>
+<p>Unlike typical SQL joins, pandas can match missing join keys with other missing keys. Decide how to handle them before merging. Details: <a href="https://pandas.pydata.org/docs/user_guide/merging.html">merge and concatenate guide</a>.</p>
+<h3 id="wide-and-long-are-two-representations">Wide and long are two representations</h3>
+<figure><a href="assets/pandas-basics/04-reshape.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img src="assets/pandas-basics/04-reshape.svg" alt="A long scores table pivots into one column per subject; merge adds information through a key." data-blue-src="assets/pandas-basics/04-reshape.svg" data-orange-src="assets/pandas-basics/04-reshape-orange.svg" loading="lazy"></a><figcaption>Original diagram <span>Open full size ↗</span></figcaption></figure>
+<div class="cell input"><div class="cell-bar"><span>In [17]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">scores = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-string">"Ron"</span>],
+    <span class="tok-string">"topic"</span>: [<span class="tok-string">"SQL"</span>, <span class="tok-string">"OS"</span>, <span class="tok-string">"SQL"</span>, <span class="tok-string">"OS"</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-number">80</span>, <span class="tok-number">90</span>, <span class="tok-number">70</span>, <span class="tok-number">60</span>],
+})
+wide = scores.pivot(index=<span class="tok-string">"name"</span>, columns=<span class="tok-string">"topic"</span>, values=<span class="tok-string">"score"</span>)
+long_again = wide.reset_index().melt(
+    id_vars=<span class="tok-string">"name"</span>, var_name=<span class="tok-string">"topic"</span>, value_name=<span class="tok-string">"score"</span>
+)
+</code></pre></div>
+<p>In the wide table, Harry has OS <code>90</code> and SQL <code>80</code>; Ron has OS <code>60</code> and SQL <code>70</code>. <code>melt</code> returns one name/topic observation per row; the row ordering may differ from the original.</p>
+<p><code>pivot</code> requires a unique value for each index/column pair. If the same student has two scores for SQL, decide what the repetitions mean. To intentionally average them, use <code>pivot_table(..., aggfunc=&quot;mean&quot;)</code>. Do not aggregate accidentally just to silence a duplicate-key error. See the <a href="https://pandas.pydata.org/docs/getting_started/intro_tutorials/07_reshape_table_layout.html">reshaping tutorial</a>.</p>
+<h3 id="labels-also-control-arithmetic">Labels also control arithmetic</h3>
+<div class="cell input"><div class="cell-bar"><span>In [18]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">left = pd.<span class="tok-function">Series</span>([<span class="tok-number">10</span>, <span class="tok-number">20</span>], index=[<span class="tok-string">"a"</span>, <span class="tok-string">"b"</span>])
+right = pd.<span class="tok-function">Series</span>([<span class="tok-number">1</span>, <span class="tok-number">2</span>], index=[<span class="tok-string">"b"</span>, <span class="tok-string">"a"</span>])
+<span class="tok-function">print</span>((left + right).to_dict())   <span class="tok-comment"># {'a': 12, 'b': 21}</span>
+</code></pre></div>
+<p>pandas aligns these values by <strong>label</strong>, not by visual position. Unexpected missing values after arithmetic may mean your labels do not match. Positional operations are possible, but first confirm that ignoring labels is actually correct.</p>
+<h2 id="worked-example-summarize-benchmark-runs">Worked example: summarize benchmark runs</h2>
+<p>Suppose I have saved timings from two implementations. I want a report that shows successful latencies <strong>and</strong> keeps failed attempts visible.</p>
+<p>The following timings are <strong>synthetic</strong>. They are used only to illustrate the reporting operations.</p>
+<div class="cell input"><div class="cell-bar"><span>In [19]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">runs = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"engine"</span>: [<span class="tok-string">"baseline"</span>, <span class="tok-string">"baseline"</span>, <span class="tok-string">"candidate"</span>, <span class="tok-string">"candidate"</span>, <span class="tok-string">"candidate"</span>, <span class="tok-string">"candidate"</span>],
+    <span class="tok-string">"case"</span>: [<span class="tok-string">"scan"</span>, <span class="tok-string">"scan"</span>, <span class="tok-string">"scan"</span>, <span class="tok-string">"scan"</span>, <span class="tok-string">"scan"</span>, <span class="tok-string">"scan"</span>],
+    <span class="tok-string">"latency_ms"</span>: [<span class="tok-number">10</span>, <span class="tok-number">14</span>, <span class="tok-number">8</span>, <span class="tok-number">12</span>, <span class="tok-keyword">None</span>, <span class="tok-number">100</span>],
+    <span class="tok-string">"status"</span>: [<span class="tok-string">"ok"</span>, <span class="tok-string">"ok"</span>, <span class="tok-string">"ok"</span>, <span class="tok-string">"ok"</span>, <span class="tok-string">"timeout"</span>, <span class="tok-string">"ok"</span>],
+})
+runs[<span class="tok-string">"latency_ms"</span>] = pd.to_numeric(runs[<span class="tok-string">"latency_ms"</span>], errors=<span class="tok-string">"coerce"</span>)
+runs[<span class="tok-string">"valid"</span>] = (runs[<span class="tok-string">"status"</span>] == <span class="tok-string">"ok"</span>) &amp; runs[<span class="tok-string">"latency_ms"</span>].notna()
+
+counts = (
+    runs.groupby([<span class="tok-string">"engine"</span>, <span class="tok-string">"case"</span>], as_index=<span class="tok-keyword">False</span>)
+    .agg(attempts=(<span class="tok-string">"status"</span>, <span class="tok-string">"size"</span>), valid=(<span class="tok-string">"valid"</span>, <span class="tok-string">"sum"</span>))
+)
+counts[<span class="tok-string">"failed_or_missing"</span>] = counts[<span class="tok-string">"attempts"</span>] - counts[<span class="tok-string">"valid"</span>]
+
+latencies = (
+    runs.loc[runs[<span class="tok-string">"valid"</span>]]
+    .groupby([<span class="tok-string">"engine"</span>, <span class="tok-string">"case"</span>], as_index=<span class="tok-keyword">False</span>)
+    .agg(mean_ms=(<span class="tok-string">"latency_ms"</span>, <span class="tok-string">"mean"</span>),
+         p95_ms=(<span class="tok-string">"latency_ms"</span>, <span class="tok-keyword">lambda</span> s: s.quantile(<span class="tok-number">0.95</span>)))
+)
+report = counts.merge(latencies, on=[<span class="tok-string">"engine"</span>, <span class="tok-string">"case"</span>], how=<span class="tok-string">"left"</span>, validate=<span class="tok-string">"one_to_one"</span>)
+<span class="tok-function">print</span>(report.round(<span class="tok-number">2</span>).to_string(index=<span class="tok-keyword">False</span>))
+</code></pre></div>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>engine</th>
+<th>case</th>
+<th align="right">attempts</th>
+<th align="right">valid</th>
+<th align="right">failed_or_missing</th>
+<th align="right">mean_ms</th>
+<th align="right">p95_ms</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>baseline</td>
+<td>scan</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">12.0</td>
+<td align="right">13.8</td>
+</tr>
+<tr>
+<td>candidate</td>
+<td>scan</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">1</td>
+<td align="right">40.0</td>
+<td align="right">91.2</td>
+</tr>
+</tbody></table></div>
+<p class="hand-note">The candidate has three usable timings out of four attempts. Its mean of 40 ms describes those three successes; it says nothing about how long the failed request waited. Keep the failure count beside the latency summary.</p>
+
+<p>The failed attempt stays visible. Successful latencies are summarized separately. With only two or three observations, the interpolated p95 is a calculation, not a stable estimate of tail latency under load.</p>
+<p>With real data, also retain workload size, seed, concurrency, cache conditions, source revision, environment, and timeout policy. Compare like-for-like workloads. For model evaluation, retain the evaluation unit and split identifiers; a tidy table cannot repair data leakage.</p>
+<p><strong>Try changing it:</strong> add a baseline timeout. The attempt and failure counts should increase while its successful-latency mean remains <code>12.0</code>.</p>
+<h2 id="fifteen-exercises-with-hidden-solutions">Fifteen exercises, with hidden solutions</h2>
+<p>These fifteen independent exercises move from creating a table to building a short analysis pipeline. Each worked solution explains the approach, the useful arguments, the result, and a mistake to watch for. The parameter tables are selective quick references, rather than complete method signatures.</p>
+<p>Run the shared setup below once. <strong>Each exercise is independent:</strong> start from these original tables rather than carrying mutations from a previous answer. Try each task before opening its solution.</p>
+<div class="cell input"><div class="cell-bar"><span>In [20]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python"><span class="tok-keyword">import</span> pandas <span class="tok-keyword">as</span> pd
+
+people = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"id"</span>: [<span class="tok-number">11</span>, <span class="tok-number">12</span>, <span class="tok-number">13</span>, <span class="tok-number">14</span>],
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-string">"Hermione"</span>, <span class="tok-string">"Neville"</span>],
+    <span class="tok-string">"age"</span>: [<span class="tok-number">24</span>, <span class="tok-number">25</span>, <span class="tok-number">23</span>, <span class="tok-number">26</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-number">82</span>, <span class="tok-number">65</span>, <span class="tok-number">91</span>, <span class="tok-number">74</span>],
+})
+dirty = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"id"</span>: [<span class="tok-number">11</span>, <span class="tok-number">12</span>, <span class="tok-number">13</span>, <span class="tok-number">14</span>],
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-keyword">None</span>, <span class="tok-string">"Neville"</span>],
+    <span class="tok-string">"email"</span>: [<span class="tok-string">"a@example.test"</span>, <span class="tok-string">"b@example.test"</span>, <span class="tok-string">"a@example.test"</span>, <span class="tok-string">"d@example.test"</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-number">82.0</span>, <span class="tok-keyword">None</span>, <span class="tok-number">91.0</span>, <span class="tok-number">74.0</span>],
+})
+</code></pre></div>
+<h3 id="01-build-a-table">01 · Build a table</h3>
+<p>Create <code>pairs</code> from <code>[[11, 82], [12, 65], [13, 91]]</code>, with columns <code>id</code> and <code>score</code>. Expected shape: <code>(3, 2)</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [21]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">pairs = pd.<span class="tok-function">DataFrame</span>([[<span class="tok-number">11</span>, <span class="tok-number">82</span>], [<span class="tok-number">12</span>, <span class="tok-number">65</span>], [<span class="tok-number">13</span>, <span class="tok-number">91</span>]], columns=[<span class="tok-string">"id"</span>, <span class="tok-string">"score"</span>])
+</code></pre></div>
+<p><strong>Approach.</strong> Each inner list is one row. The first value is an ID, the second is a score. Supplying column labels turns those positions into named fields.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Used here</th>
+<th>What to remember</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data</code></td>
+<td>Three two-item lists</td>
+<td>Supplies the observations; rows must fit the requested columns</td>
+</tr>
+<tr>
+<td><code>columns</code></td>
+<td><code>[&#39;id&#39;, &#39;score&#39;]</code></td>
+<td>Names the two fields in order; it does not add a separate header row</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>Omitted</td>
+<td>Creates default row labels <code>0, 1, 2</code>; pass labels explicitly if needed</td>
+</tr>
+<tr>
+<td><code>dtype</code></td>
+<td>Omitted</td>
+<td>Lets pandas infer types; a single supplied dtype requests conversion across the constructor&#39;s data</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Three rows and two columns. <code>pairs.columns.tolist()</code> is <code>[&#39;id&#39;, &#39;score&#39;]</code>.</p>
+<p><strong>Watch for.</strong> A dictionary such as <code>{&#39;id&#39;: [11, 12], &#39;score&#39;: [82, 65]}</code> describes columns instead. An extra name in <code>columns</code> does not fix a row with the wrong number of values.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html">API: DataFrame</a></p>
+</details>
+
+<h3 id="02-measure-the-table">02 · Measure the table</h3>
+<p>Return the row count and column count of <code>people</code> as a list. Expected: <code>[4, 4]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [22]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = <span class="tok-function">list</span>(people.shape)
+</code></pre></div>
+<p><strong>Approach.</strong> The dimensions are metadata already stored by the table. Read that information instead of counting rows in a loop, then turn the resulting tuple into the requested list.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Value here</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>people.shape</code></td>
+<td><code>(4, 4)</code></td>
+<td>Number of rows, then number of columns</td>
+</tr>
+<tr>
+<td><code>list(people.shape)</code></td>
+<td><code>[4, 4]</code></td>
+<td>Same dimensions, represented as a list</td>
+</tr>
+<tr>
+<td><code>people.size</code></td>
+<td><code>16</code></td>
+<td>Total cells, including cells with missing values</td>
+</tr>
+<tr>
+<td><code>len(people)</code></td>
+<td><code>4</code></td>
+<td>Number of rows only</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> <code>[4, 4]</code>: four observations and four fields.</p>
+<p><strong>Parameters.</strong> <code>shape</code> and <code>size</code> are attributes, so they take no parentheses or arguments. <code>list(...)</code> is a Python conversion, not a pandas operation.</p>
+<p><strong>Watch for.</strong> A table with zero rows and four columns has shape <code>(0, 4)</code>; it still has a schema. Its <code>size</code> is zero.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.shape.html">API: shape</a></p>
+</details>
+
+<h3 id="03-preview-records">03 · Preview records</h3>
+<p>Return the first three rows of <code>people</code>. Their IDs should be <code>[11, 12, 13]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [23]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = people.head(<span class="tok-number">3</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> A preview is about the current row order. Ask for its first three positions without changing or sorting the table.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Used here</th>
+<th>Useful alternatives</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>n</code></td>
+<td><code>3</code></td>
+<td>Omit it for the first 5 rows; use <code>0</code> for an empty preview with the columns retained</td>
+</tr>
+<tr>
+<td>Negative <code>n</code></td>
+<td>Not used</td>
+<td><code>head(-1)</code> returns all rows except the last one</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> A DataFrame containing IDs <code>11, 12, 13</code>, with its original index labels. If the input has two rows, <code>head(3)</code> returns both.</p>
+<p><strong>Watch for.</strong> “First” does not mean smallest ID, newest date, or highest score. Sort explicitly before taking a preview when that is the question. <code>iloc[:3]</code> is another positional way to select these rows.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.head.html">API: head</a></p>
+</details>
+
+<h3 id="04-filter-and-project">04 · Filter and project</h3>
+<p>Select the <code>name</code> and <code>age</code> columns for ID <code>13</code>. Expected values: <code>Hermione</code>, <code>23</code>, in a one-row DataFrame.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [24]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = people.loc[people[<span class="tok-string">"id"</span>] == <span class="tok-number">13</span>, [<span class="tok-string">"name"</span>, <span class="tok-string">"age"</span>]]
+</code></pre></div>
+<p><strong>Approach.</strong> First compare every ID with <code>13</code>, producing the mask <code>[False, False, True, False]</code>. Then use that mask for rows and a list of names for columns.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Part of <code>.loc[rows, columns]</code></th>
+<th>Used here</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>rows</code></td>
+<td><code>people[&#39;id&#39;] == 13</code></td>
+<td>Keeps the matching observations</td>
+</tr>
+<tr>
+<td><code>columns</code></td>
+<td><code>[&#39;name&#39;, &#39;age&#39;]</code></td>
+<td>Returns these fields in this order, as a DataFrame</td>
+</tr>
+<tr>
+<td>Single column label</td>
+<td>Not used</td>
+<td>Selecting <code>&#39;name&#39;</code> alone yields a Series for this mask</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> One row with Hermione and age <code>23</code>. Its existing index label is retained; it is not automatically reset to zero.</p>
+<p><strong>Watch for.</strong> <code>.loc</code> is an indexer using square brackets, not a method call. <code>people.loc[13]</code> searches for index label 13, not ID value 13. No matching ID yields an empty table; duplicate matching IDs yield multiple rows.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.loc.html">API: loc</a></p>
+</details>
+
+<h3 id="05-derive-a-column">05 · Derive a column</h3>
+<p>Create a new table with <code>double_score</code>, twice each score. Expected: <code>[164, 130, 182, 148]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [25]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = people.assign(double_score=people[<span class="tok-string">"score"</span>] * <span class="tok-number">2</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> Multiply the score Series element by element, then attach it under a new field name. There is no need to build rows one at a time.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Argument / expression</th>
+<th>Used here</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>**kwargs</code></td>
+<td><code>double_score=...</code></td>
+<td>Keyword names become output column names</td>
+</tr>
+<tr>
+<td>Value expression</td>
+<td><code>people[&#39;score&#39;] * 2</code></td>
+<td>Supplies the values for the new field</td>
+</tr>
+<tr>
+<td>Callable value</td>
+<td>Alternative</td>
+<td>A function can receive the working DataFrame and calculate a column</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Original columns plus <code>double_score = [164, 130, 182, 148]</code>. <code>assign</code> returns a DataFrame; the input does not gain that field.</p>
+<p><strong>Watch for.</strong> Reusing an existing column name replaces that column in the result. A supplied Series aligns by index label; a plain list must have the right length. For a column name containing spaces, pass a dictionary with <code>**{...}</code>.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.assign.html">API: assign</a></p>
+</details>
+
+<h3 id="06-remove-repeated-keys">06 · Remove repeated keys</h3>
+<p>From <code>dirty</code>, retain the first row for each email. Expected retained IDs: <code>[11, 12, 14]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [26]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = dirty.drop_duplicates(subset=[<span class="tok-string">"email"</span>], keep=<span class="tok-string">"first"</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> Define equality using email, not every field. The rows with IDs 11 and 13 share an email; keeping the first retains ID 11.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>subset</code></td>
+<td><code>[&#39;email&#39;]</code></td>
+<td>A list of fields defines the duplicate key; omission compares all columns</td>
+</tr>
+<tr>
+<td><code>keep</code></td>
+<td><code>&#39;first&#39;</code></td>
+<td><code>&#39;last&#39;</code> keeps the last occurrence; <code>False</code> removes every member of a repeated group</td>
+</tr>
+<tr>
+<td><code>ignore_index</code></td>
+<td>Default <code>False</code></td>
+<td><code>True</code> gives the retained rows consecutive labels</td>
+</tr>
+<tr>
+<td><code>inplace</code></td>
+<td>Default <code>False</code></td>
+<td>Returns the filtered DataFrame; with <code>True</code>, modifies the target and returns <code>None</code></td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> IDs <code>[11, 12, 14]</code>, keeping their existing row labels.</p>
+<p><strong>Watch for.</strong> “First” refers to current order, not earliest timestamp or lowest ID. To retain the newest record, establish that ordering first. <code>duplicated(subset=...)</code> is useful for inspecting repeats before removing them.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.drop_duplicates.html">API: drop_duplicates</a></p>
+</details>
+
+<h3 id="07-require-one-field">07 · Require one field</h3>
+<p>Remove rows with a missing <code>name</code>, retaining rows even if their score is missing. Expected IDs: <code>[11, 12, 14]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [27]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = dirty.dropna(subset=[<span class="tok-string">"name"</span>])
+</code></pre></div>
+<p><strong>Approach.</strong> Name is the only required field in this task. Inspect missingness in that field and drop the row with ID 13, while retaining Ron despite his missing score.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>axis</code></td>
+<td>Default <code>0</code></td>
+<td>Removes rows; <code>axis=1</code> removes columns instead</td>
+</tr>
+<tr>
+<td><code>subset</code></td>
+<td><code>[&#39;name&#39;]</code></td>
+<td>Limits which columns determine whether a row is incomplete</td>
+</tr>
+<tr>
+<td><code>how</code></td>
+<td>Default <code>&#39;any&#39;</code></td>
+<td>Drops a row if any selected value is missing; <code>&#39;all&#39;</code> requires every selected value to be missing</td>
+</tr>
+<tr>
+<td><code>thresh</code></td>
+<td>Not used</td>
+<td>Requires at least this many non-missing selected values; do not combine with <code>how</code></td>
+</tr>
+<tr>
+<td><code>ignore_index</code></td>
+<td>Default <code>False</code></td>
+<td><code>True</code> resets labels in the row result</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> IDs <code>[11, 12, 14]</code>. A bare <code>dropna()</code> would remove ID 12 as well.</p>
+<p><strong>Watch for.</strong> Empty strings and whitespace-only names are not automatically missing. Normalize them deliberately if your input treats them as absent.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.dropna.html">API: dropna</a></p>
+</details>
+
+<h3 id="08-modify-values">08 · Modify values</h3>
+<p>Create a copy of <code>people</code> with each score increased by <code>5</code>. Expected: <code>[87, 70, 96, 79]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [28]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = people.copy()
+answer[<span class="tok-string">"score"</span>] = answer[<span class="tok-string">"score"</span>] + <span class="tok-number">5</span>
+</code></pre></div>
+<p><strong>Approach.</strong> Make a separate table, read its score column, add five to each value, then assign the result back to the same column name.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Used here</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>copy(deep=True)</code></td>
+<td><code>copy()</code> uses this default</td>
+<td>Creates a separate DataFrame with copied data and indices for this numeric example</td>
+</tr>
+<tr>
+<td>Column arithmetic</td>
+<td><code>answer[&#39;score&#39;] + 5</code></td>
+<td>Computes the new score Series</td>
+</tr>
+<tr>
+<td>Column assignment</td>
+<td><code>answer[&#39;score&#39;] = ...</code></td>
+<td>Replaces only the score column in <code>answer</code></td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Scores <code>[87, 70, 96, 79]</code>; <code>people</code> still contains <code>[82, 65, 91, 74]</code>.</p>
+<p><strong>Watch for.</strong> <code>answer = people</code> gives two references to the same Python object. Copy-on-Write does not separate those references. Also, a deep pandas copy does not recursively clone mutable Python objects stored inside object-valued cells. This example contains scalar values, so that distinction does not arise.</p>
+<p><strong>Alternative.</strong> <code>people.assign(score=people[&#39;score&#39;] + 5)</code> expresses the same task as a returned transformation.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.copy.html">API: copy</a></p>
+</details>
+
+<h3 id="09-rename-fields">09 · Rename fields</h3>
+<p>Rename <code>id</code> to <code>student_id</code> and <code>score</code> to <code>marks</code>. Expected columns: <code>student_id, name, age, marks</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [29]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = people.rename(columns={<span class="tok-string">"id"</span>: <span class="tok-string">"student_id"</span>, <span class="tok-string">"score"</span>: <span class="tok-string">"marks"</span>})
+</code></pre></div>
+<p><strong>Approach.</strong> Rename labels, leaving the data and column order intact. A mapping states the old-to-new correspondence.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>columns</code></td>
+<td><code>{&#39;id&#39;: &#39;student_id&#39;, &#39;score&#39;: &#39;marks&#39;}</code></td>
+<td>Maps column labels; unlisted fields retain their names</td>
+</tr>
+<tr>
+<td><code>index</code></td>
+<td>Not used</td>
+<td>Renames row labels instead</td>
+</tr>
+<tr>
+<td><code>errors</code></td>
+<td>Default <code>&#39;ignore&#39;</code></td>
+<td><code>&#39;raise&#39;</code> reports a mapping key absent from the selected axis</td>
+</tr>
+<tr>
+<td><code>inplace</code></td>
+<td>Default <code>False</code></td>
+<td>Returns a renamed DataFrame; <code>True</code> changes the target and returns <code>None</code></td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Columns <code>student_id, name, age, marks</code>; values are unchanged.</p>
+<p><strong>Watch for.</strong> A typo such as <code>&#39;scores&#39;</code> may be silently ignored under the default. Prefer <code>errors=&#39;raise&#39;</code> when the input schema must be checked. The dictionary direction is old name → new name.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.rename.html">API: rename</a></p>
+</details>
+
+<h3 id="10-convert-a-dtype">10 · Convert a dtype</h3>
+<p>A table <code>typed</code> has scores <code>&quot;82&quot;</code> and <code>&quot;65&quot;</code>, both strings. Convert them to nullable integers. Expected values: <code>[82, 65]</code>; dtype: <code>Int64</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [30]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">typed = pd.<span class="tok-function">DataFrame</span>({<span class="tok-string">"score"</span>: [<span class="tok-string">"82"</span>, <span class="tok-string">"65"</span>]})
+answer = typed.astype({<span class="tok-string">"score"</span>: <span class="tok-string">"Int64"</span>})
+</code></pre></div>
+<p><strong>Approach.</strong> The strings are already valid integer representations. Request the intended dtype rather than leaving them as text.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>dtype</code></td>
+<td><code>{&#39;score&#39;: &#39;Int64&#39;}</code></td>
+<td>A mapping converts selected columns; a single dtype requests conversion of the whole DataFrame</td>
+</tr>
+<tr>
+<td><code>errors</code></td>
+<td>Default <code>&#39;raise&#39;</code></td>
+<td>Invalid conversion raises an exception; <code>&#39;ignore&#39;</code> suppresses a conversion failure and can leave data unconverted</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Values <code>[82, 65]</code>, stored as nullable integer <code>Int64</code>. A scalar <code>pd.NA</code> could be represented by this dtype.</p>
+<p><strong>Watch for.</strong> <code>astype</code> is conversion, not input repair. An invalid token such as <code>&#39;absent&#39;</code> should trigger a decision. <code>pd.to_numeric(..., errors=&#39;coerce&#39;)</code> can deliberately convert invalid values to missing entries before <code>astype(&#39;Int64&#39;)</code>. It should not happen silently. Lowercase <code>int64</code> cannot directly hold missing integers.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.astype.html">API: astype</a></p>
+</details>
+
+<h3 id="11-fill-a-missing-value">11 · Fill a missing value</h3>
+<p>For this exercise only, the reporting rule is to display missing scores as zero. Apply that rule to a new table based on <code>dirty</code>. Expected scores: <code>[82.0, 0.0, 91.0, 74.0]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [31]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = dirty.assign(score=dirty[<span class="tok-string">"score"</span>].fillna(<span class="tok-number">0</span>))
+</code></pre></div>
+<p><strong>Approach.</strong> Operate on the score Series, fill its missing entry according to the stated display rule, then place that Series into a new table using <code>assign</code>.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter / operation</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>value</code></td>
+<td><code>0</code></td>
+<td>Scalar replacement for missing entries in this Series</td>
+</tr>
+<tr>
+<td><code>limit</code></td>
+<td>Not used</td>
+<td>Caps how many missing entries receive a scalar fill along the chosen axis</td>
+</tr>
+<tr>
+<td>DataFrame mapping</td>
+<td>Alternative</td>
+<td><code>df.fillna({&#39;score&#39;: 0})</code> limits a fill policy to named columns</td>
+</tr>
+<tr>
+<td><code>assign(score=...)</code></td>
+<td>Replaces the output&#39;s score field</td>
+<td>Keeps the original <code>dirty</code> table unchanged</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Scores <code>[82.0, 0.0, 91.0, 74.0]</code>. The missing name remains missing, and the numeric column remains floating-point here.</p>
+<p><strong>Watch for.</strong> Filling does not necessarily change the dtype. Forward/backward propagation is a different decision, expressed with <code>ffill()</code> or <code>bfill()</code>. This exercise&#39;s zero-fill display policy is not a default recommendation for unknown measurements.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.Series.fillna.html">API: fillna</a></p>
+</details>
+
+<h3 id="12-stack-two-batches">12 · Stack two batches</h3>
+<p>Concatenate <code>people.iloc[:2]</code> and <code>people.iloc[2:]</code>, giving the result a fresh consecutive index. Expected IDs: <code>[11, 12, 13, 14]</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [32]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = pd.concat([people.iloc[:<span class="tok-number">2</span>], people.iloc[<span class="tok-number">2</span>:]], ignore_index=<span class="tok-keyword">True</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> Place the two row batches in a list and concatenate them along rows. Their shared column labels line up automatically.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>objs</code></td>
+<td>List containing two DataFrames</td>
+<td>Supplies the batches in output order</td>
+</tr>
+<tr>
+<td><code>axis</code></td>
+<td>Default <code>0</code></td>
+<td>Stacks rows; <code>axis=1</code> adds columns, aligning existing row labels</td>
+</tr>
+<tr>
+<td><code>ignore_index</code></td>
+<td><code>True</code></td>
+<td>Replaces labels on the concatenation axis with <code>0, 1, 2, 3</code></td>
+</tr>
+<tr>
+<td><code>join</code></td>
+<td>Default <code>&#39;outer&#39;</code></td>
+<td>For row stacking, retains the union of columns; <code>&#39;inner&#39;</code> retains shared columns only</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> All four IDs in original order, with a fresh index.</p>
+<p><strong>Watch for.</strong> <code>concat</code> does not join on an ID field and does not remove duplicate records. Mismatched schemas can introduce missing values. Accumulate batches in a list and concatenate once rather than repeatedly growing a table.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.concat.html">API: concat</a></p>
+</details>
+
+<h3 id="13-turn-categories-into-columns">13 · Turn categories into columns</h3>
+<p>Using the <code>scores</code> table below, create one row per name and one column per topic. Expected: Harry has OS <code>90</code> and SQL <code>80</code>; Ron has OS <code>60</code> and SQL <code>70</code>.</p>
+<div class="cell input"><div class="cell-bar"><span>In [33]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">scores = pd.<span class="tok-function">DataFrame</span>({
+    <span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>, <span class="tok-string">"Ron"</span>],
+    <span class="tok-string">"topic"</span>: [<span class="tok-string">"SQL"</span>, <span class="tok-string">"OS"</span>, <span class="tok-string">"SQL"</span>, <span class="tok-string">"OS"</span>],
+    <span class="tok-string">"score"</span>: [<span class="tok-number">80</span>, <span class="tok-number">90</span>, <span class="tok-number">70</span>, <span class="tok-number">60</span>],
+})
+</code></pre></div>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [34]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = scores.pivot(index=<span class="tok-string">"name"</span>, columns=<span class="tok-string">"topic"</span>, values=<span class="tok-string">"score"</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> Each input row is a name/topic observation. Move the name to the row axis and the topic to the column axis; place the score at their intersection.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Output role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>index</code></td>
+<td><code>&#39;name&#39;</code></td>
+<td>Row labels: Harry and Ron</td>
+</tr>
+<tr>
+<td><code>columns</code></td>
+<td><code>&#39;topic&#39;</code></td>
+<td>New column labels: OS and SQL</td>
+</tr>
+<tr>
+<td><code>values</code></td>
+<td><code>&#39;score&#39;</code></td>
+<td>Cell contents at each name/topic pair</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> A 2 × 2 value table: Harry <code>(OS=90, SQL=80)</code> and Ron <code>(OS=60, SQL=70)</code>. The name field is now the index, not an ordinary column; use <code>reset_index()</code> if the next step needs it as a field.</p>
+<p><strong>Watch for.</strong> <code>pivot</code> performs no aggregation. Duplicate name/topic pairs raise an error; a missing pair becomes a missing cell. Use <code>pivot_table(..., aggfunc=...)</code> only after deciding how repeated observations should combine.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.pivot.html">API: pivot</a></p>
+</details>
+
+<h3 id="14-turn-columns-into-observations">14 · Turn columns into observations</h3>
+<p>For <code>wide_scores</code> below, produce columns <code>name, topic, score</code>, with four observations.</p>
+<div class="cell input"><div class="cell-bar"><span>In [35]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">wide_scores = pd.<span class="tok-function">DataFrame</span>({<span class="tok-string">"name"</span>: [<span class="tok-string">"Harry"</span>, <span class="tok-string">"Ron"</span>], <span class="tok-string">"OS"</span>: [<span class="tok-number">90</span>, <span class="tok-number">60</span>], <span class="tok-string">"SQL"</span>: [<span class="tok-number">80</span>, <span class="tok-number">70</span>]})
+</code></pre></div>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [36]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = wide_scores.melt(id_vars=<span class="tok-string">"name"</span>, var_name=<span class="tok-string">"topic"</span>, value_name=<span class="tok-string">"score"</span>)
+</code></pre></div>
+<p><strong>Approach.</strong> Keep each name attached to its measurements while turning OS and SQL into values in a topic column. Each source score cell becomes one observation.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Used here</th>
+<th>Alternatives and effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id_vars</code></td>
+<td><code>&#39;name&#39;</code></td>
+<td>Identifier fields to retain on every observation</td>
+</tr>
+<tr>
+<td><code>value_vars</code></td>
+<td>Omitted</td>
+<td>Melts all remaining columns; pass <code>[&#39;OS&#39;, &#39;SQL&#39;]</code> to choose them explicitly</td>
+</tr>
+<tr>
+<td><code>var_name</code></td>
+<td><code>&#39;topic&#39;</code></td>
+<td>Names the column holding former field names</td>
+</tr>
+<tr>
+<td><code>value_name</code></td>
+<td><code>&#39;score&#39;</code></td>
+<td>Names the column holding former cell values</td>
+</tr>
+<tr>
+<td><code>ignore_index</code></td>
+<td>Default <code>True</code></td>
+<td>Creates a new index; <code>False</code> repeats original row labels as measurements expand</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> Four rows and three columns: <code>name, topic, score</code>. Two students × two subject columns gives four observations.</p>
+<p><strong>Watch for.</strong> If another descriptive column is added later, omitting <code>value_vars</code> can unintentionally melt it too. Declare measurement columns when the schema may grow.</p>
+<p><a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.melt.html">API: melt</a></p>
+</details>
+
+<h3 id="15-express-a-short-pipeline">15 · Express a short pipeline</h3>
+<p>Return only names with scores at least <code>75</code>, sorted by score descending. Keep the result as a DataFrame. Expected names: <code>Hermione</code>, then <code>Harry</code>.</p>
+<details>
+<summary>Reveal worked solution and parameter guide</summary>
+
+<div class="cell input"><div class="cell-bar"><span>In [37]:</span><span class="kind">Python</span><button type="button" class="copy" aria-label="Copy code example">Copy</button></div><pre><code class="language-python">answer = (
+    people.loc[people[<span class="tok-string">"score"</span>] &gt;= <span class="tok-number">75</span>]
+    .sort_values(<span class="tok-string">"score"</span>, ascending=<span class="tok-keyword">False</span>)
+    .loc[:, [<span class="tok-string">"name"</span>]]
+    .reset_index(drop=<span class="tok-keyword">True</span>)
+)
+</code></pre></div>
+<p><strong>Approach.</strong> Preserve the fields each later operation needs. First keep qualifying rows, then rank them using score, then project down to names. Reset labels only after those steps.</p>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Stage / parameter</th>
+<th>Used here</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>.loc[mask]</code></td>
+<td><code>score &gt;= 75</code></td>
+<td>Keeps Harry and Hermione while retaining the score column</td>
+</tr>
+<tr>
+<td><code>sort_values(by=...)</code></td>
+<td><code>&#39;score&#39;</code></td>
+<td>Chooses the ranking field</td>
+</tr>
+<tr>
+<td><code>ascending</code></td>
+<td><code>False</code></td>
+<td>Highest score first; default <code>True</code> would reverse the desired order</td>
+</tr>
+<tr>
+<td><code>.loc[:, [&#39;name&#39;]]</code></td>
+<td>All rows, name only</td>
+<td>The list retains a DataFrame rather than returning a Series</td>
+</tr>
+<tr>
+<td><code>reset_index(drop=True)</code></td>
+<td><code>drop=True</code></td>
+<td>Discards old row labels rather than inserting them as another column</td>
+</tr>
+</tbody></table></div>
+<p><strong>Result.</strong> A one-column table with Hermione followed by Harry, labelled <code>0, 1</code>.</p>
+<p><strong>Watch for.</strong> Selecting names before sorting discards the sort key. With equal scores, add a secondary key if deterministic tie order matters. <code>na_position=&#39;first&#39;</code> or <code>&#39;last&#39;</code> controls placement of missing sort values; the default is <code>&#39;last&#39;</code>.</p>
+<p>API: <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.sort_values.html">sort_values</a>, <a href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.reset_index.html">reset_index</a></p>
+</details>
+
+<h2 id="interview-questions-and-quick-reference">Interview questions and quick reference</h2>
+<h3 id="explain-these-without-opening-an-editor">Explain these without opening an editor</h3>
+<details>
+<summary>1. What is the difference between a Series and a one-column DataFrame?</summary>
+
+<p>A Series is one-dimensional and has an index. A DataFrame is two-dimensional with row and column labels. <code>df[&quot;score&quot;]</code> returns a Series; <code>df[[&quot;score&quot;]]</code> preserves a one-column table. The distinction affects shapes and what downstream operations expect.</p>
+</details>
+
+<details>
+<summary>2. Why can df.loc[0] and df.iloc[0] return different rows?</summary>
+
+<p><code>.loc[0]</code> selects the label <code>0</code>; <code>.iloc[0]</code> selects the first position. After filtering or assigning a custom index, that label may be elsewhere or absent. A missing label raises <code>KeyError</code>; it is not silently interpreted as a position.</p>
+</details>
+
+<details>
+<summary>3. When should I use size, count, or shape?</summary>
+
+<p>For a DataFrame, <code>shape</code> gives <code>(rows, columns)</code> and <code>size</code> gives the total number of cells. In a groupby, <code>size()</code> counts rows, including rows whose values are missing; <code>count()</code> counts non-missing values per selected column. For a Series, <code>size</code> is its number of elements.</p>
+</details>
+
+<details>
+<summary>4. How can a left merge increase the number of rows?</summary>
+
+<p>If one left row matches multiple right rows, pandas emits multiple combinations. Check the intended key cardinality and use <code>validate=&quot;many_to_one&quot;</code> or another appropriate contract. A left join preserves left-side coverage, not necessarily its row count.</p>
+</details>
+
+<details>
+<summary>5. Why does pivot sometimes fail while pivot_table succeeds?</summary>
+
+<p><code>pivot</code> expects unique index/column pairs. <code>pivot_table</code> can aggregate repeated pairs. Choose the aggregation according to what repeated observations represent; a mean or sum changes the question being answered.</p>
+</details>
+
+<details>
+<summary>6. Why is filling all missing values with zero risky?</summary>
+
+<p>It conflates an unknown measurement with an observed zero, affecting summaries and models. Missing data may encode absence, failure, or a different population. Keep failure counts visible and choose a task-specific policy.</p>
+</details>
+
+<details>
+<summary>7. What does Copy-on-Write mean for chained assignment?</summary>
+
+<p>Writing through an intermediate selection does not reliably target the original object; under pandas 3.x Copy-on-Write, chained assignment does not update the parent. Use one <code>.loc</code> assignment on the intended table. Copy-on-Write can defer physical copies, but it does not make two names referencing the same Python object independent.</p>
+</details>
+
+<details>
+<summary>8. How would you process a CSV larger than available memory?</summary>
+
+<p>Read only needed columns, choose appropriate dtypes, and use <code>read_csv(..., chunksize=...)</code> for operations that can be combined across chunks. A sum and count can be accumulated; averaging chunk means without weighting is wrong when chunk sizes differ. Exact global sorting, joins, or quantiles require more planning; consider a database or external-memory engine.</p>
+</details>
+
+<h3 id="keep-this-beside-your-editor">Keep this beside your editor</h3>
+<div class="table-scroll" tabindex="0"><table>
+<thead>
+<tr>
+<th>Question</th>
+<th>First tool to reach for</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>What did I load?</td>
+<td><code>head()</code>, <code>shape</code>, <code>info()</code>, <code>dtypes</code></td>
+</tr>
+<tr>
+<td>Which rows and fields?</td>
+<td><code>.loc[mask, columns]</code></td>
+</tr>
+<tr>
+<td>Which positions?</td>
+<td><code>.iloc[rows, columns]</code></td>
+</tr>
+<tr>
+<td>Which entries are missing?</td>
+<td><code>.isna()</code>, <code>.notna()</code></td>
+</tr>
+<tr>
+<td>Which records repeat by key?</td>
+<td><code>.duplicated(subset=...)</code>, <code>.drop_duplicates(...)</code></td>
+</tr>
+<tr>
+<td>How do I derive a field?</td>
+<td>Column arithmetic, <code>.assign(...)</code></td>
+</tr>
+<tr>
+<td>How do I order the result?</td>
+<td><code>.sort_values(...)</code></td>
+</tr>
+<tr>
+<td>How do I summarize groups?</td>
+<td><code>.groupby(...).agg(...)</code></td>
+</tr>
+<tr>
+<td>How do I retain group detail?</td>
+<td><code>.groupby(...).transform(...)</code></td>
+</tr>
+<tr>
+<td>How do I stack batches?</td>
+<td><code>pd.concat(...)</code></td>
+</tr>
+<tr>
+<td>How do I add related information?</td>
+<td><code>.merge(..., validate=...)</code></td>
+</tr>
+<tr>
+<td>How do I change long/wide shape?</td>
+<td><code>.pivot(...)</code>, <code>.melt(...)</code>, <code>.pivot_table(...)</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="a-final-self-check">A final self-check</h3>
+<p>Given a CSV of requests, can you produce one row per endpoint containing total attempts, failed requests, and the p95 latency of successful requests? Can you explain how missing timings affect the report, why different workloads must stay separate, and what sample size limits your conclusions?</p>
+<p>If you can explain those choices as well as write the code, you have moved from memorizing commands to using pandas to answer questions.</p>
+<h2 id="sources-and-next-steps">Sources and next steps</h2>
+<p>Use the pandas documentation to check API details. For additional guided practice after the exercises here, the LeetCode study plan is listed separately below.</p>
+<ul>
+<li><a href="https://pandas.pydata.org/docs/getting_started/index.html">pandas: getting started</a> — installation and the beginner tutorial sequence.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/dsintro.html">Introductory data structures</a> — Series, DataFrame, labels, and alignment.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/indexing.html">Indexing and selecting</a> — <code>.loc</code>, <code>.iloc</code>, masks, and assignment.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/missing_data.html">Working with missing data</a> — missing markers, nullable dtypes, and fill/drop operations.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/groupby.html">GroupBy guide</a> — aggregations and transforms.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/merging.html">Combining tables</a> — join cardinality, validation, and concatenation.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/copy_on_write.html">Copy-on-Write</a> — modern mutation semantics.</li>
+<li><a href="https://pandas.pydata.org/docs/user_guide/scale.html">Scaling to larger datasets</a> — memory and chunking considerations.</li>
+</ul>
+<h3 id="further-guided-practice">Further guided practice</h3>
+<ul>
+<li><a href="https://leetcode.com/studyplan/introduction-to-pandas/">LeetCode: Introduction to Pandas</a> — an additional guided exercise sequence.</li>
+<li><a href="https://leetcode.com/studyplan/30-days-of-pandas/">LeetCode: 30 Days of Pandas</a> — a broader practice plan after the basics.</li>
+</ul>
+<footer><span>Pandas · Learning guide · <a href="../index.html#writing">More writing</a></span><a href="#">Back to top ↑</a></footer></main></div>
+</body></html>

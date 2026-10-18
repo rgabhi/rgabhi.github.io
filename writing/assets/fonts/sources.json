@@ -1,0 +1,55 @@
+[
+  {
+    "file": "jetbrains-mono-400.ttf",
+    "family": "JetBrains Mono",
+    "weight": "400",
+    "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKxjPQ.ttf",
+    "bytes": 112172
+  },
+  {
+    "file": "jetbrains-mono-500.ttf",
+    "family": "JetBrains Mono",
+    "weight": "500",
+    "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbY2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8-qxjPQ.ttf",
+    "bytes": 112204
+  },
+  {
+    "file": "kalam-400.ttf",
+    "family": "Kalam",
+    "weight": "400",
+    "url": "https://fonts.gstatic.com/s/kalam/v18/YA9dr0Wd4kDdMuhW.ttf",
+    "bytes": 426488
+  },
+  {
+    "file": "newsreader-italic-400.ttf",
+    "family": "Newsreader",
+    "style": "italic",
+    "weight": "400",
+    "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9kfjOCX1hbuyalUrK439vogqC9yFZCYg7oRZaLP4obnf7fTXglsMwoT-ZA.ttf",
+    "bytes": 119892
+  },
+  {
+    "file": "newsreader-normal-400.ttf",
+    "family": "Newsreader",
+    "style": "normal",
+    "weight": "400",
+    "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438weI_ADA.ttf",
+    "bytes": 109472
+  },
+  {
+    "file": "newsreader-normal-500.ttf",
+    "family": "Newsreader",
+    "style": "normal",
+    "weight": "500",
+    "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438wSo_ADA.ttf",
+    "bytes": 111588
+  },
+  {
+    "file": "newsreader-normal-600.ttf",
+    "family": "Newsreader",
+    "style": "normal",
+    "weight": "600",
+    "url": "https://fonts.gstatic.com/s/newsreader/v26/cY9qfjOCX1hbuyalUrK49dLac06G1ZGsZBtoBCzBDXXD9JVF438wpojADA.ttf",
+    "bytes": 111628
+  }
+]
