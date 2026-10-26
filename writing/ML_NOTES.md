@@ -1,6 +1,6 @@
 # Machine learning notes
 
-The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html` and `cnn-training.html`, with links in both directions.
+The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html`, `cnn-training.html`, and `probability-gaussians.html`, with links between adjacent chapters and the index.
 
 These are ordinary static pages. GitHub Pages can serve them without a build step. For a local preview, run the existing `serve.py` from the repository root, or use a static HTTP server bound to localhost.
 
@@ -21,6 +21,7 @@ These are ordinary static pages. GitHub Pages can serve them without a build ste
 - `assets/ml-notes.css`: ML-specific layout, diagram, calculator, practice, and print styles.
 - `assets/ml-notes.js`: mathematical rendering, answer controls, printing, local reading/checklist state, convolution explorer, and shape calculator.
 - `assets/ml-training.js`: dropout masks/scaling and batch-normalization training/inference workbenches, used only by the training chapter.
+- `assets/ml-probability.js`: joint-table probabilities and Gaussian covariance/conditioning workbenches, used only by the probability chapter. Charts scroll within their own region on small screens.
 - `assets/vendor/katex/`: KaTeX 0.19.1 browser files, fonts, and MIT license. They are bundled so equation rendering does not require a third-party network request.
 - Shared article fonts and the existing palette/navigation behavior are reused from the portfolio.
 
@@ -29,3 +30,5 @@ Reading state stays in browser local storage where available. It is optional and
 ## Numerical validation
 
 From the repository root, run `python3 tools/verify_ml_training.py`. It uses only the Python standard library. The checks compare analytic convolution/BN derivatives with central finite differences, enumerate dropout masks to verify expectations and variances, and verify worked examples and overlapping pooling. The script deliberately recomputes training BN statistics during perturbations and holds dropout masks fixed when differentiating.
+
+Run `python3 tools/verify_ml_probability.py` for the probability chapter. It also uses only the standard library. Deterministic sums and quadrature verify distribution moments, Gaussian normalization and conditional slices, affine moments, block residual covariance, canonical parameters, ellipse geometry, and products versus convolution of densities. Numerical checks support the derivations; they are not proofs of all possible cases.
