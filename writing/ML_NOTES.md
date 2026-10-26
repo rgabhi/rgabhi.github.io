@@ -1,6 +1,6 @@
 # Machine learning notes
 
-The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The first chapter is `cnn-foundations.html`.
+The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html` and `cnn-training.html`, with links in both directions.
 
 These are ordinary static pages. GitHub Pages can serve them without a build step. For a local preview, run the existing `serve.py` from the repository root, or use a static HTTP server bound to localhost.
 
@@ -20,7 +20,12 @@ These are ordinary static pages. GitHub Pages can serve them without a build ste
 
 - `assets/ml-notes.css`: ML-specific layout, diagram, calculator, practice, and print styles.
 - `assets/ml-notes.js`: mathematical rendering, answer controls, printing, local reading/checklist state, convolution explorer, and shape calculator.
+- `assets/ml-training.js`: dropout masks/scaling and batch-normalization training/inference workbenches, used only by the training chapter.
 - `assets/vendor/katex/`: KaTeX 0.19.1 browser files, fonts, and MIT license. They are bundled so equation rendering does not require a third-party network request.
 - Shared article fonts and the existing palette/navigation behavior are reused from the portfolio.
 
 Reading state stays in browser local storage where available. It is optional and does not sync to a server. The explanatory HTML remains readable if scripting or storage is unavailable; the interactive calculators require JavaScript.
+
+## Numerical validation
+
+From the repository root, run `python3 tools/verify_ml_training.py`. It uses only the Python standard library. The checks compare analytic convolution/BN derivatives with central finite differences, enumerate dropout masks to verify expectations and variances, and verify worked examples and overlapping pooling. The script deliberately recomputes training BN statistics during perturbations and holds dropout masks fixed when differentiating.
