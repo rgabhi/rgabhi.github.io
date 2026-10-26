@@ -1,0 +1,26 @@
+# Machine learning notes
+
+The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The first chapter is `cnn-foundations.html`.
+
+These are ordinary static pages. GitHub Pages can serve them without a build step. For a local preview, run the existing `serve.py` from the repository root, or use a static HTTP server bound to localhost.
+
+## Extending the collection
+
+1. Inspect all relevant source slides, including annotations. Check the preceding and following lectures before deciding chapter boundaries.
+2. Preserve the source learning goals. Explain necessary prerequisites as they arise; expand omitted algebra and supply small worked calculations.
+3. Use general topic titles rather than course or exam branding. Attribute sources in each chapter, distinguish supplementary extensions, and avoid copying source photographs or assessment questions.
+4. Follow the existing article shell: shared fonts and `article-notes.css`, then the isolated extensions in `ml-notes.css`. Keep existing articles unchanged.
+5. Put original diagrams in `assets/ml-notes/`. Give every figure descriptive alternative text, a caption, and a full-size link. Provide static explanations alongside interactive tools.
+6. Use `\(...\)` and `\[...\]` delimiters for locally rendered mathematics. State notation, dimensions, conventions, and assumptions. Verify equations and numerical examples.
+7. Add practice questions with hints and solutions in distinct disclosure blocks. `data-solution` marks an answer for the chapter's reveal/print controls; `data-hint` marks a hint that remains closed when answers are revealed.
+8. Update the learning index when the new chapter is ready. Pending topics remain text, not empty links. Add meaningful links between model chapters and probability, statistics, algebra, and calculus notes as those notes are completed.
+9. Verify links, anchors, equation rendering, calculations, mobile layout, and printing. Include a review of keyboard-accessible interactions and any saved reading state.
+
+## Assets and behavior
+
+- `assets/ml-notes.css`: ML-specific layout, diagram, calculator, practice, and print styles.
+- `assets/ml-notes.js`: mathematical rendering, answer controls, printing, local reading/checklist state, convolution explorer, and shape calculator.
+- `assets/vendor/katex/`: KaTeX 0.19.1 browser files, fonts, and MIT license. They are bundled so equation rendering does not require a third-party network request.
+- Shared article fonts and the existing palette/navigation behavior are reused from the portfolio.
+
+Reading state stays in browser local storage where available. It is optional and does not sync to a server. The explanatory HTML remains readable if scripting or storage is unavailable; the interactive calculators require JavaScript.
