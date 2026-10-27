@@ -1,6 +1,6 @@
 # Machine learning notes
 
-The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html`, `cnn-training.html`, `probability-gaussians.html`, `statistical-regression-gda.html`, `naive-bayes.html`, and `factor-models-pca.html`, with links between adjacent chapters and the index.
+The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html`, `cnn-training.html`, `probability-gaussians.html`, `statistical-regression-gda.html`, `naive-bayes.html`, `factor-models-pca.html`, and `decision-trees-pruning.html`, with links between adjacent chapters and the index.
 
 These are ordinary static pages. GitHub Pages can serve them without a build step. For a local preview, run the existing `serve.py` from the repository root, or use a static HTTP server bound to localhost.
 
@@ -25,6 +25,7 @@ These are ordinary static pages. GitHub Pages can serve them without a build ste
 - `assets/ml-regression.js` and `assets/ml-regression.css`: regression estimation and Gaussian classification workbenches, plus chapter-specific table/chart layout. The classifier's separate-variance and decision-threshold controls are marked as extensions.
 - `assets/ml-naive-bayes.js` and `assets/ml-naive-bayes.css`: categorical count estimation and a document classifier comparing separately fitted multinomial/Bernoulli models. These use a fixed, printed six-document corpus, local tokenization, log scores, and explicit zero-support/unknown-token behavior.
 - `assets/ml-pca.js` and `assets/ml-pca.css`: editable two-feature projection geometry, through-origin comparison, and fixed-basis image-patch reconstruction. `assets/ml-pca-patches.js` bundles the original synthetic image, mean, fitted directions, scores and eigenvalues; no library or network service is required for the demos.
+- `assets/ml-trees.js` and `assets/ml-trees.css`: editable binary-label threshold search and all five prunings of a fixed tree, with separate training/validation counts, query paths and cost-complexity curves.
 - `assets/vendor/katex/`: KaTeX 0.19.1 browser files, fonts, and MIT license. They are bundled so equation rendering does not require a third-party network request.
 - Shared article fonts and the existing palette/navigation behavior are reused from the portfolio.
 
@@ -41,3 +42,5 @@ Run `python3 tools/verify_ml_regression.py` for regression and GDA. The standard
 Run `python3 tools/verify_ml_naive_bayes.py` for Naive Bayes. Standard-library enumeration checks sequence and count-vector masses, binary vector normalization, conditional dependence, and sparse affine scores. Exact fractions independently recompute corpus estimates and worked posteriors; finite differences check constrained likelihood derivatives. It also checks pseudocount normalization, zero support, stable log normalization, multiclass probabilities, and duplicated evidence.
 
 Run `python3 tools/verify_ml_pca.py` for factor models and PCA. The standard-library checks independently verify projection identities, constrained variance objectives, the eigenvector/SVD relationship, Gaussian factor moments and latent inference, storage counts, cosine orthogonality, and every direction in the bundled synthetic patch basis. Pixel-space reconstruction is compared with discarded covariance eigenvalues, including zero- and full-component endpoints.
+
+Run `python3 tools/verify_ml_trees.py` for decision trees and pruning. Standard-library enumeration checks impurity concavity, Gini variance identities, threshold partitions, training-error monotonicity, source examples, regression SSE decomposition, and every pruning in the teaching example. Independent exhaustive frontier searches check the bottom-up validation and cost recurrences, including ties and no validation observations. Bootstrap enumeration, covariance averaging and fixed-table significance calculations support the introductory forest/statistics connections.
