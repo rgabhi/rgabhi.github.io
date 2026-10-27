@@ -1,6 +1,6 @@
 # Machine learning notes
 
-The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html`, `cnn-training.html`, `probability-gaussians.html`, and `statistical-regression-gda.html`, with links between adjacent chapters and the index.
+The public learning index is `machine-learning.html`, linked from the portfolio's Writing section. The available chapters are `cnn-foundations.html`, `cnn-training.html`, `probability-gaussians.html`, `statistical-regression-gda.html`, and `naive-bayes.html`, with links between adjacent chapters and the index.
 
 These are ordinary static pages. GitHub Pages can serve them without a build step. For a local preview, run the existing `serve.py` from the repository root, or use a static HTTP server bound to localhost.
 
@@ -23,6 +23,7 @@ These are ordinary static pages. GitHub Pages can serve them without a build ste
 - `assets/ml-training.js`: dropout masks/scaling and batch-normalization training/inference workbenches, used only by the training chapter.
 - `assets/ml-probability.js`: joint-table probabilities and Gaussian covariance/conditioning workbenches, used only by the probability chapter. Charts scroll within their own region on small screens.
 - `assets/ml-regression.js` and `assets/ml-regression.css`: regression estimation and Gaussian classification workbenches, plus chapter-specific table/chart layout. The classifier's separate-variance and decision-threshold controls are marked as extensions.
+- `assets/ml-naive-bayes.js` and `assets/ml-naive-bayes.css`: categorical count estimation and a document classifier comparing separately fitted multinomial/Bernoulli models. These use a fixed, printed six-document corpus, local tokenization, log scores, and explicit zero-support/unknown-token behavior.
 - `assets/vendor/katex/`: KaTeX 0.19.1 browser files, fonts, and MIT license. They are bundled so equation rendering does not require a third-party network request.
 - Shared article fonts and the existing palette/navigation behavior are reused from the portfolio.
 
@@ -35,3 +36,5 @@ From the repository root, run `python3 tools/verify_ml_training.py`. It uses onl
 Run `python3 tools/verify_ml_probability.py` for the probability chapter. It also uses only the standard library. Deterministic sums and quadrature verify distribution moments, Gaussian normalization and conditional slices, affine moments, block residual covariance, canonical parameters, ellipse geometry, and products versus convolution of densities. Numerical checks support the derivations; they are not proofs of all possible cases.
 
 Run `python3 tools/verify_ml_regression.py` for regression and GDA. The standard-library checks compare analytic likelihood derivatives with finite differences, independently fit joint/conditional regression, enumerate noise to verify residual degrees of freedom, check pooled versus total covariance, and compare discriminant scores with normalized densities. Singular cases and prior/threshold effects are checked explicitly.
+
+Run `python3 tools/verify_ml_naive_bayes.py` for Naive Bayes. Standard-library enumeration checks sequence and count-vector masses, binary vector normalization, conditional dependence, and sparse affine scores. Exact fractions independently recompute corpus estimates and worked posteriors; finite differences check constrained likelihood derivatives. It also checks pseudocount normalization, zero support, stable log normalization, multiclass probabilities, and duplicated evidence.
