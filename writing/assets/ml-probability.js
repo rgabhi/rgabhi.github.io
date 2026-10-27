@@ -23,7 +23,7 @@
  if(lab){
   const names=['mx','my','sx','sy','rho','observed','probe'],fields=Object.fromEntries(names.map(name=>[name,document.getElementById('gauss-'+name)]));
   const root=document.getElementById('gauss-plot'),result=document.getElementById('gauss-result'),ns='http://www.w3.org/2000/svg';
-  function el(tag,attributes={},text){const node=document.createElementNS(ns,tag);Object.entries(attributes).forEach(([key,value])=>node.setAttribute(key,String(value)));if(text!==undefined)node.textContent=String(text);return node;}
+  function el(tag,attributes={},text){const node=document.createElementNS(ns,tag);Object.entries(attributes).forEach(([key,value])=>node.setAttribute(key.replace(/[A-Z]/g,letter=>'-'+letter.toLowerCase()),String(value)));if(text!==undefined)node.textContent=String(text);return node;}
   function draw(){
    const v=Object.fromEntries(names.map(name=>[name,read(fields[name])]));root.querySelector('[data-drawing]')?.remove();
    const valid=Object.values(v).every(Number.isFinite)&&Math.abs(v.mx)<=1&&Math.abs(v.my)<=1&&v.sx>=.5&&v.sx<=1.5&&v.sy>=.5&&v.sy<=1.5&&Math.abs(v.rho)<=.95&&Math.abs(v.observed)<=4&&Math.abs(v.probe)<=4;
