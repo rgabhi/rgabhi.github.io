@@ -1,19 +1,19 @@
 <!doctype html>
 <html lang="en" data-accent="blue"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Decision trees, from splits to pruning — Abhinav Gupta</title><meta name="description" content="Decision trees explained from foundations: impurity, entropy, information gain, numerical thresholds, regression, overfitting, validation, pruning and random forests, with derivations, diagrams and practice."><link rel="canonical" href="https://rgabhi.github.io/writing/decision-trees-pruning.html"><meta property="og:type" content="article"><meta property="og:title" content="Decision trees, from splits to pruning — Abhinav Gupta"><meta property="og:description" content="Decision trees explained from foundations: impurity, entropy, information gain, numerical thresholds, regression, overfitting, validation, pruning and random forests, with derivations, diagrams and practice."><meta property="og:url" content="https://rgabhi.github.io/writing/decision-trees-pruning.html"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/portrait.jpg">
-<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="assets/article-notes.css"><link rel="stylesheet" href="assets/ml-notes.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script defer src="assets/vendor/katex/katex.min.js"></script><script defer src="assets/vendor/katex/contrib/auto-render.min.js"></script><script defer src="assets/article-guide.js"></script><script defer src="assets/ml-notes.js"></script><link rel="stylesheet" href="assets/ml-trees.css"><script defer src="assets/ml-trees.js?v=4"></script></head><body>
+<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="assets/article-notes.css"><link rel="stylesheet" href="assets/ml-notes.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script defer src="assets/vendor/katex/katex.min.js"></script><script defer src="assets/vendor/katex/contrib/auto-render.min.js"></script><script defer src="assets/article-guide.js"></script><script defer src="assets/ml-notes.js"></script><link rel="stylesheet" href="assets/ml-trees.css"><script defer src="assets/ml-trees.js?v=4"></script><link rel="stylesheet" href="assets/ml-learning.css"><script defer src="assets/ml-learning.js"></script></head><body>
 <a class="skip-link" href="#article">Skip to notes</a>
 <header class="topbar"><a class="brand" href="../index.html">Abhinav Gupta<span class="brand-dot">.</span></a><div class="header-tools"><nav class="links" aria-label="Article links"><a href="../index.html#writing">Writing</a><a href="machine-learning.html">ML notes</a><a href="#references">Sources</a></nav><div class="palette-toggle" role="group" aria-label="Article colour palette"><button type="button" data-accent-option="blue" aria-pressed="true" aria-label="Blue palette" title="Blue palette"><span class="palette-dot blue" aria-hidden="true"></span></button><button type="button" data-accent-option="orange" aria-pressed="false" aria-label="Orange palette" title="Orange palette"><span class="palette-dot orange" aria-hidden="true"></span></button></div></div></header><div class="progress" aria-hidden="true"></div>
-<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#why-trees"><span>01</span>Why trees?</a><a href="#tree-geometry"><span>02</span>Paths, rules &amp; regions</a><a href="#feature-types"><span>03</span>Feature types &amp; tests</a><a href="#leaf-predictions"><span>04</span>What a leaf predicts</a><a href="#gini"><span>05</span>Derive Gini impurity</a><a href="#entropy"><span>06</span>Entropy &amp; label surprise</a><a href="#weighted-gain"><span>07</span>Weighted split gain</a><a href="#error-trap"><span>08</span>Why accuracy can stall</a><a href="#growing"><span>09</span>Grow a tree &amp; count work</a><a href="#weather-example"><span>10</span>Weather &amp; count examples</a><a href="#threshold-lab"><span>11</span>Threshold workbench</a><a href="#regression"><span>12</span>Regression means &amp; SSE</a><a href="#search-limits"><span>13</span>Expressivity &amp; greedy limits</a><a href="#overfitting"><span>14</span>Training &amp; population error</a><a href="#pre-pruning"><span>15</span>Stop growth early</a><a href="#reduced-error"><span>16</span>Efficient reduced-error pruning</a><a href="#pruning-example"><span>17</span>Calculate all five prunings</a><a href="#cost-complexity"><span>18</span>Complexity costs &amp; units</a><a href="#pruning-lab"><span>19</span>Pruning workbench</a><a href="#rule-pruning"><span>20</span>Pruning individual rules</a><a href="#forests"><span>21</span>The forest introduction</a><a href="#practical"><span>22</span>Practical choices</a><a href="#practice"><span>23</span>Twenty-six practice problems</a><a href="#interviews"><span>24</span>Interview explanations</a><a href="#revision"><span>25</span>Revision &amp; checklist</a><a href="#references"><span>26</span>Sources &amp; further learning</a></nav><div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div></aside><main id="article"><p class="breadcrumb"><a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Decision trees &amp; pruning</p>
+<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#why-trees"><span>01</span>Why trees?</a><a href="#tree-geometry"><span>02</span>Paths, rules &amp; regions</a><a href="#feature-types"><span>03</span>Feature types &amp; tests</a><a href="#ld-title"><span>↳</span>Guided split learning</a><a href="#leaf-predictions"><span>04</span>What a leaf predicts</a><a href="#gini"><span>05</span>Derive Gini impurity</a><a href="#entropy"><span>06</span>Entropy &amp; label surprise</a><a href="#weighted-gain"><span>07</span>Weighted split gain</a><a href="#error-trap"><span>08</span>Why accuracy can stall</a><a href="#growing"><span>09</span>Grow a tree &amp; count work</a><a href="#weather-example"><span>10</span>Weather &amp; count examples</a><a href="#threshold-lab"><span>11</span>Threshold workbench</a><a href="#regression"><span>12</span>Regression means &amp; SSE</a><a href="#search-limits"><span>13</span>Expressivity &amp; greedy limits</a><a href="#overfitting"><span>14</span>Training &amp; population error</a><a href="#pre-pruning"><span>15</span>Stop growth early</a><a href="#reduced-error"><span>16</span>Efficient reduced-error pruning</a><a href="#pruning-example"><span>17</span>Calculate all five prunings</a><a href="#cost-complexity"><span>18</span>Complexity costs &amp; units</a><a href="#pruning-lab"><span>19</span>Pruning workbench</a><a href="#rule-pruning"><span>20</span>Pruning individual rules</a><a href="#forests"><span>21</span>The forest introduction</a><a href="#practical"><span>22</span>Practical choices</a><a href="#practice"><span>23</span>Twenty-six practice problems</a><a href="#interviews"><span>24</span>Interview explanations</a><a href="#revision"><span>25</span>Revision &amp; checklist</a><a href="#references"><span>26</span>Sources &amp; further learning</a></nav><div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div></aside><main id="article"><p class="breadcrumb"><a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Decision trees &amp; pruning</p>
 <div class="eyebrow hero-kicker">Machine learning notes · 07</div><h1>Decision trees,<br>from splits to pruning.</h1>
 <p class="chapter-deck">Learn a sequence of questions from data. Understand the impurity calculations, grow a tree, and decide which branches deserve to stay.</p>
 <div class="chapter-meta">Abhinav Gupta · October 2026 · Foundations, derivations &amp; practice</div>
-<div class="chapter-tools"><a href="#learning-goals">Start learning</a><a href="#practice">Practice</a><a href="#revision">Quick revision</a><button type="button" data-toggle-solutions>Reveal solutions</button><button type="button" data-print>Print with solutions</button></div><a class="resume-link" data-resume hidden></a>
+<p class="ld-pilot-entry"><a href="#tree-learning-path">New guided learning: counts → impurity → split gain</a><span>Sections 4–8 · learn, revise, or go deeper.</span></p><div class="chapter-tools"><a href="#learning-goals">Start learning</a><a href="#practice">Practice</a><a href="#revision">Quick revision</a><button type="button" data-toggle-solutions>Reveal solutions</button><button type="button" data-print>Print with solutions</button></div><a class="resume-link" data-resume hidden></a>
 <p>A decision tree divides a prediction problem into smaller questions. Each answer sends an observation into a smaller region; a leaf supplies the prediction. We will derive how the questions are chosen, why a deeper tree can fit training data better, and how validation and pruning control its complexity.</p>
 <p>These notes join the decision-tree lecture and its pruning continuation, including their handwritten examples, the weather calculation, entropy versus error, efficient pruning counts, and the closing random-forest sketch. Original numerical examples and interactive tools make the intermediate steps visible. The <a href="factor-models-pca.html">previous chapter's projections</a> supply a useful contrast: tree splits operate along the supplied feature axes, so the representation still matters.</p>
 <div class="learning-goals" id="learning-goals"><p><strong>What you should be able to do afterward</strong></p><ul><li>Trace a tree prediction, convert a path into a rule, and connect numerical tests to axis-parallel regions.</li><li>Handle binary, ordinal, nominal, and real-valued features without assuming an arbitrary category code has meaningful order.</li><li>Derive leaf predictions, Gini impurity, entropy, weighted split gain, and the difference from misclassification error.</li><li>Build a small greedy tree, reproduce the lecture's weather gains, and search valid numerical thresholds.</li><li>Explain regression-tree squared-error fitting, Boolean expressivity, greedy-search limits, and training cost assumptions.</li><li>Distinguish training, validation, and test error; explain pre-pruning, reduced-error pruning, complexity penalties, and rule pruning.</li><li>Calculate and compare complete pruned subtrees, including replacement labels, validation counts, and complexity units.</li><li>Explain the lecture's forest introduction and the roles of data sampling, feature randomization, and averaging.</li></ul></div>
 <p><strong>Reading route:</strong> sections 1–8 explain the model and split criterion. Sections 9–13 grow and analyze trees. Sections 14–20 develop overfitting and pruning, with a complete interactive example. Sections 21–22 connect ensembles and practical choices. Practice and revision then test the same material.</p>
-<details class="mobile-contents"><summary>Contents · choose a section</summary><nav aria-label="Chapter contents"><ul><li><a href="#why-trees">01 · Why trees?</a></li><li><a href="#tree-geometry">02 · Paths, rules &amp; regions</a></li><li><a href="#feature-types">03 · Feature types &amp; tests</a></li><li><a href="#leaf-predictions">04 · What a leaf predicts</a></li><li><a href="#gini">05 · Derive Gini impurity</a></li><li><a href="#entropy">06 · Entropy &amp; label surprise</a></li><li><a href="#weighted-gain">07 · Weighted split gain</a></li><li><a href="#error-trap">08 · Why accuracy can stall</a></li><li><a href="#growing">09 · Grow a tree &amp; count work</a></li><li><a href="#weather-example">10 · Weather &amp; count examples</a></li><li><a href="#threshold-lab">11 · Threshold workbench</a></li><li><a href="#regression">12 · Regression means &amp; SSE</a></li><li><a href="#search-limits">13 · Expressivity &amp; greedy limits</a></li><li><a href="#overfitting">14 · Training &amp; population error</a></li><li><a href="#pre-pruning">15 · Stop growth early</a></li><li><a href="#reduced-error">16 · Efficient reduced-error pruning</a></li><li><a href="#pruning-example">17 · Calculate all five prunings</a></li><li><a href="#cost-complexity">18 · Complexity costs &amp; units</a></li><li><a href="#pruning-lab">19 · Pruning workbench</a></li><li><a href="#rule-pruning">20 · Pruning individual rules</a></li><li><a href="#forests">21 · The forest introduction</a></li><li><a href="#practical">22 · Practical choices</a></li><li><a href="#practice">23 · Twenty-six practice problems</a></li><li><a href="#interviews">24 · Interview explanations</a></li><li><a href="#revision">25 · Revision &amp; checklist</a></li><li><a href="#references">26 · Sources &amp; further learning</a></li></ul></nav></details>
+<details class="mobile-contents"><summary>Contents · choose a section</summary><nav aria-label="Chapter contents"><ul><li><a href="#why-trees">01 · Why trees?</a></li><li><a href="#tree-geometry">02 · Paths, rules &amp; regions</a></li><li><a href="#feature-types">03 · Feature types &amp; tests</a></li><li><a href="#ld-title">Guided split learning</a></li><li><a href="#leaf-predictions">04 · What a leaf predicts</a></li><li><a href="#gini">05 · Derive Gini impurity</a></li><li><a href="#entropy">06 · Entropy &amp; label surprise</a></li><li><a href="#weighted-gain">07 · Weighted split gain</a></li><li><a href="#error-trap">08 · Why accuracy can stall</a></li><li><a href="#growing">09 · Grow a tree &amp; count work</a></li><li><a href="#weather-example">10 · Weather &amp; count examples</a></li><li><a href="#threshold-lab">11 · Threshold workbench</a></li><li><a href="#regression">12 · Regression means &amp; SSE</a></li><li><a href="#search-limits">13 · Expressivity &amp; greedy limits</a></li><li><a href="#overfitting">14 · Training &amp; population error</a></li><li><a href="#pre-pruning">15 · Stop growth early</a></li><li><a href="#reduced-error">16 · Efficient reduced-error pruning</a></li><li><a href="#pruning-example">17 · Calculate all five prunings</a></li><li><a href="#cost-complexity">18 · Complexity costs &amp; units</a></li><li><a href="#pruning-lab">19 · Pruning workbench</a></li><li><a href="#rule-pruning">20 · Pruning individual rules</a></li><li><a href="#forests">21 · The forest introduction</a></li><li><a href="#practical">22 · Practical choices</a></li><li><a href="#practice">23 · Twenty-six practice problems</a></li><li><a href="#interviews">24 · Interview explanations</a></li><li><a href="#revision">25 · Revision &amp; checklist</a></li><li><a href="#references">26 · Sources &amp; further learning</a></li></ul></nav></details>
 <h2 id="why-trees">1. Why ask a sequence of small questions?</h2>
 <p class="section-source">Lecture connection: interpretable decisions, fraud/insurance/customer applications, and comparison with other decision boundaries.</p>
 <p>A classifier such as shared-covariance <a href="statistical-regression-gda.html#linear-boundary">GDA</a> or logistic regression uses a score that combines features. A usual classification tree instead asks questions such as “is this sender already known?” or “is this measurement at most 3?” A complete path records the conditions that led to one prediction. A small tree can therefore make its decision procedure easy to inspect.</p>
@@ -34,47 +34,461 @@
 <p>With r nominal categories, there are \(2^{r-1}-1\) distinct nonempty binary partitions after identifying a subset with its complement. Searching every grouping can be costly. An ordinal feature has only r−1 gaps between adjacent distinct values. The split family is part of the model, not a detail to leave unspecified.</p>
 <p>For a real-valued feature, sort the values observed <em>at the current node</em>. Every gap between two distinct consecutive values gives a candidate partition; a midpoint is a convenient representative threshold. Equal feature values must travel together. Different thresholds inside the same empty gap give the same training partition, although they can route a future observation differently.</p>
 <p>The same numerical feature can be tested again farther down a path to refine an interval. A categorical feature already fixed to one value by an ancestor offers no further split there. Missing values and categories unseen during fitting need an explicit policy, such as a learned missing-value route or a documented fallback; the basic complete-data formulas do not supply one automatically.</p>
+<section class="ld-pilot" id="tree-learning-path" data-learning-pilot data-ld-mode="learn" aria-labelledby="ld-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 04–08</div>
+<h2 id="ld-title">How does a tree choose a good split?</h2>
+<p>Start with the labels in one node. Build the meaning of impurity, then compare what a split changes.</p>
+<nav class="ld-map" aria-label="Concept map for choosing a split">
+<a href="#leaf-predictions">
+<span>01 · Count</span>
+<strong>Class proportions</strong>
+<small>supply a leaf prediction</small>
+</a>
+<a href="#gini">
+<span>02 · Measure</span>
+<strong>Gini impurity</strong>
+<small>uses those proportions</small>
+</a>
+<a href="#entropy">
+<span>03 · Compare</span>
+<strong>Label surprise</strong>
+<small>gives an alternative measure</small>
+</a>
+<a href="#weighted-gain">
+<span>04 · Decide</span>
+<strong>Weighted gain</strong>
+<small>compares parent and children</small>
+</a>
+<a href="#error-trap">
+<span>05 · Question</span>
+<strong>Accuracy can stall</strong>
+<small>even while impurity improves</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for sections 4 to 8">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all derivations</button>
+</div>
+<p class="ld-mode-help" id="ld-mode-help" aria-live="polite">Learn: follow the examples; open each derivation when ready. These controls affect sections 4–8 only.</p>
+<div class="ld-route-links">
+<a href="#ld-revision">Formula &amp; assumption sheet</a>
+<a href="#ld-review">Return-review questions</a>
+</div>
+</div>
+<aside class="ld-notation">
+<strong>A small notation bridge</strong>
+<p>A node holds a subset S of the training data. n is its size; \(n_c\) counts class c; \(\hat p_c\) is that class's observed proportion. The positive class is 1 and the negative class is 0. A pure node contains just one observed class.</p>
+</aside>
+<section class="ld-unit" aria-labelledby="leaf-predictions">
 <h2 id="leaf-predictions">4. What should a leaf predict?</h2>
-<p>Let S be the training observations reaching a node, \(n=|S|&gt;0\), and \(n_c\) the number with class c. The empirical class distribution is:</p>
-<div class="math-block">\[\hat p_c=\frac{n_c}{n},\qquad\sum_{c=1}^K\hat p_c=1.\]</div>
-<p>This is also the categorical maximum-likelihood estimate obtained by the <a href="naive-bayes.html#multinomial-estimation">constrained count calculation</a> from the Naive Bayes chapter, now applied to labels within a leaf. For a constant predicted class a, the training error count is n−nₐ. Therefore equal-cost classification selects a majority class:</p>
-<div class="math-block">\[\hat y=\arg\max_c n_c,\qquad E_{\text{leaf}}=n-\max_c n_c.\]</div>
-<p>Specify a deterministic tie rule; the binary teaching tools here choose class 0 when the counts tie. Estimated leaf probabilities are empirical proportions, not guaranteed calibrated population probabilities. A tiny pure leaf can report an extreme estimate from very little evidence. Smoothing or a different cost-sensitive prediction rule changes the leaf estimator or decision rule and should be stated explicitly.</p>
-<p>A node receiving no observations has no empirical distribution to estimate. A sensible tree-building routine rejects a split with an empty child; a fallback leaf for an unseen categorical branch must inherit an explicitly chosen prediction, rather than divide by zero.</p>
-<h2 id="gini">5. Measure impurity with Gini</h2>
-<p class="section-source">Lecture connection: class proportions, pure endpoints, the binary maximum, and the K-class extension.</p>
-<p>An impurity measure summarizes how mixed the labels are at a node. For K classes, Gini impurity is:</p>
-<div class="math-block">\[G(S)=1-\sum_{c=1}^K\hat p_c^2.\]</div>
-<p>To interpret it, imagine drawing a true label and, independently, a guessed label from the same node distribution. The chance of a match is \(\sum_c\hat p_c^2\); Gini is the chance they differ. It is not the error of the deterministic majority-label classifier.</p>
-<p>For binary labels with positive proportion p, the formula becomes \(G(p)=1-p^2-(1-p)^2=2p(1-p)\). It is zero at p=0 or 1 and reaches 1/2 at p=1/2. Differentiating gives \(G'(p)=2-4p\) and \(G''(p)=-4\): the curve is concave.</p>
-<p>For K classes, \(\sum_c(p_c-1/K)^2\ge0\) implies \(\sum_c p_c^2\ge1/K\). Hence \(G\le1-1/K\), with equality for the uniform class distribution. A pure node has G=0. The maximum changes with the number of classes; binary plots should not be read as having the same maximum for every K.</p>
-<h2 id="entropy">6. Derive entropy from label surprise</h2>
-<p class="section-source">Lecture connection: binary and multiclass entropy, ideal code lengths, uncertainty, and the entropy curve.</p>
-<p>A rare label carries more surprise than a common one. Assign an event of probability p the self-information \(-\log_2p\) bits. This convention makes the surprise of two independent events additive, since \(-\log_2(pq)=-\log_2p-\log_2q\). Average over the node's label distribution:</p>
-<div class="math-block">\[H(S)=-\sum_{c=1}^K\hat p_c\log_2\hat p_c.\]</div>
-<p>Use \(0\log_20=0\), the continuous limit as p approaches zero. A class that never appears contributes zero; evaluating log0 directly in a program is unnecessary. For a binary node:</p>
-<div class="math-block">\[h(p)=-p\log_2p-(1-p)\log_2(1-p).\]</div>
-<p>The endpoints are zero. In the interior, \(h'(p)=\log_2((1-p)/p)\), and \(h''(p)=-1/[\ln2\,p(1-p)]&lt;0\). Thus the maximum is h(1/2)=1 bit. The multiclass maximum is \(\log_2K\), attained at equal proportions. One way to see the bound is to apply concavity of log to the weighted average \(\sum_{p_c&gt;0}p_c\log_2(1/p_c)\le\log_2 K_+\le\log_2 K\), where K₊ is the number of positive-probability classes.</p>
-<p>The lecture relates entropy to coding class labels. The real-valued ideal length −log₂p does not always equal the length of a one-label binary prefix code, which must use integer lengths. Entropy is the ideal average/asymptotic coding rate; block or arithmetic coding can approach it. For tree splitting, the expected surprise formula is the quantity we calculate.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/trees-impurity-curves.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="572" loading="lazy" src="assets/ml-notes/trees-impurity-curves.svg" alt="Binary entropy, Gini, and majority misclassification error are plotted on their raw scales, with a separately labeled half-entropy curve for shape comparison."></a><figcaption>Entropy peaks at 1 bit, while binary Gini and misclassification impurity peak at 1/2. Multiplying a criterion by a positive constant preserves its split ranking; changing its shape can change the ranking.</figcaption></figure>
-<h2 id="weighted-gain">7. A split is good when the weighted children are purer</h2>
-<p class="section-source">Lecture connection: information gain and branch-size weighting in binary and multiway splits.</p>
-<p>A candidate test partitions S into disjoint nonempty children \(S_1,\ldots,S_B\). Let \(w_b=|S_b|/|S|\). A randomly selected observation from S reaches child b with probability wᵦ, so the expected child impurity uses those weights:</p>
-<div class="math-block">\[\Delta I=I(S)-\sum_{b=1}^B\frac{|S_b|}{|S|}I(S_b).\]</div>
-<p>For entropy, this is <strong>information gain</strong>. For Gini it is a Gini decrease. The parent term is common to all candidates at that node, so maximizing gain is the same as minimizing weighted child impurity. An unweighted average would give a small and a large child equal influence, answering a different question.</p>
-<p>Parent class proportions are weighted averages of child proportions. Entropy and Gini are concave, meaning their value at an average distribution is at least the corresponding average of their values. Therefore a valid split has nonnegative empirical gain, up to numerical rounding. In binary notation:</p>
-<div class="math-block">\[p=\sum_bw_bp_b,\qquad h(p)\ge\sum_bw_bh(p_b).\]</div>
-<p>The vertical gap between the curve and the weighted child point is the gain. A split can contain a child that is more mixed than the parent while still improving the weighted average. Empirical gain need not mean that the feature will improve unseen predictions; searching many tests can find chance patterns.</p>
-<p>For binary Gini, expanding the squares gives an especially useful identity:</p>
-<div class="math-block">\[\Delta G=2\left(\sum_bw_bp_b^2-p^2\right)=2\sum_bw_b(p_b-p)^2.\]</div>
-<p>It measures how much the child class proportions differ. For entropy, the same reduction is the empirical mutual information between the label and the selected branch. This is a statement about the observed node sample; interpreting it as a population dependence requires more evidence.</p>
-<h2 id="error-trap">8. Why immediate classification accuracy can miss a useful split</h2>
-<p class="section-source">Lecture connection: the 40-positive/80-negative example and the entropy-versus-error comparison.</p>
-<p>The majority-error impurity is \(M(S)=1-\max_c p_c\), which is min(p,1−p) for binary labels. It measures a leaf's deterministic error rate. Unlike entropy and Gini, its binary curve is linear on each side of 1/2. Child proportions can move apart while remaining on the same side, producing no reduction in immediate majority error.</p>
-<p>The lecture's parent has 40 positives and 80 negatives. Its candidate children contain [28+,42−] and [12+,38−]. All three majority predictions are class 0. Before splitting there are 40 errors; afterward there are 28+12=40. The weighted misclassification decrease is zero.</p>
-<p>Entropy still falls: the parent is h(1/3)≈0.918296 bits; the children have h(0.4)≈0.970951 and h(0.24)≈0.795040. Their weighted average is about 0.897655, so gain is about 0.020641 bits. Gini decreases from 4/9 to 0.432, giving about 0.012444. The children are differently composed even though their current majority labels agree.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/trees-weighted-gain.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="377" loading="lazy" src="assets/ml-notes/trees-weighted-gain.svg" alt="The lecture's 40-positive/80-negative parent splits into children with different proportions. Entropy decreases while the majority classifier still makes forty errors."></a><figcaption>Impurity can expose structure that a one-step accuracy comparison cannot. The lecture rounds the entropy gain to about 0.02; the calculation here retains more precision.</figcaption></figure>
-<p>The next-level tests in the lecture separate the remaining classes into pure leaves. This explains why a criterion sensitive to changing proportions can be useful while growing a tree. It does not guarantee that every positive-gain split helps generalization or that greedy growth finds the best complete tree.</p>
+<p class="ld-lead">A leaf must summarize several labels with one prediction. Counts tell us both the predicted class and how mixed the sample is.</p>
+<div class="ld-definition">
+<div class="ld-label">Definition · class proportions</div><p>Let S be the training observations reaching a node, \(n=|S|&gt;0\), and \(n_c\) the number with class c. The empirical class distribution is:</p><div class="math-block">\[\hat p_c=\frac{n_c}{n},\qquad\sum_{c=1}^K\hat p_c=1.\]</div></div>
+<div class="ld-teach">
+<h3>Read a leaf through its counts</h3>
+<div class="ld-example-inline">
+<div class="ld-dots" aria-label="4 positive and 4 negative observations">
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+</div>
+<p>
+<strong>4 positive, 4 negative.</strong> The empirical positive probability is 1/2. Both class choices make 4 training errors; our stated tie rule selects class 0. This is the same balanced parent used below.</p>
+</div>
+</div>
+<div class="ld-principle">
+<div class="ld-label">Decision rule · equal error costs</div><div class="math-block">\[\hat y=\arg\max_c n_c,\qquad E_{\text{leaf}}=n-\max_c n_c.\]</div><p>Choose a class with the largest training count. This minimizes the error of a constant prediction inside this leaf.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Why the majority rule follows from counts</summary>
+<div class="ld-detail-body"><p>This is also the categorical maximum-likelihood estimate obtained by the <a href="naive-bayes.html#multinomial-estimation">constrained count calculation</a> from the Naive Bayes chapter, now applied to labels within a leaf. For a constant predicted class a, the training error count is n−nₐ. Therefore equal-cost classification selects a majority class:</p><ol class="ld-steps">
+<li>Predict class a for every observation in the leaf.</li>
+<li>Exactly nₐ labels match; n−nₐ labels do not.</li>
+<li>Minimizing n−nₐ means maximizing nₐ.</li>
+</ol>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Ties, probabilities and unequal costs</summary>
+<div class="ld-detail-body"><p>Specify a deterministic tie rule; the binary teaching tools here choose class 0 when the counts tie. Estimated leaf probabilities are empirical proportions, not guaranteed calibrated population probabilities. A tiny pure leaf can report an extreme estimate from very little evidence. Smoothing or a different cost-sensitive prediction rule changes the leaf estimator or decision rule and should be stated explicitly.</p></div>
+</details>
+<aside class="ld-caution">
+<strong>Do not divide by an empty node.</strong><p>A node receiving no observations has no empirical distribution to estimate. A sensible tree-building routine rejects a split with an empty child; a fallback leaf for an unseen categorical branch must inherit an explicitly chosen prediction, rather than divide by zero.</p></aside>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>A leaf contains 6 positives and 2 negatives. What are its prediction, positive probability, and error count?</p>
+<details data-solution class="ld-answer" id="ld-check-leaf">
+<summary>Check your reasoning</summary>
+<p>
+<strong>Prediction 1; probability 6/8=3/4; two errors.</strong> A probability estimate and a hard class prediction answer different questions. State a tie rule when counts tie.</p>
+</details>
+</div>
+<p class="ld-exit">
+<strong>Before moving on:</strong> Explain the majority rule, give its equal-cost assumption, and distinguish a class label from a probability estimate.</p>
+</section>
+<section class="ld-unit" aria-labelledby="gini">
+<h2 id="gini">5. Measure impurity with Gini</h2><p class="section-source">Lecture connection: class proportions, pure endpoints, the binary maximum, and the K-class extension.</p><p class="ld-lead">Impurity asks how mixed the labels are. Gini turns the whole class distribution into one number.</p>
+<div class="ld-definition">
+<div class="ld-label">Definition · Gini impurity</div><p>An impurity measure summarizes how mixed the labels are at a node. For K classes, Gini impurity is:</p><div class="math-block">\[G(S)=1-\sum_{c=1}^K\hat p_c^2.\]</div><p class="ld-symbols">K: number of classes · \(\hat p_c\): proportion in class c · n&gt;0.</p>
+</div>
+<div class="ld-teach">
+<h3>One balanced node, step by step</h3>
+<div class="ld-example-inline">
+<div class="ld-dots" aria-label="4 positive and 4 negative observations">
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+</div>
+<p>
+<strong>4 positive, 4 negative.</strong> Both proportions are 1/2.</p>
+</div>
+<ol class="ld-steps">
+<li>
+<strong>Square the proportions:</strong> \(p_1^2+p_0^2=1/4+1/4=1/2\).</li>
+<li>
+<strong>Subtract from one:</strong> \(G=1-1/2=1/2\).</li>
+<li>
+<strong>Interpret:</strong> this is the maximum binary impurity; neither observed class dominates.</li>
+</ol>
+</div>
+<div class="ld-meaning">
+<div class="ld-label">What the formula means</div><p>To interpret it, imagine drawing a true label and, independently, a guessed label from the same node distribution. The chance of a match is \(\sum_c\hat p_c^2\); Gini is the chance they differ. It is not the error of the deterministic majority-label classifier.</p></div>
+<div class="ld-facts">
+<div>
+<strong>Pure</strong>
+<span>p=0 or 1</span>
+<b>G=0</b>
+</div>
+<div>
+<strong>Balanced binary</strong>
+<span>p=1/2</span>
+<b>G=1/2</b>
+</div>
+<div>
+<strong>Uniform K classes</strong>
+<span>\(p_c\)=1/K</span>
+<b>G=1−1/K</b>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Derive the binary form and its maximum</summary>
+<div class="ld-detail-body"><p>For binary labels with positive proportion p, the formula becomes \(G(p)=1-p^2-(1-p)^2=2p(1-p)\). It is zero at p=0 or 1 and reaches 1/2 at p=1/2. Differentiating gives \(G'(p)=2-4p\) and \(G''(p)=-4\): the curve is concave.</p><ol class="ld-steps">
+<li>Substitute the two proportions: \(1-p^2-(1-p)^2\).</li>
+<li>Expand the square: \(1-p^2-1+2p-p^2=2p(1-p)\).</li>
+<li>Set \(2-4p=0\), giving p=1/2. The negative second derivative establishes a maximum.</li>
+</ol>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Prove the K-class bound</summary>
+<div class="ld-detail-body"><p>For K classes, \(\sum_c(p_c-1/K)^2\ge0\) implies \(\sum_c p_c^2\ge1/K\). Hence \(G\le1-1/K\), with equality for the uniform class distribution. A pure node has G=0. The maximum changes with the number of classes; binary plots should not be read as having the same maximum for every K.</p><div class="math-block">\[\sum_c(p_c-1/K)^2=\sum_cp_c^2-1/K\ge0.\]</div>
+<p>The squared deviations vanish only when all K proportions equal 1/K. Substituting the lower bound into \(1-\sum_cp_c^2\) gives the upper bound on Gini.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>A leaf has 3 positives and 1 negative. Calculate Gini. Is it the same as the majority prediction’s error rate?</p>
+<details data-solution class="ld-answer" id="ld-check-gini">
+<summary>Check your reasoning</summary>
+<p>\(G=1-(3/4)^2-(1/4)^2=3/8\). The majority error rate is (1/4). <strong>They are different:</strong> Gini describes a distribution; majority error describes the fitted constant class decision.</p>
+</details>
+</div>
+<p class="ld-exit">
+<strong>Before moving on:</strong> Calculate Gini, interpret its endpoints, and derive the binary and multiclass maxima.</p>
+</section>
+<section class="ld-unit" aria-labelledby="entropy">
+<h2 id="entropy">6. Derive entropy from label surprise</h2><p class="section-source">Lecture connection: binary and multiclass entropy, ideal code lengths, uncertainty, and the entropy curve.</p><p class="ld-lead">Entropy measures average label surprise. It uses the same proportions as Gini, but a different shape and units.</p>
+<div class="ld-teach">
+<h3>Expected surprise, not just a formula</h3><p>A rare label carries more surprise than a common one. Assign an event of probability p the self-information \(-\log_2p\) bits. This convention makes the surprise of two independent events additive, since \(-\log_2(pq)=-\log_2p-\log_2q\). Average over the node's label distribution:</p><figure class="ld-surprise" aria-labelledby="ld-surprise-caption">
+<div>
+<strong>Balanced</strong>
+<div class="ld-proportion-bar">
+<span style="width:50%">1/2 +</span>
+<span style="width:50%">1/2 −</span>
+</div>
+<p>Each observed class: 1 bit of surprise.<br>
+<b>Average H=1 bit.</b>
+</p>
+</div>
+<div>
+<strong>One class dominates</strong>
+<div class="ld-proportion-bar">
+<span style="width:75%">3/4 +</span>
+<span style="width:25%">1/4 −</span>
+</div>
+<p>Common class ≈0.415 bits; rare class 2 bits.<br>
+<b>Average H≈0.811278 bits.</b>
+</p>
+</div>
+<figcaption id="ld-surprise-caption">Weight each label’s surprise by its probability. A rare class is more surprising when it occurs, while a balanced binary distribution has the largest average surprise.</figcaption>
+</figure>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Definition · entropy in bits</div><div class="math-block">\[H(S)=-\sum_{c=1}^K\hat p_c\log_2\hat p_c.\]</div><p class="ld-symbols">Use base-2 logarithms for bits. Each term is probability × surprise.</p><p>Use \(0\log_20=0\), the continuous limit as p approaches zero. A class that never appears contributes zero; evaluating log0 directly in a program is unnecessary. For a binary node:</p><div class="math-block">\[h(p)=-p\log_2p-(1-p)\log_2(1-p).\]</div></div>
+<div class="ld-facts">
+<div>
+<strong>Pure</strong>
+<span>p=0 or 1</span>
+<b>H=0</b>
+</div>
+<div>
+<strong>Balanced binary</strong>
+<span>p=1/2</span>
+<b>H=1 bit</b>
+</div>
+<div>
+<strong>Uniform K classes</strong>
+<span>\(p_c\)=1/K</span>
+<b>H=log₂K bits</b>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Derive concavity and the binary / K-class maxima</summary>
+<div class="ld-detail-body"><p>The endpoints are zero. In the interior, \(h'(p)=\log_2((1-p)/p)\), and \(h''(p)=-1/[\ln2\,p(1-p)]&lt;0\). Thus the maximum is h(1/2)=1 bit. The multiclass maximum is \(\log_2K\), attained at equal proportions. One way to see the bound is to apply concavity of log to the weighted average \(\sum_{p_c&gt;0}p_c\log_2(1/p_c)\le\log_2 K_+\le\log_2 K\), where K₊ is the number of positive-probability classes.</p><ol class="ld-steps">
+<li>The first derivative vanishes at p=1/2.</li>
+<li>The second derivative is negative for 0&lt;p&lt;1, so this stationary point is a maximum.</li>
+<li>For K classes, concavity of log bounds the average surprise by the log of the number of supported classes.</li>
+</ol>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Connect entropy to coding, with the right qualification</summary>
+<div class="ld-detail-body"><p>The lecture relates entropy to coding class labels. The real-valued ideal length −log₂p does not always equal the length of a one-label binary prefix code, which must use integer lengths. Entropy is the ideal average/asymptotic coding rate; block or arithmetic coding can approach it. For tree splitting, the expected surprise formula is the quantity we calculate.</p></div>
+</details>
+<div class="ld-teach"><figure class="figure-frame"><a href="assets/ml-notes/trees-impurity-curves.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="572" loading="lazy" src="assets/ml-notes/trees-impurity-curves.svg" alt="Binary entropy, Gini, and majority misclassification error are plotted on their raw scales, with a separately labeled half-entropy curve for shape comparison."></a><figcaption>Entropy peaks at 1 bit, while binary Gini and misclassification impurity peak at 1/2. Multiplying a criterion by a positive constant preserves its split ranking; changing its shape can change the ranking.</figcaption></figure></div>
+<p class="ld-caution">
+<strong>Keep the scales straight.</strong> Binary entropy peaks at 1 bit; Gini and majority-error impurity peak at 1/2. H/2 in the figure is explicitly a display comparison.</p>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>A binary leaf becomes pure. What happens to entropy and Gini? Why should the code avoid evaluating log 0?</p>
+<details data-solution class="ld-answer" id="ld-check-entropy">
+<summary>Check your reasoning</summary>
+<p>Both impurities become zero. The absent class contributes zero through the limit \(p\log p\to0\); it is unnecessary to calculate log 0. A pure training leaf does not establish zero population error.</p>
+</details>
+</div>
+<p class="ld-exit">
+<strong>Before moving on:</strong> Explain expected surprise, retain the zero-probability convention, and distinguish binary from multiclass maxima.</p>
+</section>
+<section class="ld-unit" aria-labelledby="weighted-gain">
+<h2 id="weighted-gain">7. A split is good when the weighted children are purer</h2><p class="section-source">Lecture connection: information gain and branch-size weighting in binary and multiway splits.</p><p class="ld-lead">A useful split improves the average observation’s child impurity. A tiny pure child alone is not enough to judge the split.</p>
+<div class="ld-definition">
+<div class="ld-label">Decision criterion · weighted impurity decrease</div><p>A candidate test partitions S into disjoint nonempty children \(S_1,\ldots,S_B\). Let \(w_b=|S_b|/|S|\). A randomly selected observation from S reaches child b with probability wᵦ, so the expected child impurity uses those weights:</p><div class="math-block">\[\Delta I=I(S)-\sum_{b=1}^B\frac{|S_b|}{|S|}I(S_b).\]</div></div>
+<div class="ld-teach">
+<h3>Keep the same eight observations</h3>
+<figure class="ld-count-tree" aria-labelledby="ld-count-caption">
+<div class="ld-node ld-parent">
+<div class="ld-label">Parent · 8 observations</div>
+<div class="ld-dots" aria-label="4 positive and 4 negative observations">
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+</div>
+<strong>[4+, 4−] · G=1/2</strong>
+</div>
+<div class="ld-branch-label">A candidate test creates two child samples ↓</div>
+<div class="ld-children">
+<div class="ld-node">
+<div class="ld-label">Left · 2/8 of the sample</div>
+<div class="ld-dots" aria-label="0 positive and 2 negative observations">
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+</div>
+<strong>[0+, 2−] · G=0</strong>
+<span>Pure; contribution (2/8)×0.</span>
+</div>
+<div class="ld-node">
+<div class="ld-label">Right · 6/8 of the sample</div>
+<div class="ld-dots" aria-label="4 positive and 2 negative observations">
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot positive" aria-hidden="true">+</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+<span class="ld-dot negative" aria-hidden="true">−</span>
+</div>
+<strong>[4+, 2−] · G=4/9</strong>
+<span>Mixed; contribution (6/8)×(4/9).</span>
+</div>
+</div>
+<figcaption id="ld-count-caption">Every original observation contributes once to the child average. The right child gets three times the left child’s weight.</figcaption>
+</figure>
+<ol class="ld-steps">
+<li>
+<strong>Measure before:</strong> parent Gini = 1/2.</li>
+<li>
+<strong>Average after:</strong> \((2/8)\times0+(6/8)\times(4/9)=1/3\).</li>
+<li>
+<strong>Subtract:</strong> \(\Delta G=1/2-1/3=1/6\).</li>
+</ol>
+</div>
+<div class="ld-meaning">
+<div class="ld-label">Why these weights?</div><p>For entropy, this is <strong>information gain</strong>. For Gini it is a Gini decrease. The parent term is common to all candidates at that node, so maximizing gain is the same as minimizing weighted child impurity. An unweighted average would give a small and a large child equal influence, answering a different question.</p></div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Why valid entropy and Gini gains are nonnegative</summary>
+<div class="ld-detail-body"><p>Parent class proportions are weighted averages of child proportions. Entropy and Gini are concave, meaning their value at an average distribution is at least the corresponding average of their values. Therefore a valid split has nonnegative empirical gain, up to numerical rounding. In binary notation:</p><div class="math-block">\[p=\sum_bw_bp_b,\qquad h(p)\ge\sum_bw_bh(p_b).\]</div><p>The vertical gap between the curve and the weighted child point is the gain. A split can contain a child that is more mixed than the parent while still improving the weighted average. Empirical gain need not mean that the feature will improve unseen predictions; searching many tests can find chance patterns.</p></div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Derive Gini gain as a variance of child proportions</summary>
+<div class="ld-detail-body"><p>For binary Gini, expanding the squares gives an especially useful identity:</p><div class="math-block">\[\Delta G=2\left(\sum_bw_bp_b^2-p^2\right)=2\sum_bw_b(p_b-p)^2.\]</div><ol class="ld-steps">
+<li>Start from \(2p(1-p)-\sum_bw_b\,2p_b(1-p_b)\).</li>
+<li>Use \(\sum_bw_bp_b=p\) to cancel the linear terms.</li>
+<li>The remainder is \(2(\sum_bw_bp_b^2-p^2)\). Expand the weighted squared deviations to obtain the displayed identity.</li>
+</ol><p>It measures how much the child class proportions differ. For entropy, the same reduction is the empirical mutual information between the label and the selected branch. This is a statement about the observed node sample; interpreting it as a population dependence requires more evidence.</p></div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Complete the missing step: a balanced 8-observation parent splits into [1+,1−] and [3+,3−]. Weighted child Gini is ____. What is the gain?</p>
+<details data-solution class="ld-answer" id="ld-check-gain">
+<summary>Check your reasoning</summary>
+<p>\((2/8)(1/2)+(6/8)(1/2)=1/2\), giving gain 0. <strong>Splitting into unequal sizes is not enough:</strong> the class proportions did not change.</p>
+</details>
+</div>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Now solve independently: [3+,3−] splits into [3+,0−] and [0+,3−]. Give the entropy and Gini decreases. State why the weighting still matters.</p>
+<details data-solution class="ld-answer" id="ld-check-independent">
+<summary>Check your reasoning</summary>
+<p>Both children are pure. The child averages are zero, so entropy decrease is 1 bit and Gini decrease is 1/2. Each child has weight 1/2. The general rule must still weight by size; purity only makes the weighting invisible in this calculation.</p>
+</details>
+</div>
+<p class="ld-exit">
+<strong>Before moving on:</strong> Write the weighted criterion, justify the weights, calculate a gain, and explain its nonnegativity.</p>
+</section>
+<section class="ld-unit" aria-labelledby="error-trap">
+<h2 id="error-trap">8. Why immediate classification accuracy can miss a useful split</h2><p class="section-source">Lecture connection: the 40-positive/80-negative example and the entropy-versus-error comparison.</p><p class="ld-lead">A leaf’s hard prediction can stay unchanged while its label distribution becomes more informative. This is why impurity and accuracy are different criteria.</p>
+<div class="ld-definition">
+<div class="ld-label">Compare carefully · majority-error impurity</div><p>The majority-error impurity is \(M(S)=1-\max_c p_c\), which is min(p,1−p) for binary labels. It measures a leaf's deterministic error rate. Unlike entropy and Gini, its binary curve is linear on each side of 1/2. Child proportions can move apart while remaining on the same side, producing no reduction in immediate majority error.</p></div>
+<div class="ld-teach">
+<h3>The lecture’s counterexample</h3><p>The lecture's parent has 40 positives and 80 negatives. Its candidate children contain [28+,42−] and [12+,38−]. All three majority predictions are class 0. Before splitting there are 40 errors; afterward there are 28+12=40. The weighted misclassification decrease is zero.</p><div class="ld-comparison">
+<div>
+<div class="ld-label">Immediate prediction errors</div>
+<strong>40 → 40</strong>
+<p>Both children still predict class 0.</p>
+</div>
+<div>
+<div class="ld-label">Entropy in bits</div>
+<strong>0.918296 → 0.897655</strong>
+<p>The child distributions have moved apart.</p>
+</div>
+</div><figure class="figure-frame"><a href="assets/ml-notes/trees-weighted-gain.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="377" loading="lazy" src="assets/ml-notes/trees-weighted-gain.svg" alt="The lecture's 40-positive/80-negative parent splits into children with different proportions. Entropy decreases while the majority classifier still makes forty errors."></a><figcaption>Impurity can expose structure that a one-step accuracy comparison cannot. The lecture rounds the entropy gain to about 0.02; the calculation here retains more precision.</figcaption></figure></div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>Reproduce the full entropy and Gini calculation</summary>
+<div class="ld-detail-body"><p>Entropy still falls: the parent is h(1/3)≈0.918296 bits; the children have h(0.4)≈0.970951 and h(0.24)≈0.795040. Their weighted average is about 0.897655, so gain is about 0.020641 bits. Gini decreases from 4/9 to 0.432, giving about 0.012444. The children are differently composed even though their current majority labels agree.</p></div>
+</details>
+<aside class="ld-caution">
+<strong>Impurity decrease is not a generalization guarantee.</strong><p>The next-level tests in the lecture separate the remaining classes into pure leaves. This explains why a criterion sensitive to changing proportions can be useful while growing a tree. It does not guarantee that every positive-gain split helps generalization or that greedy growth finds the best complete tree.</p></aside>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Explain in one or two sentences how a split can have positive entropy gain and zero immediate accuracy gain.</p>
+<details data-solution class="ld-answer" id="ld-check-trap">
+<summary>Check your reasoning</summary>
+<p>Child class proportions can change while remaining on the same side of the majority boundary. Their current hard predictions stay the same, but entropy responds to the changed proportions. Deeper tests may use the structure; validation still has to assess predictive value.</p>
+</details>
+</div>
+<p class="ld-exit">
+<strong>Before moving on:</strong> Explain the 40-error example and separate observed impurity gain from unseen predictive performance.</p>
+</section>
+<section class="ld-revision" id="ld-revision" aria-labelledby="ld-revision-title">
+<div class="ld-label">Revision sheet · sections 04–08</div>
+<h3 id="ld-revision-title">Rebuild the argument in five moves</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>1. Estimate</strong>
+<p>\(\hat p_c=n_c/n\), with n&gt;0. Predict a training majority under equal error costs; state ties.</p>
+</div>
+<div>
+<strong>2. Measure Gini</strong>
+<p>\(G=1-\sum_cp_c^2\). Binary maximum 1/2; K-class maximum 1−1/K.</p>
+</div>
+<div>
+<strong>3. Measure entropy</strong>
+<p>\(H=-\sum_cp_c\log_2p_c\). Use 0log0=0; maximum log₂K bits.</p>
+</div>
+<div>
+<strong>4. Compare a split</strong>
+<p>\(\Delta I=I(S)-\sum_b(n_b/n)I(S_b)\). Nonempty children; disjoint samples; weights sum to one.</p>
+</div>
+<div>
+<strong>5. Qualify the result</strong>
+<p>\(M=1-\max_cp_c\) is majority error. Positive entropy/Gini gain need not change the hard prediction or improve validation error.</p>
+</div>
+</div>
+<p>
+<strong>Derivation checklist:</strong> <a href="#gini">binary Gini and the K-class bound</a> · <a href="#entropy">entropy concavity and maxima</a> · <a href="#weighted-gain">weighted concavity and the Gini-variance identity</a>. Open the labeled derivations to check every step.</p>
+</section>
+<section class="ld-review" id="ld-review" aria-labelledby="ld-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="ld-review-title">Try this before rereading</h3>
+<p>Use paper, speech, or a mental explanation. Choose a method before opening the answer. If you need help, revisit the linked idea and then attempt a fresh case.</p>
+<ol>
+<li>Why does a majority label minimize equal-cost leaf errors?</li>
+<li>Derive the binary Gini formula, then state the K-class maximum.</li>
+<li>Why are the child weights nᵦ/n? What goes wrong with a simple average?</li>
+<li>Compute both impurity decreases for [3+,3−] → [3+,0−] and [0+,3−].</li>
+<li>Give a case where positive entropy gain leaves majority predictions unchanged.</li>
+</ol>
+<details data-solution class="ld-answer">
+<summary>Review answers and self-check rubric</summary>
+<ol>
+<li>A prediction a matches nₐ observations and misses n−nₐ; maximizing nₐ minimizes misses.</li>
+<li>\(1-p^2-(1-p)^2=2p(1-p)\); uniform K classes give maximum 1−1/K.</li>
+<li>A random parent observation reaches child b with probability nᵦ/n. Equal weighting overrepresents a small child.</li>
+<li>Entropy decreases by 1 bit; Gini by 1/2. Both child impurities are zero.</li>
+<li>The lecture’s [40+,80−] → [28+,42−],[12+,38−] keeps both predictions at 0 but lowers entropy.</li>
+</ol>
+<p>
+<strong>Check three things:</strong> did you choose the right criterion, state the assumptions/units, and justify the steps? Record a missing assumption separately from arithmetic or method-choice errors. Reading a familiar solution does not establish unaided recall.</p>
+</details>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> Read the explanations</label>
+<label>
+<input type="checkbox" data-learning-progress="attempt"> Attempted the practice without solutions</label>
+<label>
+<input type="checkbox" data-learning-progress="later"> Recalled the ideas on a later visit</label>
+</fieldset>
+<p class="ld-small">Self-reported, saved only in this browser where storage is available. These are separate actions, not automatic mastery scores.</p>
+<div class="ld-review-buttons" role="group" aria-label="Record a review and choose the suggested gap">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p id="ld-review-status" aria-live="polite">After trying the questions, choose a suggested return gap. The intervals are practical heuristics, not an optimal schedule or a reminder service.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this learning record</button>
+</div>
+</section>
+<p class="ld-next">
+<strong>Next connection:</strong> <a href="#growing">use the gain criterion to grow a tree</a>, then <a href="#weather-example">reproduce the categorical examples</a>. The <a href="#threshold-lab">threshold workbench</a> lets you test the same weighting and impurity ideas on editable observations.</p>
+</section>
 <h2 id="growing">9. Grow recursively, making the stopping rules explicit</h2>
 <p class="section-source">Lecture connection: GrowTree pseudocode, feature/threshold search, stopping, and the handwritten training-cost estimate.</p>
 <p>Begin with a leaf that predicts the node's majority. If splitting is permitted, compare all valid candidate tests at that node, choose the best, partition the observations, and repeat separately in each child. This is top-down greedy growth: the current choice uses its immediate impurity reduction, without exhaustively optimizing every possible future subtree.</p>
