@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preservation and exact-example audit for the probability-language redesign.
+"""Preservation and exact-example audit for the probability-language and moments redesign.
 
 Run from any directory. Requires only Python's standard library and Git.
 Browser checks cover interaction, responsive layout and printing separately.
@@ -83,7 +83,16 @@ assert len(page.ids) == len(set(page.ids)), 'Duplicate ID'
 assert not (Counter(old.paragraphs) - Counter(page.paragraphs)), 'An original paragraph was lost'
 assert not (Counter(math(base)) - Counter(math(source))), 'An original equation was lost'
 assert set(old.ids) <= set(page.ids), 'An original anchor was lost'
-assert source[source.index('<h2 id="moments">'):] == base[base.index('<h2 id="moments">'):], 'Content after section 5 changed'
+assert source[source.index('<h2 id="normal">'):] == base[base.index('<h2 id="normal">'):], 'Content after section 8 changed'
+prior = subprocess.check_output(['git', 'show', '493a0eb:writing/probability-gaussians.html'], cwd=ROOT, text=True)
+prior_page = Page(prior)
+assert set(prior_page.ids) <= set(page.ids), 'A first-block anchor was lost'
+assert not (Counter(prior_page.paragraphs) - Counter(page.paragraphs)), 'A first-block paragraph was lost'
+assert not (Counter(math(prior)) - Counter(math(source))), 'A first-block equation was lost'
+first_marker = '<section class="ld-pilot prob-language" id="probability-language-path"'
+old_first = prior[prior.index(first_marker):prior.index('<h2 id="moments">')].strip()
+new_first = source[source.index(first_marker):source.index('<section class="ld-pilot prob-language prob-moments"')].strip()
+assert new_first == old_first.replace('href="#moments"', 'href="#probability-moments-path"'), 'First block changed beyond its two forward links'
 for pattern, label in [
     (r'<img[^>]+src="([^"]+)"', 'figure asset'),
     (r'<figcaption[^>]*>(.*?)</figcaption>', 'figure caption'),
@@ -104,10 +113,11 @@ for link in page.links:
         if target not in pages:
             pages[target] = Page(target.read_text())
         assert unquote(url.fragment) in pages[target].ids, link
-assert source.count('data-learning-pilot') == 1
-assert source.count('class="ld-unit"') == 5
+assert source.count('data-learning-pilot') == 2
+assert source.count('class="ld-unit"') == 8
 assert source.count('class="exercise"') == base.count('class="exercise"') == 18
 assert 'data-learning-key="probability-language"' in source
+assert 'data-learning-key="probability-moments"' in source
 assert 'assets/ml-learning.js' in source
 expected_counts = {'rain-late': 18, 'rain-on-time': 12, 'dry-late': 7, 'dry-on-time': 63}
 assert page.cases == Counter(expected_counts), '100-case visual differs from the stated model'
@@ -134,9 +144,47 @@ assert F(0)/(c+0) == 0  # Reverse conditional after deleting the rainy cases.
 a, b, c, d = map(F, [15, 15, 35, 35])
 assert a/(a+b+c+d) == (a+b)*(a+c)/(a+b+c+d)**2
 
+# Exact new moment examples and matrix feasibility checks.
+head_values = [F(0), F(1), F(2)]
+head_mass = [F(1,4), F(1,2), F(1,4)]
+def moment(values, probabilities, power=1):
+    return sum((x**power)*p for x,p in zip(values,probabilities))
+assert moment(head_values, head_mass) == 1
+assert moment(head_values, head_mass, 2) == F(3,2)
+assert moment(head_values, head_mass, 2) - 1 == F(1,2)
+values, probs = [F(-1),F(2)], [F(2,3),F(1,3)]
+assert moment(values,probs) == 0 and moment(values,probs,2) == 2
+transformed = [3-2*x for x in values]
+assert moment(transformed,probs) == 3
+assert moment(transformed,probs,2) - moment(transformed,probs)**2 == 8
+assert 4*F(1,4)*F(3,4) == F(3,4)
+assert 16*F(1,4)*F(3,4) == 3
+assert F(2+8,2) == 5 and F((8-2)**2,12) == 3
+assert F(1)/F(1,4) == 4 and F(3,4)/F(1,4)**2 == 12
+assert F(1)/2 == F(1,2) and F(1)/4 == F(1,4)
+assert F(3,5)*F(4,3) - F(3,5)**2 == F(11,25)
+assert F(3)*2/(3-1) == 3 and F(3)*4/((3-1)**2*(3-2)) == 3
+assert F(3,2)*2/(F(3,2)-1) == 6
+vr, vl, cov = F(21,100),F(3,16),F(21,200)
+assert vr+vl+2*cov == F(243,400)
+assert vr+vl-2*cov == F(3,16)
+assert vr*vl-cov**2 == F(567,20000)
+assert cov**2/(vr*vl) == F(7,25)
+def quadratic(matrix, vector):
+    return sum(vector[i]*matrix[i][j]*vector[j] for i in range(2) for j in range(2))
+assert quadratic([[1,F(3,2)],[F(3,2),1]],[1,-1]) == -1
+assert quadratic([[1,2],[2,4]],[2,-1]) == 0
+assert F(1,5)-F(1,3)**2 == F(4,45) > 0  # Var(X²), X uniform[-1,1].
+for key,expected in [('variance-r',vr),('variance-l',vl),('covariance-rl',cov)]:
+    cell = re.search(r'data-moment-value="'+key+r'">([^<]+)',source)
+    assert cell and F(cell.group(1)) == expected, key
+import xml.etree.ElementTree as ET
+for name in ['linear','nonlinear']:
+    ET.parse(ROOT / ('writing/assets/ml-notes/probability-covariance-'+name+'.svg'))
+
 for name in ['cnn-foundations', 'cnn-training', 'statistical-regression-gda', 'naive-bayes', 'factor-models-pca', 'decision-trees-pruning', 'machine-learning']:
     original = subprocess.check_output(['git', 'show', BASELINE + ':writing/' + name + '.html'], cwd=ROOT)
     assert original == (ROOT / 'writing' / (name + '.html')).read_bytes(), 'Unrelated chapter changed: ' + name
-print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 6 onward byte-identical.')
+print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 9 onward byte-identical; first block preserved apart from forward links.')
 print('HTML and local references pass:', len(page.ids), 'unique IDs,', len(page.links), 'references,', len(math(source)), 'math expressions.')
-print('Exact examples pass; five teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')
+print('Exact examples pass; two blocks, eight teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')

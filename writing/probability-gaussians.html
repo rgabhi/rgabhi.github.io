@@ -73,6 +73,7 @@
 <span>04</span>Joint &amp; conditional</a>
 <a href="#joint-lab">
 <span>05</span>Joint-table workbench</a>
+<a href="#probability-moments-title"><span>Learn</span>Moments &amp; covariance</a>
 <a href="#moments">
 <span>06</span>Expectation &amp; variance</a>
 <a href="#families">
@@ -116,6 +117,8 @@
 <div class="ld-pilot-entry">
 <a href="#probability-language-path">Learn probability: from outcomes to Bayes’ rule</a>
 <span>Sections 1–5 · guided examples, full explanations and return-review questions.</span>
+<a href="#probability-moments-path">Learn moments: expectation, spread and covariance</a>
+<span>Sections 6–8 · distribution derivations, visual comparisons and recall.</span>
 </div>
 <div class="chapter-tools">
 <a href="#learning-goals">Start learning</a>
@@ -253,7 +256,7 @@
 <div class="ld-route-links">
 <a href="#prob-language-revision">Revision sheet</a>
 <a href="#prob-language-review">Return-review questions</a>
-<a href="#moments">Continue to expectation &amp; variance</a>
+<a href="#probability-moments-path">Continue to expectation &amp; variance</a>
 </div>
 </div>
 <div class="ld-notation">
@@ -1079,82 +1082,739 @@
 </div>
 </details>
 </section>
-<p class="ld-next">Next: <a href="#moments">summarize a distribution with expectation and variance</a>, then connect them through covariance. <a href="#probability-language-path">Back to this block’s controls ↑</a>
+<p class="ld-next">Next: <a href="#probability-moments-path">summarize a distribution with expectation and variance</a>, then connect them through covariance. <a href="#probability-language-path">Back to this block’s controls ↑</a>
 </p>
 </section>
 
+<section class="ld-pilot prob-language prob-moments" id="probability-moments-path" data-learning-pilot data-learning-key="probability-moments" data-learning-scope="sections 6–8" data-ld-mode="learn" aria-labelledby="probability-moments-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 6–8</div>
+<h2 id="probability-moments-title">How do you summarize uncertainty?</h2>
+<p>Use probabilities as weights. Separate an average from spread, derive the distribution formulas, then collect variation in a covariance matrix.</p>
+<nav class="ld-map prob-moment-map" aria-label="Moments and covariance concept map">
+<a href="#moments">
+<span>01 · Summarize</span>
+<strong>Mean &amp; spread</strong>
+<small>weights values and squared deviations</small>
+</a>
+<a href="#families">
+<span>02 · Derive</span>
+<strong>Distribution moments</strong>
+<small>uses support and parameter conventions</small>
+</a>
+<a href="#covariance">
+<span>03 · Combine</span>
+<strong>Covariance &amp; matrices</strong>
+<small>tracks variation of weighted sums</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for probability sections 6 to 8">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all explanations</button>
+</div>
+<p class="ld-mode-help" data-learning-mode-help>These controls apply to sections 6–8 only.</p>
+<div class="ld-route-links">
+<a href="#prob-moments-revision">Revision sheet</a>
+<a href="#prob-moments-review">Return-review questions</a>
+<a href="#normal">Continue to Gaussians</a>
+</div>
+</div>
+<div class="ld-notation">
+<strong>Build on probability language.</strong>
+<p>E: average using a distribution’s probabilities · μ: mean · Var: variance · σ: standard deviation · Cov: covariance · Σ: covariance matrix.</p>
+<p>We use finite expectations for the ordinary mean identities and finite second moments for variance and covariance. The Pareto examples show why those conditions matter.</p>
+</div>
+<section class="ld-unit" aria-labelledby="moments">
 <h2 id="moments">6. Expectation, variance, and useful identities</h2>
 <p class="section-source">Lecture connection: mean, variance, linearity of expectation, and the variance-of-a-sum identities.</p>
+<p class="ld-lead">A mean locates the distribution. Variance describes spread around that location. Each is an average with a different quantity inside.</p>
+<div class="ld-definition">
+<div class="ld-label">Definitions · state existence conditions</div>
+<div class="math-block">\[\mu=\mathbb E[X],\qquad \operatorname{Var}(X)=\mathbb E[(X-\mu)^2]\]</div>
+<p>The mean weights values by probabilities. Variance weights squared deviations. Standard deviation is the square root of variance and returns to the original units.</p>
+</div>
+<div class="ld-teach">
+<h3>One distribution, two useful weighted sums</h3>
+<p>Let X count heads in two independent fair tosses. The four outcomes are equally likely, but the values 0, 1 and 2 have probabilities 1/4, 1/2 and 1/4.</p>
+<div class="prob-outcome-strip" role="group" aria-label="Four equally likely outcomes: TT gives zero, HT and TH give one each, and HH gives two.">
+<div>
+<span>TT · 1/4</span>
+<b>0</b>
+</div>
+<div>
+<span>HT · 1/4</span>
+<b>1</b>
+</div>
+<div>
+<span>TH · 1/4</span>
+<b>1</b>
+</div>
+<div>
+<span>HH · 1/4</span>
+<b>2</b>
+</div>
+</div>
+<div class="table-scroll" tabindex="0">
+<table class="prob-moment-table">
+<caption>Average X and X² using the same probabilities</caption>
+<thead>
+<tr>
+<th scope="col">x</th>
+<th scope="col">P(X=x)</th>
+<th scope="col">x × P(X=x)</th>
+<th scope="col">x² × P(X=x)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">0</th>
+<td>1/4</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<th scope="row">1</th>
+<td>1/2</td>
+<td>1/2</td>
+<td>1/2</td>
+</tr>
+<tr>
+<th scope="row">2</th>
+<td>1/4</td>
+<td>1/2</td>
+<td>1</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th scope="row">Sum</th>
+<td>1</td>
+<td>Mean = 1</td>
+<td>E[X²] = 3/2</td>
+</tr>
+</tfoot>
+</table>
+</div>
+<ol class="ld-steps">
+<li>
+<strong>Mean:</strong> add x times its probability: 0+1/2+1/2=1.</li>
+<li>
+<strong>Second raw moment:</strong> square the value before weighting: 0+1/2+1=3/2.</li>
+<li>
+<strong>Variance:</strong> subtract the squared mean: 3/2−1²=1/2.</li>
+</ol>
+</div>
+<div class="ld-teach">
+<h3>The same mean can hide different spread</h3>
+<div class="prob-spread-compare">
+<div>
+<strong>Always 1</strong>
+<div class="prob-spread-axis">
+<span>
+</span>
+<b>1</b>
+<span>
+</span>
+</div>
+<p>Mean 1 · variance 0.</p>
+</div>
+<div>
+<strong>0 or 2, each with probability 1/2</strong>
+<div class="prob-spread-axis">
+<b>0</b>
+<span class="prob-mean-marker">mean 1</span>
+<b>2</b>
+</div>
+<p>Mean 1 · variance 1.</p>
+</div>
+</div>
+<p>Variance asks about squared distance from the mean. A zero average deviation does not imply that individual deviations vanish.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Expectation of a function, sums, integrals and mixed distributions</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Expectation is a weighted average, not a likely value</h3>
 <div class="math-block">\[\mathbb E[g(X)]=\sum_xg(x)p_X(x)\quad\text{or}\quad\mathbb E[g(X)]=\int g(x)f_X(x)\,dx.\]</div>
 <p>The formulas apply to discrete or density-based cases; a mixed distribution includes both contributions. Put g(x)=x to obtain the mean μ. Put g(x)=x² to obtain the second raw moment. The mean need not be a possible outcome: a fair die has mean 3.5.</p>
 <p>We use linearity with finite expectations and covariance identities with finite second moments. Heavy-tailed distributions may not satisfy these conditions. For example, the Pareto family later in the chapter requires explicit restrictions before a mean or variance formula applies.</p>
+<p>To compute E[g(X)], transform each value with g and average using the original probabilities. This does not replace g(E[X]); in general those two expressions differ. An atom and a continuous component both contribute to a mixed expectation.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Expand the centered square, then take expectations</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Derive the variance identity</h3>
 <div class="math-block">\[\begin{aligned}\operatorname{Var}(X)&amp;=\mathbb E[(X-\mu)^2]\\&amp;=\mathbb E[X^2-2\mu X+\mu^2]\\&amp;=\mathbb E[X^2]-2\mu\mathbb E[X]+\mu^2\\&amp;=\mathbb E[X^2]-\mu^2.\end{aligned}\]</div>
 <p>Variance measures squared spread around the mean; standard deviation is its square root and has the original variable's units. Expanding the square is what makes second raw moments useful.</p>
-<h3>Expectation is linear even for dependent variables</h3>
+<p>
+<strong>Why the middle term simplifies:</strong> μ is a fixed number. Hence E[μX]=μE[X]=μ² and E[μ²]=μ². This leaves E[X²]−μ².</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Complete the calculation: X is −1 with probability 2/3 and 2 with probability 1/3. Its mean is 0. Find E[X²] and Var(X).</p>
+<details class="ld-answer" data-solution id="prob-moment-check-weighted-completion">
+<summary>Check your reasoning</summary>
+<p>Square before weighting: E[X²]=(2/3)×1+(1/3)×4=2. Since the mean is zero, Var(X)=2. Squaring the mean instead would give zero and miss all the spread.</p>
+</details>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Linearity · independence is not required</div>
 <div class="math-block">\[\mathbb E[aX+bY+c]=a\mathbb E[X]+b\mathbb E[Y]+c.\]</div>
+<p>Use finite expectations. Dependence affects other calculations, including products and the variance of a sum.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Distribute the joint weighted sum without factoring it</span>
+</summary>
+<div class="ld-detail-body">
+<h3>Expectation is linear even for dependent variables</h3>
 <p>This follows by distributing the sum or integral over the expression. Independence is not required. In contrast, replacing \(\mathbb E[XY]\) with \(\mathbb E[X]\mathbb E[Y]\) generally does require more than linearity; independence is a sufficient condition when the expectations exist.</p>
+<div class="math-block">\[\mathbb E[aX+bY+c]=\sum_{x,y}(ax+by+c)p_{X,Y}(x,y)\]</div>
+<p>Separate the three sums. Summing p(x,y) over y gives p_X(x), summing over x gives p_Y(y), and summing over both gives 1. No step assumes p(x,y)=p_X(x)p_Y(y). The same linearity applies with integrals when expectations are finite.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Shift and scale · the scale is squared</div>
+<div class="math-block">\[\operatorname{Var}(aX+b)=a^2\operatorname{Var}(X).\]</div>
+<p>A shift changes location, while multiplying by a changes standard deviation by |a| and variance by a².</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Center the transformed variable first</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Shift and rescale a variable</h3>
 <p>Since \(aX+b-\mathbb E[aX+b]=a(X-\mathbb E[X])\):</p>
-<div class="math-block">\[\operatorname{Var}(aX+b)=a^2\operatorname{Var}(X).\]</div>
 <p>A constant shift changes the mean but not the spread. A scale multiplies variance by its square, even when the scale is negative.</p>
+</div>
+</details>
+<div class="ld-teach">
+<p>For the fair two-toss count above, Y=5−2X has mean 5−2×1=3 and variance (−2)²×(1/2)=2. A negative scale reverses order; it cannot produce negative variance.</p>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Combining variables · keep the covariance term</div>
+<div class="math-block">\[\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y).\]</div>
+<p>Use finite second moments. The cross term disappears when covariance is zero; independence is sufficient for that, but is not necessary.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Square a weighted sum of centered variables</span>
+</summary>
+<div class="ld-detail-body">
 <h3>The missing term when adding uncertain quantities</h3>
 <p>Define covariance by \(\operatorname{Cov}(X,Y)=\mathbb E[(X-\mu_X)(Y-\mu_Y)]\). Expanding the product gives \(\operatorname{Cov}(X,Y)=\mathbb E[XY]-\mu_X\mu_Y\). Now expand the centered square of aX+bY:</p>
-<div class="math-block">\[\operatorname{Var}(aX+bY)=a^2\operatorname{Var}(X)+b^2\operatorname{Var}(Y)+2ab\operatorname{Cov}(X,Y).\]</div>
-<p>Independent variables have covariance zero, but dependent variables can also have covariance zero. For X uniform on [−1,1] and Y=X², symmetry gives E[X]=E[X³]=0, so Cov(X,Y)=0, yet Y is completely determined by X. Zero covariance rules out a linear association measured by this moment, not every form of dependence.</p>
-<p>In the initial joint workbench, R and L are binary indicators, so E[R]=0.30, E[L]=0.25, and E[RL]=0.18. Their covariance is \(0.18-0.30(0.25)=0.105\). This is why an independence assumption would lose information about the table.</p>
-
+<div class="math-block">\[U=X-\mu_X,\quad V=Y-\mu_Y,\quad (aU+bV)^2=a^2U^2+2abUV+b^2V^2\]</div>
+<p>Take expectations term by term. E[U²] and E[V²] are the variances; E[UV] is the covariance. This explains both the factor 2 and the sign change when one coefficient is negative.</p>
+</div>
+</details>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Compute a weighted mean and second moment, derive variance, and state exactly where dependence changes a formula.</div>
+</section>
+<section class="ld-unit" aria-labelledby="families">
 <h2 id="families">7. Derive the moments of the lecture's distribution families</h2>
 <p class="section-source">Lecture connection: the seven-row distribution table and its first-principles mean/variance exercise.</p>
+<p class="ld-lead">Choose a distribution by its support and the question it answers. Derive its moments using that model, and carry its conditions into every application.</p>
 <p>Learn the support and parameter convention along with each formula. A PMF or density written without its support does not fully specify a distribution. The Gaussian row is derived in section 9; the other six families are developed here.</p>
+<nav class="prob-family-nav" aria-label="Choose a distribution by its question">
+<a href="#moment-family-bernoulli">
+<span>One yes/no outcome</span>
+<strong>Bernoulli</strong>
+</a>
+<a href="#moment-family-binomial">
+<span>Successes in n independent trials</span>
+<strong>Binomial</strong>
+</a>
+<a href="#moment-family-geometric">
+<span>Trial of the first success</span>
+<strong>Geometric</strong>
+</a>
+<a href="#moment-family-uniform">
+<span>Constant density on an interval</span>
+<strong>Uniform</strong>
+</a>
+<a href="#moment-family-exponential">
+<span>A memoryless waiting time</span>
+<strong>Exponential</strong>
+</a>
+<a href="#moment-family-pareto">
+<span>A lower-bounded power-law tail</span>
+<strong>Pareto</strong>
+</a>
+<a href="#normal">
+<span>The bell-shaped family, continued next</span>
+<strong>Normal / Gaussian</strong>
+</a>
+</nav>
+<section class="prob-family" id="moment-family-bernoulli" aria-label="Bernoulli · support {0,1}, probability 0 ≤ p ≤ 1">
 <h3>Bernoulli: one binary event</h3>
+<div class="ld-definition">
+<div class="ld-label">Bernoulli · support {0,1}, probability 0 ≤ p ≤ 1</div>
+<p>One binary indicator: probability p of 1, and 1−p of 0.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>p</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>p(1−p)</b>
+</div>
+</div>
+</div>
+<div class="ld-teach">
+<p>If a gate is kept with probability 0.3, its mean is 0.3 and variance is 0.3×0.7=0.21. Because the values are only 0 and 1, X²=X.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Enumerate the two values, then subtract the squared mean</span>
+</summary>
+<div class="ld-detail-body">
 <p>For X∈{0,1}, let P(X=1)=p and P(X=0)=1−p, with 0≤p≤1. Then:</p>
 <div class="math-block">\[\mathbb E[X]=0(1-p)+1(p)=p,\qquad\mathbb E[X^2]=p,\qquad\operatorname{Var}(X)=p-p^2=p(1-p).\]</div>
 <p>The equality X²=X is specific to a zero/one indicator. A dropout gate is exactly this kind of variable, with its Bernoulli parameter interpreted as a keep probability.</p>
+</div>
+</details>
+</section>
+<section class="prob-family" id="moment-family-binomial" aria-label="Binomial · support {0,…,n}, n a nonnegative integer, 0 ≤ p ≤ 1">
 <h3>Binomial: count independent successes</h3>
+<div class="ld-definition">
+<div class="ld-label">Binomial · support {0,…,n}, n a nonnegative integer, 0 ≤ p ≤ 1</div>
+<p>Count successes in n independent Bernoulli(p) trials. Equal success probabilities and independence define this model.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>np</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>np(1−p)</b>
+</div>
+</div>
+</div>
+<div class="ld-teach">
+<div class="prob-spread-compare">
+<div>
+<strong>Four independent trials</strong>
+<p>Each has success probability 1/4. The count has mean 1 and variance 4×(1/4)×(3/4)=3/4.</p>
+</div>
+<div>
+<strong>Four copies of one trial</strong>
+<p>The count is 4B for one Bernoulli(1/4) variable B. The mean is still 1; variance is 16×(1/4)×(3/4)=3.</p>
+</div>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Count arrangements, then use indicators for moments</span>
+</summary>
+<div class="ld-detail-body">
 <p>Let X=I₁+⋯+Iₙ for n independent Bernoulli(p) indicators. For k=0,…,n, a particular arrangement of k successes has probability pᵏ(1−p)ⁿ⁻ᵏ, and there are \(\binom nk\) such arrangements:</p>
 <div class="math-block">\[p_X(k)=\binom nkp^k(1-p)^{n-k}.\]</div>
 <p>Linearity gives E[X]=np without needing independence. For the binomial variance, independence makes all cross-covariances zero:</p>
 <div class="math-block">\[\operatorname{Var}(X)=\sum_{i=1}^n\operatorname{Var}(I_i)=np(1-p).\]</div>
 <p>If successes are dependent, the covariance terms generally remain, and the count need not be binomial. For n=10,p=0.3, the binomial mean is 3 and variance 2.1.</p>
+<p>The binomial coefficient counts the subsets of k successful trial positions. With k successes, each arrangement has the same probability pᵏ(1−p)ⁿ⁻ᵏ. Independence is used for those products and for removing covariance terms. Linearity of the mean alone does not need it.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>If four success indicators each have probability 1/4, which moment is fixed by those marginals alone: the mean, the variance, or both?</p>
+<details class="ld-answer" data-solution id="prob-moment-check-dependent-count">
+<summary>Check your reasoning</summary>
+<p>The mean is fixed at 4×1/4=1 by linearity. The variance is not fixed: the independent count has variance 3/4, while four copies of the same indicator give variance 3. The joint dependence matters.</p>
+</details>
+</div>
+</section>
+<section class="prob-family" id="moment-family-uniform" aria-label="Uniform · support [a,b], with a &lt; b">
 <h3>Uniform: constant density over a finite interval</h3>
+<div class="ld-definition">
+<div class="ld-label">Uniform · support [a,b], with a &lt; b</div>
+<p>Constant density 1/(b−a) on the stated interval, zero outside it.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>(a+b)/2</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>(b−a)²/12</b>
+</div>
+</div>
+</div>
+<div class="ld-teach">
+<p>For Uniform[2,8], the mean is 5. Its second raw moment is (4+16+64)/3=28, so variance is 28−25=3. Equivalently, write X=2+6U for U uniform on [0,1].</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Integrate x and x², then subtract the squared mean</span>
+</summary>
+<div class="ld-detail-body">
 <p>For a&lt;b, the density is 1/(b−a) on [a,b] and zero elsewhere. Direct integration gives:</p>
 <div class="math-block">\[\mathbb E[X]=\frac1{b-a}\int_a^bx\,dx=\frac{a+b}{2},\qquad\mathbb E[X^2]=\frac1{b-a}\int_a^bx^2\,dx=\frac{a^2+ab+b^2}{3}.\]</div>
 <p>Subtracting the squared mean yields:</p>
 <div class="math-block">\[\operatorname{Var}(X)=\frac{a^2+ab+b^2}{3}-\frac{(a+b)^2}{4}=\frac{(b-a)^2}{12}.\]</div>
 <p>The interval length is squared in the numerator. Endpoint inclusion does not alter a density-based probability.</p>
+</div>
+</details>
+</section>
+<section class="prob-family" id="moment-family-geometric" aria-label="Geometric · support {1,2,…}, independent trials with 0 &lt; p ≤ 1">
 <h3>Geometric: trial number of the first success</h3>
+<div class="ld-definition">
+<div class="ld-label">Geometric · support {1,2,…}, independent trials with 0 &lt; p ≤ 1</div>
+<p>X counts the trial number of the first success, including that successful trial.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>1/p</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>(1−p)/p²</b>
+</div>
+</div>
+</div>
+<div class="ld-teach">
+<div class="prob-trial-visual" role="group" aria-label="One realization has failure, failure, failure, success: trial count four, failures before success three.">
+<div>
+<span>Trial 1</span>
+<b>F</b>
+</div>
+<div>
+<span>Trial 2</span>
+<b>F</b>
+</div>
+<div>
+<span>Trial 3</span>
+<b>F</b>
+</div>
+<div>
+<span>Trial 4</span>
+<b>S</b>
+</div>
+</div>
+<p>One realization: F, F, F, S has X=4 and X−1=3 failures. With p=1/4, the expected trial count is 4 and the expected failure count is 3; both have variance 12. A particular realization and an expected value are different objects.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Differentiate the geometric series to obtain weighted sums</span>
+</summary>
+<div class="ld-detail-body">
 <p>Use support k=1,2,… and success probability 0&lt;p≤1. With q=1−p, the PMF is pqᵏ⁻¹: k−1 failures followed by a success. The geometric series \(S(q)=\sum_{j=0}^{\infty}q^j=1/(1-q)\) normalizes this PMF.</p>
 <p>Differentiate the series for 0≤q&lt;1: S′(q)=1/(1−q)² and S″(q)=2/(1−q)³. These derivatives provide the needed weighted sums:</p>
 <div class="math-block">\[\begin{aligned}\mathbb E[X]&amp;=p\sum_{k=1}^{\infty}kq^{k-1}=\frac{p}{(1-q)^2}=\frac1p,\\\mathbb E[X(X-1)]&amp;=pqS''(q)=\frac{2q}{p^2},\\\operatorname{Var}(X)&amp;=\mathbb E[X(X-1)]+\mathbb E[X]-\mathbb E[X]^2=\frac{1-p}{p^2}.\end{aligned}\]</div>
 <p>The first sum follows by differentiating \(\sum_{k\ge1}q^k=q/(1-q)\); it equals S′(q). A different geometric convention counts failures before success and starts at zero. Its mean is (1−p)/p, while its variance is unchanged. Check the support before using either mean.</p>
+<p>The power series may be differentiated inside its radius of convergence, |q|&lt;1. Multiplying its derivative by p supplies the mean; the second derivative supplies the factorial moment E[X(X−1)]. Then X²=X(X−1)+X converts it to a raw second moment. At p=1 the first trial succeeds with certainty, giving mean 1 and variance 0.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>A book defines G as the number of failures before success. How do the mean and variance change from the trial-count convention?</p>
+<details class="ld-answer" data-solution id="prob-moment-check-geometric-convention">
+<summary>Check your reasoning</summary>
+<p>G=X−1. Therefore E[G]=1/p−1=(1−p)/p and Var(G)=Var(X)=(1−p)/p². Subtracting one shifts the distribution without changing its spread.</p>
+</details>
+</div>
+</section>
+<section class="prob-family" id="moment-family-exponential" aria-label="Exponential · support x ≥ 0, rate λ &gt; 0">
 <h3>Exponential: a nonnegative waiting time</h3>
+<div class="ld-definition">
+<div class="ld-label">Exponential · support x ≥ 0, rate λ &gt; 0</div>
+<p>A continuous nonnegative waiting-time model. The rate λ has inverse-time units; its reciprocal has time units.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>1/λ</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>1/λ²</b>
+</div>
+</div>
+</div>
+<div class="ld-teach">
+<p>At rate 2 per minute, mean waiting time is 0.5 minutes and variance is 0.25 minutes². The chance of waiting more than one minute is e⁻²≈0.1353.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Integrate by parts and keep the boundary terms</span>
+</summary>
+<div class="ld-detail-body">
 <p>Integration by parts is the product rule used backward: \(\int u\,dv=uv-\int v\,du\). It lets us move a derivative from a polynomial factor to an exponential factor when computing moments.</p>
 <p>With rate λ&gt;0, the density is \(\lambda e^{-\lambda x}\) for x≥0. Rate has inverse-time units; it is not the mean. Integration by parts, with \(u=x\), \(dv=\lambda e^{-\lambda x}\,dx\), and \(v=-e^{-\lambda x}\), gives:</p>
 <div class="math-block">\[\mathbb E[X]=\int_0^{\infty}x\lambda e^{-\lambda x}\,dx=\left[-xe^{-\lambda x}\right]_0^{\infty}+\int_0^{\infty}e^{-\lambda x}\,dx=\frac1\lambda.\]</div>
 <p>Another integration by parts gives \(\mathbb E[X^2]=(2/\lambda)\mathbb E[X]=2/\lambda^2\). Therefore Var(X)=1/λ². Its survival probability is P(X&gt;t)=\(e^{-\lambda t}\) for t≥0. Consequently P(X&gt;s+t|X&gt;s)=\(e^{-\lambda t}\): the remaining waiting-time distribution does not depend on how long has already elapsed in this model.</p>
+<p>The boundary term xe⁻λx tends to zero as x tends to infinity. A second integration by parts gives E[X²]=2/λ² before subtracting the mean squared. For the memoryless identity, use nonnegative elapsed time s and additional time t, and divide survival probabilities: e⁻λ(s+t)/e⁻λs=e⁻λt.</p>
+</div>
+</details>
+</section>
+<section class="prob-family" id="moment-family-pareto" aria-label="Pareto · support x ≥ b, shape α &gt; 0, scale b &gt; 0">
 <h3>Pareto: moments need not exist</h3>
+<div class="ld-definition">
+<div class="ld-label">Pareto · support x ≥ b, shape α &gt; 0, scale b &gt; 0</div>
+<p>Check convergence before substituting parameters. A formula derived under a condition does not extend through a divergent integral.</p>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Expected value</span>
+<b>αb/(α−1), α &gt; 1</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>αb²/[(α−1)²(α−2)], α &gt; 2</b>
+</div>
+</div>
+</div>
+<div class="prob-tail-regimes">
+<div>
+<strong>0 &lt; α ≤ 1</strong>
+<span>The mean is infinite. The usual variance around a finite mean is not defined.</span>
+</div>
+<div>
+<strong>1 &lt; α ≤ 2</strong>
+<span>The mean exists; the second moment and variance diverge.</span>
+</div>
+<div>
+<strong>α &gt; 2</strong>
+<span>Both the mean and variance are finite.</span>
+</div>
+</div>
+<div class="ld-teach">
+<p>With b=2 and α=3, the mean is 3 and variance is 3. At α=1.5 with the same b, the mean becomes 6 and the variance diverges. A negative result from blindly substituting into the variance expression would signal an invalid use of its derivation.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Use the tail integral to determine when each moment exists</span>
+</summary>
+<div class="ld-detail-body">
 <p>Use shape α&gt;0, scale b&gt;0, and support x≥b. The density is \(f(x)=\alpha b^\alpha x^{-(\alpha+1)}\). To see both the moment formula and its restriction, integrate the general r-th power:</p>
 <div class="math-block">\[\mathbb E[X^r]=\alpha b^\alpha\int_b^{\infty}x^{r-\alpha-1}\,dx=\frac{\alpha b^r}{\alpha-r}\quad\text{when }r&lt;\alpha.\]</div>
 <p>The upper endpoint converges only when r−α&lt;0. In particular:</p>
 <div class="math-block">\[\mathbb E[X]=\frac{\alpha b}{\alpha-1}\quad(\alpha&gt;1),\qquad\operatorname{Var}(X)=\frac{\alpha b^2}{(\alpha-1)^2(\alpha-2)}\quad(\alpha&gt;2).\]</div>
 <p>The variance formula follows by subtracting the squared mean from \(\mathbb E[X^2]=\alpha b^2/(\alpha-2)\). For 1&lt;α≤2, the mean is finite but the second moment and variance diverge. For α≤1, the mean itself is infinite, so the usual finite-mean variance is not defined. A finite sample can still have an ordinary numerical average; that does not make the population mean finite.</p>
-<div class="stop-point"><strong>Checkpoint:</strong> For each family, give its support, explain the parameter, and derive its mean and variance. Memorizing a table without those conditions is especially misleading for geometric and Pareto distributions.</div>
-
+<p>The integrand for the r-th moment behaves like x^(r−α−1). Its integral at infinity converges precisely when r−α−1&lt;−1, or r&lt;α. At r=α the integral has logarithmic divergence, so equality is not a finite-moment case.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For shape α=2 and scale b=1, is the mean finite? Can the usual finite variance formula be used?</p>
+<details class="ld-answer" data-solution id="prob-moment-check-pareto-condition">
+<summary>Check your reasoning</summary>
+<p>The mean is 2 because α&gt;1. The second moment diverges at α=2, so variance is infinite; the finite-variance formula requires α&gt;2. A finite dataset can still have a finite numerical average and sample variance.</p>
+</details>
+</div>
+</section>
+<div class="ld-meaning">
+<strong>The seventh family continues in section 9.</strong>
+<p>For a nonsingular scalar normal N(μ,σ²), the support is the real line, the mean is μ and variance is σ² with σ&gt;0. <a href="#normal">The next section derives its normalization and moments</a>; its full material remains available.</p>
+</div>
+<div class="stop-point">
+<strong>Checkpoint:</strong> For each family, give its support, explain the parameter, and derive its mean and variance. Memorizing a table without those conditions is especially misleading for geometric and Pareto distributions.</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> For each family: state support, parameter meaning, the derivation route, and the conditions that make its moments finite.</div>
+</section>
+<section class="ld-unit" aria-labelledby="covariance">
 <h2 id="covariance">8. Covariance matrices: the linear-algebra bridge</h2>
 <p class="section-source">Lecture connection: covariance identities and the covariance matrix used by the multivariate Gaussian.</p>
+<p class="ld-lead">Covariance keeps the cross terms that individual variances miss. A covariance matrix records the variance of every fixed weighted sum.</p>
+<div class="ld-definition">
+<div class="ld-label">Covariance and correlation · finite second moments</div>
+<div class="math-block">\[\operatorname{Cov}(X,Y)=\mathbb E[(X-\mu_X)(Y-\mu_Y)]\]</div>
+<p>Same-sign deviations contribute positively; opposite-sign deviations contribute negatively. Correlation divides by both standard deviations and is defined only when both variances are positive.</p>
+</div>
+<div class="ld-teach">
+<p>In the initial joint workbench, R and L are binary indicators, so E[R]=0.30, E[L]=0.25, and E[RL]=0.18. Their covariance is \(0.18-0.30(0.25)=0.105\). This is why an independence assumption would lose information about the table.</p>
+<div class="prob-matrix-example">
+<div class="table-scroll" tabindex="0">
+<table class="prob-matrix">
+<caption>Covariance matrix for the rain/lateness probability model</caption>
+<thead>
+<tr>
+<th scope="col">Σ</th>
+<th scope="col">R</th>
+<th scope="col">L</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">R</th>
+<td class="prob-diagonal" data-moment-value="variance-r">0.21<small>Var(R)</small>
+</td>
+<td class="prob-cross" data-moment-value="covariance-rl">0.105<small>Cov(R,L)</small>
+</td>
+</tr>
+<tr>
+<th scope="row">L</th>
+<td class="prob-cross">0.105<small>Cov(L,R)</small>
+</td>
+<td class="prob-diagonal" data-moment-value="variance-l">0.1875<small>Var(L)</small>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Diagonal entries describe each variable’s spread. Matching off-diagonal entries describe how the pair varies together.</p>
+</div>
+<div class="ld-facts">
+<div>
+<strong>Var(R)</strong>
+<span>0.30×0.70</span>
+<b>0.21</b>
+</div>
+<div>
+<strong>Var(L)</strong>
+<span>0.25×0.75</span>
+<b>0.1875</b>
+</div>
+<div>
+<strong>Cov(R,L)</strong>
+<span>0.18−0.30×0.25</span>
+<b>0.105</b>
+</div>
+</div>
+<p>Correlation is 0.105 / √(0.21×0.1875)≈0.5292. Treat the table proportions as the specified probability model here; these are distribution moments, not a separate unbiased sample-covariance estimate.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Why correlation lies between −1 and 1</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Correlation rescales covariance</h3>
 <p>For positive finite variances, define \(\rho=\operatorname{Cov}(X,Y)/(\sigma_X\sigma_Y)\). It lies between −1 and 1 and removes the units of covariance. If either variance is zero, this ordinary correlation expression is undefined.</p>
 <p>Why is the magnitude bounded by one? For centered variables U=X−μₓ and V=Y−μᵧ, the expected square E[(U−tV)²] is nonnegative for every t. Minimizing that quadratic over t gives \(\operatorname{Cov}(X,Y)^2\le\operatorname{Var}(X)\operatorname{Var}(Y)\). Division by the positive standard deviations yields |ρ|≤1.</p>
+<div class="math-block">\[\mathbb E[(U-tV)^2]=\operatorname{Var}(X)-2t\operatorname{Cov}(X,Y)+t^2\operatorname{Var}(Y)\]</div>
+<p>For U=X−μₓ and V=Y−μᵧ, choose t=Cov(X,Y)/Var(Y), using Var(Y)&gt;0. Nonnegativity of this expected square yields Cov(X,Y)²≤Var(X)Var(Y). Divide by the two positive variances to get |ρ|≤1.</p>
+</div>
+</details>
+<div class="ld-caution">
+<strong>Zero covariance does not establish independence.</strong>
+<p>A curved deterministic relation can have cancelling positive and negative centered products. The full joint distribution contains more information than these moments.</p>
+</div>
+<div class="prob-covariance-plots ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/probability-covariance-linear.svg" target="_blank" rel="noopener" aria-label="Open linear-dependence diagram at full size">
+<img src="assets/ml-notes/probability-covariance-linear.svg" width="500" height="370" loading="lazy" alt="For X uniform on minus one to one and Y equal to X, the graph is an increasing line; covariance is one third and correlation is one.">
+</a>
+<figcaption>Y=X: both variables vary together linearly. Covariance is 1/3 and correlation is 1.</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/probability-covariance-nonlinear.svg" target="_blank" rel="noopener" aria-label="Open nonlinear-dependence diagram at full size">
+<img src="assets/ml-notes/probability-covariance-nonlinear.svg" width="500" height="370" loading="lazy" alt="For X uniform on minus one to one and Y equal to X squared, the graph is a parabola; covariance and correlation are zero despite Y being fully determined by X.">
+</a>
+<figcaption>Y=X²: Y is still completely determined by X, but covariance and correlation are zero. Curves show the exact relationships; dots mark illustrative positions.</figcaption>
+</figure>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Counterexample</span>
+<span>Use symmetry to prove zero covariance without independence</span>
+</summary>
+<div class="ld-detail-body">
+<p>Independent variables have covariance zero, but dependent variables can also have covariance zero. For X uniform on [−1,1] and Y=X², symmetry gives E[X]=E[X³]=0, so Cov(X,Y)=0, yet Y is completely determined by X. Zero covariance rules out a linear association measured by this moment, not every form of dependence.</p>
+<p>For X uniform on [−1,1], E[X]=0, E[X²]=1/3 and E[X³]=0. With Y=X², Cov(X,Y)=E[X³]−E[X]E[X²]=0. Yet knowing X fixes Y. Here Var(Y)=1/5−1/9=4/45&gt;0, so correlation is defined and equals zero.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Covariance matrix · one entry for each pair</div>
+<div class="math-block">\[\Sigma_{ij}=\operatorname{Cov}(X_i,X_j)\]</div>
+<p>For d variables in a column vector, Σ is d×d and symmetric. Its diagonal entries are variances. Off-diagonal entries carry covariance, including its sign.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Dimensions</span>
+<span>Read the outer product as a matrix of centered products</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Collect related variables into a vector</h3>
 <p>A column vector \(X=[X_1,\ldots,X_d]^\top\) has mean \(\mu=\mathbb E[X]\in\mathbb R^d\). Its covariance matrix is:</p>
 <div class="math-block">\[\Sigma=\mathbb E[(X-\mu)(X-\mu)^\top],\qquad\Sigma_{ij}=\operatorname{Cov}(X_i,X_j).\]</div>
 <p>The outer product of a d×1 column and a 1×d row gives a d×d matrix. Diagonal entries are variances; off-diagonal entries are covariances. The transpose exchanges rows and columns. A dot product \(v^\top w\) produces a scalar; an outer product \(vw^\top\) produces a matrix. Tracking these dimensions prevents many Gaussian-formula errors.</p>
+</div>
+</details>
+<div class="ld-teach">
+<div class="ld-pipeline">
+<div>
+<strong>Choose fixed weights v</strong>
+<span>A d×1 list of coefficients.</span>
+</div>
+<div>
+<strong>Form vᵀX</strong>
+<span>One scalar weighted sum of the variables.</span>
+</div>
+<div>
+<strong>Read its variance</strong>
+<span>The scalar vᵀΣv must be nonnegative.</span>
+</div>
+</div>
+<p>For the rain/lateness model, Var(R+L)=0.21+0.1875+2×0.105=0.6075. For R−L, the cross term changes sign: variance is 0.1875. Omitting covariance would give 0.3975 for both and miss the dependence.</p>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Positive semidefinite · every projected variance is nonnegative</div>
+<div class="math-block">\[v^\top\Sigma v=\operatorname{Var}(v^\top X)\ge0\]</div>
+<p>This must hold for every fixed v. Positive diagonal entries alone do not guarantee a valid covariance matrix. Positive definiteness additionally requires strict positivity for every nonzero v.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Turn the quadratic form into an expected square</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Why covariance is positive semidefinite</h3>
 <p>Covariance is symmetric. For any deterministic column vector v:</p>
 <div class="math-block">\[v^\top\Sigma v=\mathbb E\!\left[\big(v^\top(X-\mu)\big)^2\right]=\operatorname{Var}(v^\top X)\ge0.\]</div>
 <p>This is <strong>positive semidefiniteness</strong>. It is positive definite when the expression is strictly positive for every nonzero v. A positive-definite matrix has a positive determinant and an inverse. A singular covariance can occur when a nontrivial linear combination has zero variance, as with X₂=2X₁.</p>
+<p>First center X. Then vᵀ(X−μ) is a scalar, and multiplying it by its transpose squares that scalar. Move the fixed v through expectation: vᵀE[(X−μ)(X−μ)ᵀ]v. This is a variance, so it cannot be negative. If a nonzero v gives zero, that projection is constant and the covariance is singular.</p>
+</div>
+</details>
+<div class="ld-teach">
+<div class="prob-spread-compare">
+<div>
+<strong>Reject an impossible matrix</strong>
+<div class="math-block">\[A=\begin{bmatrix}1&amp;1.5\\1.5&amp;1\end{bmatrix}\]</div>
+<p>For v=(1,−1), vᵀAv=1+1−3=−1. A variance cannot be negative, so A is not a covariance matrix.</p>
+</div>
+<div>
+<strong>Allow a singular covariance</strong>
+<div class="math-block">\[B=\begin{bmatrix}1&amp;2\\2&amp;4\end{bmatrix}\]</div>
+<p>This is possible when X₂=2X₁ and Var(X₁)=1. For v=(2,−1), vᵀBv=0: the weighted sum is constant. B has no inverse.</p>
+</div>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Determinants, inverse conditions and covariance geometry</span>
+</summary>
+<div class="ld-detail-body">
 <p>For a symmetric 2×2 covariance \(\Sigma=[a,c;c,b]\), positive definiteness requires a&gt;0 and ab−c²&gt;0; then b&gt;0 follows. In standard-deviation/correlation form:</p>
 <div class="math-block">\[\Sigma=\begin{bmatrix}\sigma_1^2&amp;\rho\sigma_1\sigma_2\\\rho\sigma_1\sigma_2&amp;\sigma_2^2\end{bmatrix},\qquad |\Sigma|=\sigma_1^2\sigma_2^2(1-\rho^2).\]</div>
 <p>With positive σ₁,σ₂, |ρ|&lt;1 gives the nonsingular case. |ρ|=1 collapses a dimension. Correlation changes orientation and dependence; unequal diagonal variances can stretch the axes even when correlation is zero.</p>
@@ -1162,6 +1822,109 @@
 <p>The inverse reverses an invertible linear transformation. The determinant describes its signed volume scaling; its absolute value is the volume factor. For the 2×2 matrix above:</p>
 <div class="math-block">\[\Sigma^{-1}=\frac1{ab-c^2}\begin{bmatrix}b&amp;-c\\-c&amp;a\end{bmatrix}.\]</div>
 <p>Later, Σ⁻¹ will measure a direction's squared distance relative to spread, while √|Σ| controls the Gaussian density's normalization volume. These are connected but distinct functions.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Why can a singular covariance be valid even though the ordinary full-dimensional Gaussian density uses an inverse and a determinant?</p>
+<details class="ld-answer" data-solution id="prob-moment-check-projection">
+<summary>Check your reasoning</summary>
+<p>A covariance may have zero variation in a nonzero direction and remain positive semidefinite. It then has no inverse. An ordinary full-dimensional Gaussian density requires positive definiteness; a singular Gaussian can instead live on a lower-dimensional set. The next Gaussian sections make that distinction explicit.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Compute covariance, distinguish it from independence, track matrix dimensions and interpret positive semidefiniteness as a variance constraint.</div>
+</section>
+<section class="ld-revision" id="prob-moments-revision" aria-labelledby="prob-moments-revision-title">
+<div class="ld-label">Revision sheet · sections 6–8</div>
+<h3 id="prob-moments-revision-title">Recall the conditions with the formulas</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>Mean and variance</strong>
+<p>Average values for E[X]; average their squares for E[X²]. Var(X)=E[X²]−E[X]². State existence conditions and squared units.</p>
+</div>
+<div>
+<strong>Linearity and dependence</strong>
+<p>Linearity needs finite expectations, not independence. Variance of aX+bY includes 2abCov(X,Y). A shift changes no variance.</p>
+</div>
+<div>
+<strong>Count models</strong>
+<p>Bernoulli: one indicator. Binomial: n independent Bernoulli(p) trials. Geometric: independent trials until success; count trials or failures explicitly.</p>
+</div>
+<div>
+<strong>Continuous models</strong>
+<p>Uniform: interval endpoints set the support. Exponential: λ is a rate, mean 1/λ. Normal: μ and σ², continued in section 9.</p>
+</div>
+<div>
+<strong>Pareto restrictions</strong>
+<p>Shape α, lower bound b. The r-th moment is finite for r&lt;α. Mean needs α&gt;1; finite variance needs α&gt;2. Check strict inequalities.</p>
+</div>
+<div>
+<strong>Covariance and matrices</strong>
+<p>Σ is symmetric d×d; diagonal variances, off-diagonal covariances. Correlation needs positive finite variances. Zero covariance does not generally mean independence.</p>
+</div>
+<div>
+<strong>Projection test</strong>
+<div class="math-block">\[v^\top\Sigma v=\operatorname{Var}(v^\top X)\ge0\]</div>
+<p>Every covariance is positive semidefinite. Positive definite means every nonzero projection has positive variance. Singular covariances can be valid but have no inverse.</p>
+</div>
+</div>
+</section>
+<section class="ld-review" id="prob-moments-review" aria-labelledby="prob-moments-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="prob-moments-review-title">Choose the identity, then justify it</h3>
+<p>Try without the formulas open. Give the method, its conditions and the interpretation.</p>
+<ol>
+<li>X takes −1 and 2 with probabilities 2/3 and 1/3. Find its mean and variance, then those of 3−2X.</li>
+<li>Four indicators each have success probability 1/4. Explain why the mean count is fixed while the variance is not. Compare independence with four copies of one indicator.</li>
+<li>For Uniform[2,8], derive the mean and variance from U uniform on [0,1].</li>
+<li>At geometric success probability 1/4, compare counting trials and failures. For an exponential rate of 2 per minute, state mean and variance with units.</li>
+<li>A mixture puts probability 0.4 at zero and 0.6 on Uniform(0,2). Calculate E[X], E[X²] and Var(X).</li>
+<li>For Pareto scale b=2, compare shape α=3 with α=1.5. Can a finite sample variance prove a finite population variance?</li>
+<li>Give a dependent pair with zero covariance. Explain why its relation is still visible in the joint distribution.</li>
+<li>Reject A=[[1,1.5],[1.5,1]] using a projected variance. Explain why B=[[1,2],[2,4]] can be a valid singular covariance.</li>
+</ol>
+<details class="ld-answer" data-solution>
+<summary>Review answers and reasoning</summary>
+<ol>
+<li>E[X]=0, E[X²]=2, Var(X)=2. Thus E[3−2X]=3 and Var(3−2X)=8.</li>
+<li>Linearity fixes the mean at 1. Independence gives variance 3/4; four copies give variance 3. Covariance terms differ.</li>
+<li>X=2+6U. E[U]=1/2 and Var(U)=1/12, so mean 5 and variance 36/12=3.</li>
+<li>Trial-count geometric: mean 4, variance 12. Failure-count: mean 3, variance 12. Exponential: mean 0.5 minutes, variance 0.25 minutes².</li>
+<li>E[X]=0.6×1=0.6; E[X²]=0.6×(4/3)=0.8; variance 0.8−0.36=0.44. The atom contributes zero to these two raw moments, while the continuous part is weighted by 0.6.</li>
+<li>At α=3: mean 3, variance 3. At α=1.5: mean 6, variance diverges. Finite sample arithmetic does not establish existence of a population moment.</li>
+<li>X uniform on [−1,1], Y=X². Symmetry gives Cov(X,Y)=0, but X determines Y. Both variances are positive, so correlation also exists and is zero.</li>
+<li>For v=(1,−1), vᵀAv=−1, impossible for a variance. For B with X₂=2X₁, v=(2,−1) gives a constant projection with variance zero; the matrix is valid and singular.</li>
+</ol>
+<p>
+<strong>Self-check:</strong> support and parameter convention stated, the necessary moments exist, dependence handled correctly, and result units interpreted.</p>
+</details>
+<details class="ld-record-disclosure">
+<summary>Save your progress or a return date</summary>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your self-reported learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> I followed the explanations and derivations.</label>
+<label>
+<input type="checkbox" data-learning-progress="attempted"> I attempted a fresh calculation before revealing feedback.</label>
+<label>
+<input type="checkbox" data-learning-progress="recalled"> On a later visit, I reconstructed the ideas without looking.</label>
+</fieldset>
+<p class="ld-small">These are your own reports. Viewing an answer does not establish mastery.</p>
+<div class="ld-review-buttons">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p data-learning-review-status aria-live="polite">Choose a suggested return gap after trying the questions.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this block’s record</button>
+</div>
+</details>
+</section>
+<p class="ld-next">Next: <a href="#normal">derive the normal distribution and build Gaussian geometry</a>. <a href="#probability-moments-path">Back to this block’s controls ↑</a>
+</p>
+</section>
 
 <h2 id="normal">9. The normal distribution from its normalization to its moments</h2>
 <p class="section-source">Lecture connection: the normal-density plot and the requested mean/variance derivation.</p>
