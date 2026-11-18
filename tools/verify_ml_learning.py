@@ -82,7 +82,8 @@ assert len(re.findall('data-learning-pilot',s))==5
 assert len(re.findall('class="exercise"',s))==26
 assert len(set(re.findall('data-learning-key="([^"]+)"',s)))==5
 for i in range(1,27):assert 'tree-practice-'+str(i).zfill(2) in page.ids
-for name in ['cnn-foundations','cnn-training','probability-gaussians','statistical-regression-gda','naive-bayes','factor-models-pca','machine-learning']:
+# Probability now has its own source-preservation audit in verify_ml_probability_learning.py.
+for name in ['cnn-foundations','cnn-training','statistical-regression-gda','naive-bayes','factor-models-pca','machine-learning']:
  original=subprocess.check_output(['git','show','0963f5e:writing/'+name+'.html'],cwd=root)
  assert original==(root/'writing'/f'{name}.html').read_bytes(),('Unrelated learning page changed',name)
 print('Exact new examples pass; five independent blocks, 22 teaching units and all 26 original exercises are present.')

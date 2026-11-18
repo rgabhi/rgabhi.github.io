@@ -1,83 +1,1087 @@
 <!doctype html>
-<html lang="en" data-accent="blue"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Probability and multivariate Gaussians — Abhinav Gupta</title><meta name="description" content="Probability explained from outcomes and events through distribution moments, covariance, multivariate Gaussian geometry, conditioning, transformations, and worked practice."><link rel="canonical" href="https://rgabhi.github.io/writing/probability-gaussians.html"><meta property="og:type" content="article"><meta property="og:title" content="Probability and multivariate Gaussians — Abhinav Gupta"><meta property="og:description" content="Probability explained from outcomes and events through distribution moments, covariance, multivariate Gaussian geometry, conditioning, transformations, and worked practice."><meta property="og:url" content="https://rgabhi.github.io/writing/probability-gaussians.html"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/portrait.jpg">
-<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="assets/article-notes.css"><link rel="stylesheet" href="assets/ml-notes.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script defer src="assets/vendor/katex/katex.min.js"></script><script defer src="assets/vendor/katex/contrib/auto-render.min.js"></script><script defer src="assets/article-guide.js"></script><script defer src="assets/ml-notes.js"></script><script defer src="assets/ml-probability.js?v=2"></script></head><body>
+<html lang="en" data-accent="blue">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Probability and multivariate Gaussians — Abhinav Gupta</title>
+<meta name="description" content="Probability explained from outcomes and events through distribution moments, covariance, multivariate Gaussian geometry, conditioning, transformations, and worked practice.">
+<link rel="canonical" href="https://rgabhi.github.io/writing/probability-gaussians.html">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Probability and multivariate Gaussians — Abhinav Gupta">
+<meta property="og:description" content="Probability explained from outcomes and events through distribution moments, covariance, multivariate Gaussian geometry, conditioning, transformations, and worked practice.">
+<meta property="og:url" content="https://rgabhi.github.io/writing/probability-gaussians.html">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/portrait.jpg">
+<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script>
+<link rel="stylesheet" href="assets/fonts/fonts.css">
+<link rel="stylesheet" href="assets/article-notes.css">
+<link rel="stylesheet" href="assets/ml-notes.css">
+<link rel="stylesheet" href="assets/ml-learning.css">
+<link rel="stylesheet" href="assets/ml-probability-learning.css">
+<link rel="stylesheet" href="assets/vendor/katex/katex.min.css">
+<script defer src="assets/vendor/katex/katex.min.js">
+</script>
+<script defer src="assets/vendor/katex/contrib/auto-render.min.js">
+</script>
+<script defer src="assets/article-guide.js">
+</script>
+<script defer src="assets/ml-notes.js">
+</script>
+<script defer src="assets/ml-probability.js?v=2">
+</script>
+<script defer src="assets/ml-learning.js">
+</script>
+</head>
+<body>
 <a class="skip-link" href="#article">Skip to notes</a>
-<header class="topbar"><a class="brand" href="../index.html">Abhinav Gupta<span class="brand-dot">.</span></a><div class="header-tools"><nav class="links" aria-label="Article links"><a href="../index.html#writing">Writing</a><a href="machine-learning.html">ML notes</a><a href="#references">Sources</a></nav><div class="palette-toggle" role="group" aria-label="Article colour palette"><button type="button" data-accent-option="blue" aria-pressed="true" aria-label="Blue palette" title="Blue palette"><span class="palette-dot blue" aria-hidden="true"></span></button><button type="button" data-accent-option="orange" aria-pressed="false" aria-label="Orange palette" title="Orange palette"><span class="palette-dot orange" aria-hidden="true"></span></button></div></div></header><div class="progress" aria-hidden="true"></div>
-<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#ml-context"><span>01</span>Probability in ML</a><a href="#outcomes"><span>02</span>Outcomes &amp; events</a><a href="#distributions"><span>03</span>Mass, density &amp; CDFs</a><a href="#conditioning"><span>04</span>Joint &amp; conditional</a><a href="#joint-lab"><span>05</span>Joint-table workbench</a><a href="#moments"><span>06</span>Expectation &amp; variance</a><a href="#families"><span>07</span>Distribution derivations</a><a href="#covariance"><span>08</span>Covariance &amp; matrices</a><a href="#normal"><span>09</span>Normal normalization</a><a href="#multivariate"><span>10</span>Joint Gaussian density</a><a href="#geometry"><span>11</span>Contours &amp; distance</a><a href="#joint-gaussian"><span>12</span>Joint-Gaussian pitfalls</a><a href="#gaussian-conditioning"><span>13</span>Gaussian conditioning</a><a href="#gaussian-lab"><span>14</span>Gaussian workbench</a><a href="#operations"><span>15</span>Gaussian operations</a><a href="#connections"><span>16</span>Connections to ML</a><a href="#practice"><span>17</span>Eighteen practice problems</a><a href="#interviews"><span>18</span>Interview explanations</a><a href="#revision"><span>19</span>Revision &amp; checklist</a><a href="#references"><span>20</span>Sources &amp; continuation</a></nav><div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div></aside><main id="article"><p class="breadcrumb"><a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Probability &amp; Gaussians</p>
+<header class="topbar">
+<a class="brand" href="../index.html">Abhinav Gupta<span class="brand-dot">.</span>
+</a>
+<div class="header-tools">
+<nav class="links" aria-label="Article links">
+<a href="../index.html#writing">Writing</a>
+<a href="machine-learning.html">ML notes</a>
+<a href="#references">Sources</a>
+</nav>
+<div class="palette-toggle" role="group" aria-label="Article colour palette">
+<button type="button" data-accent-option="blue" aria-pressed="true" aria-label="Blue palette" title="Blue palette">
+<span class="palette-dot blue" aria-hidden="true">
+</span>
+</button>
+<button type="button" data-accent-option="orange" aria-pressed="false" aria-label="Orange palette" title="Orange palette">
+<span class="palette-dot orange" aria-hidden="true">
+</span>
+</button>
+</div>
+</div>
+</header>
+<div class="progress" aria-hidden="true">
+</div>
+<div class="layout">
+<aside class="rail" aria-label="Article navigation">
+<div class="eyebrow">On this page</div>
+<nav>
+<a href="#probability-language-title">
+<span>Learn</span>Probability language</a>
+<a href="#ml-context">
+<span>01</span>Probability in ML</a>
+<a href="#outcomes">
+<span>02</span>Outcomes &amp; events</a>
+<a href="#distributions">
+<span>03</span>Mass, density &amp; CDFs</a>
+<a href="#conditioning">
+<span>04</span>Joint &amp; conditional</a>
+<a href="#joint-lab">
+<span>05</span>Joint-table workbench</a>
+<a href="#moments">
+<span>06</span>Expectation &amp; variance</a>
+<a href="#families">
+<span>07</span>Distribution derivations</a>
+<a href="#covariance">
+<span>08</span>Covariance &amp; matrices</a>
+<a href="#normal">
+<span>09</span>Normal normalization</a>
+<a href="#multivariate">
+<span>10</span>Joint Gaussian density</a>
+<a href="#geometry">
+<span>11</span>Contours &amp; distance</a>
+<a href="#joint-gaussian">
+<span>12</span>Joint-Gaussian pitfalls</a>
+<a href="#gaussian-conditioning">
+<span>13</span>Gaussian conditioning</a>
+<a href="#gaussian-lab">
+<span>14</span>Gaussian workbench</a>
+<a href="#operations">
+<span>15</span>Gaussian operations</a>
+<a href="#connections">
+<span>16</span>Connections to ML</a>
+<a href="#practice">
+<span>17</span>Eighteen practice problems</a>
+<a href="#interviews">
+<span>18</span>Interview explanations</a>
+<a href="#revision">
+<span>19</span>Revision &amp; checklist</a>
+<a href="#references">
+<span>20</span>Sources &amp; continuation</a>
+</nav>
+<div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div>
+</aside>
+<main id="article">
+<p class="breadcrumb">
+<a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Probability &amp; Gaussians</p>
 <div class="eyebrow hero-kicker">Machine learning notes · 03</div>
 <h1>Probability and<br>multivariate Gaussians</h1>
 <p class="chapter-deck">Start with outcomes and events. Build distributions, expectations, and covariance, then see how a Gaussian turns those ideas into geometry and prediction.</p>
 <div class="chapter-meta">Abhinav Gupta · October 2026 · Foundations, derivations &amp; practice</div>
-<div class="chapter-tools"><a href="#learning-goals">Start learning</a><a href="#practice">Practice</a><a href="#revision">Quick revision</a><button type="button" data-toggle-solutions>Reveal solutions</button><button type="button" data-print>Print with solutions</button></div><a class="resume-link" data-resume hidden></a>
+<div class="ld-pilot-entry">
+<a href="#probability-language-path">Learn probability: from outcomes to Bayes’ rule</a>
+<span>Sections 1–5 · guided examples, full explanations and return-review questions.</span>
+</div>
+<div class="chapter-tools">
+<a href="#learning-goals">Start learning</a>
+<a href="#practice">Practice</a>
+<a href="#revision">Quick revision</a>
+<button type="button" data-toggle-solutions>Reveal solutions</button>
+<button type="button" data-print>Print with solutions</button>
+</div>
+<a class="resume-link" data-resume hidden>
+</a>
 <p>In the <a href="cnn-training.html">CNN training chapter</a>, probability described a dropout mask and statistics described a batch of activations. Here those ideas become a language for modeling data itself. We will distinguish what a random quantity can do, how its uncertainty is described, and what changes after observing related information.</p>
 <p>The chapter combines the probability refresher and the multivariate-Gaussian continuation. It includes the distribution table, handwritten identities, Gaussian operations, and the distinction between marginal and conditional distributions. The next lecture starts regression and Gaussian classification; parameter estimation for those models belongs to the next chapter.</p>
-<div class="learning-goals" id="learning-goals"><p><strong>What you should be able to do afterward</strong></p><ul><li>Distinguish outcomes, events, random variables, probability masses, densities, and CDFs.</li><li>Calculate joint, marginal, and conditional quantities and apply Bayes' rule.</li><li>Derive expectations, variances, covariance identities, and the moments of the lecture's distribution families.</li><li>Read the Gaussian density using matrix dimensions, covariance, determinants, and Mahalanobis distance.</li><li>Derive Gaussian marginals, conditionals, affine transformations, sums, products of density functions, and the canonical parameterization.</li><li>Identify when independence, positive definiteness, finite moments, or joint Gaussianity is actually required.</li></ul></div>
-<p><strong>Reading route:</strong> sections 1–5 establish the probability language; 6–8 build moments and covariance; 9–15 develop Gaussian models. Section 16 connects the ideas to later ML methods. The chapter is intentionally substantial: use the checkpoints to stop after one coherent piece rather than trying to memorize all formulas at once.</p>
-<details class="mobile-contents"><summary>Contents · choose a section</summary><nav aria-label="Chapter contents"><ul><li><a href="#ml-context">01 · Probability in ML</a></li><li><a href="#outcomes">02 · Outcomes &amp; events</a></li><li><a href="#distributions">03 · Mass, density &amp; CDFs</a></li><li><a href="#conditioning">04 · Joint &amp; conditional</a></li><li><a href="#joint-lab">05 · Joint-table workbench</a></li><li><a href="#moments">06 · Expectation &amp; variance</a></li><li><a href="#families">07 · Distribution derivations</a></li><li><a href="#covariance">08 · Covariance &amp; matrices</a></li><li><a href="#normal">09 · Normal normalization</a></li><li><a href="#multivariate">10 · Joint Gaussian density</a></li><li><a href="#geometry">11 · Contours &amp; distance</a></li><li><a href="#joint-gaussian">12 · Joint-Gaussian pitfalls</a></li><li><a href="#gaussian-conditioning">13 · Gaussian conditioning</a></li><li><a href="#gaussian-lab">14 · Gaussian workbench</a></li><li><a href="#operations">15 · Gaussian operations</a></li><li><a href="#connections">16 · Connections to ML</a></li><li><a href="#practice">17 · Eighteen practice problems</a></li><li><a href="#interviews">18 · Interview explanations</a></li><li><a href="#revision">19 · Revision &amp; checklist</a></li><li><a href="#references">20 · Sources &amp; continuation</a></li></ul></nav></details>
+<div class="learning-goals" id="learning-goals">
+<p>
+<strong>What you should be able to do afterward</strong>
+</p>
+<ul>
+<li>Distinguish outcomes, events, random variables, probability masses, densities, and CDFs.</li>
+<li>Calculate joint, marginal, and conditional quantities and apply Bayes' rule.</li>
+<li>Derive expectations, variances, covariance identities, and the moments of the lecture's distribution families.</li>
+<li>Read the Gaussian density using matrix dimensions, covariance, determinants, and Mahalanobis distance.</li>
+<li>Derive Gaussian marginals, conditionals, affine transformations, sums, products of density functions, and the canonical parameterization.</li>
+<li>Identify when independence, positive definiteness, finite moments, or joint Gaussianity is actually required.</li>
+</ul>
+</div>
+<p>
+<strong>Reading route:</strong> sections 1–5 establish the probability language; 6–8 build moments and covariance; 9–15 develop Gaussian models. Section 16 connects the ideas to later ML methods. The chapter is intentionally substantial: use the checkpoints to stop after one coherent piece rather than trying to memorize all formulas at once.</p>
+<details class="mobile-contents">
+<summary>Contents · choose a section</summary>
+<nav aria-label="Chapter contents">
+<ul>
+<li>
+<a href="#ml-context">01 · Probability in ML</a>
+</li>
+<li>
+<a href="#outcomes">02 · Outcomes &amp; events</a>
+</li>
+<li>
+<a href="#distributions">03 · Mass, density &amp; CDFs</a>
+</li>
+<li>
+<a href="#conditioning">04 · Joint &amp; conditional</a>
+</li>
+<li>
+<a href="#joint-lab">05 · Joint-table workbench</a>
+</li>
+<li>
+<a href="#moments">06 · Expectation &amp; variance</a>
+</li>
+<li>
+<a href="#families">07 · Distribution derivations</a>
+</li>
+<li>
+<a href="#covariance">08 · Covariance &amp; matrices</a>
+</li>
+<li>
+<a href="#normal">09 · Normal normalization</a>
+</li>
+<li>
+<a href="#multivariate">10 · Joint Gaussian density</a>
+</li>
+<li>
+<a href="#geometry">11 · Contours &amp; distance</a>
+</li>
+<li>
+<a href="#joint-gaussian">12 · Joint-Gaussian pitfalls</a>
+</li>
+<li>
+<a href="#gaussian-conditioning">13 · Gaussian conditioning</a>
+</li>
+<li>
+<a href="#gaussian-lab">14 · Gaussian workbench</a>
+</li>
+<li>
+<a href="#operations">15 · Gaussian operations</a>
+</li>
+<li>
+<a href="#connections">16 · Connections to ML</a>
+</li>
+<li>
+<a href="#practice">17 · Eighteen practice problems</a>
+</li>
+<li>
+<a href="#interviews">18 · Interview explanations</a>
+</li>
+<li>
+<a href="#revision">19 · Revision &amp; checklist</a>
+</li>
+<li>
+<a href="#references">20 · Sources &amp; continuation</a>
+</li>
+</ul>
+</nav>
+</details>
 
+<section class="ld-pilot prob-language" id="probability-language-path" data-learning-pilot data-learning-key="probability-language" data-learning-scope="sections 1–5" data-ld-mode="learn" aria-labelledby="probability-language-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 1–5</div>
+<h2 id="probability-language-title">What changes when you learn something?</h2>
+<p>Build the language of uncertainty, then use one small table to distinguish a joint event, a marginal probability and a conditional probability.</p>
+<nav class="ld-map" aria-label="Probability concept map">
+<a href="#ml-context">
+<span>01 · Locate</span>
+<strong>Data &amp; models</strong>
+<small>connects observations to uncertainty</small>
+</a>
+<a href="#outcomes">
+<span>02 · Define</span>
+<strong>Outcomes &amp; values</strong>
+<small>defines what an event means</small>
+</a>
+<a href="#distributions">
+<span>03 · Measure</span>
+<strong>Mass, area &amp; CDF</strong>
+<small>assigns probability consistently</small>
+</a>
+<a href="#conditioning">
+<span>04 · Update</span>
+<strong>Joint → conditional</strong>
+<small>changes the reference population</small>
+</a>
+<a href="#joint-lab">
+<span>05 · Test</span>
+<strong>Predict &amp; explain</strong>
+<small>checks assumptions in a joint table</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for probability sections 1 to 5">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all explanations</button>
+</div>
+<p class="ld-mode-help" data-learning-mode-help>Follow the examples, then open each full explanation. The controls apply to sections 1–5.</p>
+<div class="ld-route-links">
+<a href="#prob-language-revision">Revision sheet</a>
+<a href="#prob-language-review">Return-review questions</a>
+<a href="#moments">Continue to expectation &amp; variance</a>
+</div>
+</div>
+<div class="ld-notation">
+<strong>Read the symbols as questions.</strong>
+<p>P(A): how probable is event A? · X: a random variable · x: one value it can take · “| B”: after restricting to context B.</p>
+<p>p is a probability mass, f a density and F a cumulative probability. Their meanings are introduced at the point of use.</p>
+</div>
+<section class="ld-unit" aria-labelledby="ml-context">
 <h2 id="ml-context">1. Why the lecture returns to probability</h2>
 <p class="section-source">Lecture connection: the opening ML terminology, problem-type, and method-summary slides.</p>
+<p class="ld-lead">Probability gives a model a language for uncertain outcomes. Start by separating an observed dataset from the distribution it may help us estimate.</p>
+<div class="ld-definition">
+<div class="ld-label">The connection · observations and uncertainty</div>
+<p>An observed dataset contains particular cases. A probability model describes possible outcomes and the probabilities assigned to events.</p>
+</div>
+<div class="ld-teach">
+<div class="ld-pipeline">
+<div>
+<strong>Observe</strong>
+<span>Features describe a case; a target is the quantity to predict.</span>
+</div>
+<div>
+<strong>Model</strong>
+<span>Learn parameters and state assumptions about uncertainty.</span>
+</div>
+<div>
+<strong>Predict &amp; assess</strong>
+<span>Use the fitted model, then evaluate on held-out observations.</span>
+</div>
+</div>
+<p>Our running example asks whether a journey is rainy (R=1) and whether it is late (L=1). A joint model describes both; conditioning will express what knowing one tells us about the other.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture context</span>
+<span>ML vocabulary, task types and the method map</span>
+</summary>
+<div class="ld-detail-body">
 <p>An <strong>example</strong> is one observed instance. Its <strong>features</strong> describe the information available to a model; its <strong>target</strong>, label, or response is what a supervised model should predict. Regression predicts numerical quantities; classification predicts categories. A model can also learn structure without a supplied target, as in clustering, factor models, or dimensionality reduction. Reinforcement learning instead involves actions and rewards over interactions.</p>
-<p><strong>Parameters</strong> are learned quantities inside a model. <strong>Model selection</strong> chooses among model families or settings; <strong>regularization</strong> restricts or discourages certain fitted behaviors. Feature creation and selection change the representation on which learning operates. Training error measures fit on the data used to learn; test error estimates performance on held-out data under the evaluation setup. Generalization concerns behavior beyond the training examples. Cross-validation is a procedure for assessing choices through repeated training/validation splits.</p>
+<p>
+<strong>Parameters</strong> are learned quantities inside a model. <strong>Model selection</strong> chooses among model families or settings; <strong>regularization</strong> restricts or discourages certain fitted behaviors. Feature creation and selection change the representation on which learning operates. Training error measures fit on the data used to learn; test error estimates performance on held-out data under the evaluation setup. Generalization concerns behavior beyond the training examples. Cross-validation is a procedure for assessing choices through repeated training/validation splits.</p>
 <p>The opening slides place linear/logistic regression, neural networks, trees, Bayes models, margin methods, nearest neighbors, ensembles, and matrix-factorization methods on the same map. They are a recap, not separate derivations in this lecture. Probability supports several of them by describing uncertainty, assumptions about data, and what observations imply about unobserved quantities.</p>
 <p>It also supports tasks beyond class labels: density estimation describes where data are likely; anomaly detection looks for unusual observations; missing-data methods reason about unobserved entries; time-series models describe dependence over time. Calibration concerns whether predicted probabilities match observed frequencies. Recommender systems may combine these ideas with learned representations. These are application connections; each needs assumptions appropriate to its own task.</p>
-<div class="aside-note"><p><strong>Two different objects:</strong> a distribution is a mathematical description of uncertainty. A finite dataset is a set of observations. Its average or histogram can estimate features of a distribution, but the estimate and the underlying quantity are not the same object.</p></div>
-
+<div class="aside-note">
+<p>
+<strong>Two different objects:</strong> a distribution is a mathematical description of uncertainty. A finite dataset is a set of observations. Its average or histogram can estimate features of a distribution, but the estimate and the underlying quantity are not the same object.</p>
+</div>
+</div>
+</details>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Distinguish the observed cases, the model’s parameters and the probability question being asked.</div>
+</section>
+<section class="ld-unit" aria-labelledby="outcomes">
 <h2 id="outcomes">2. Outcomes, events, and random variables</h2>
 <p class="section-source">Lecture connection: die rolls, sample spaces, events, probability axioms, and the random-variable definition.</p>
+<p class="ld-lead">An outcome is one possible result. An event collects results. A random variable assigns a number to each result.</p>
+<div class="ld-definition">
+<div class="ld-label">Vocabulary · three objects, three jobs</div>
+<dl class="ld-vocabulary">
+<dt>Outcome ω</dt>
+<dd>One result, such as rolling a 4.</dd>
+<dt>Event A</dt>
+<dd>A set of outcomes, such as {2,4,6}.</dd>
+<dt>Random variable X</dt>
+<dd>A numerical function of the outcome, such as the number of heads.</dd>
+</dl>
+</div>
+<div class="ld-facts">
+<div>
+<strong>Nonnegative</strong>
+<span>No event has negative probability.</span>
+<b>P(A) ≥ 0</b>
+</div>
+<div>
+<strong>Normalized</strong>
+<span>The whole sample space is certain.</span>
+<b>P(Ω) = 1</b>
+</div>
+<div>
+<strong>Add disjoint events</strong>
+<span>For a countable disjoint collection, add their probabilities.</span>
+<b>No overlap</b>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Probability axioms, complements and overlapping events</span>
+</summary>
+<div class="ld-detail-body">
 <p>An experiment has a <strong>sample space</strong> Ω: the set of possible outcomes. A single outcome is denoted ω. An <strong>event</strong> is a subset of Ω. For a die, Ω={1,2,3,4,5,6}; “an even face” is the event {2,4,6}.</p>
 <p>A probability rule maps events to numbers. It assigns nonnegative probabilities, gives the whole space probability 1, and adds probabilities over disjoint events. More precisely, for pairwise disjoint events \(A_1,A_2,\ldots\):</p>
 <div class="math-block">\[P(\Omega)=1,\qquad P(A)\ge0,\qquad P\!\left(\bigcup_iA_i\right)=\sum_iP(A_i).\]</div>
 <p>It follows that \(P(\varnothing)=0\), \(P(A^c)=1-P(A)\), and \(P(A\cup B)=P(A)+P(B)-P(A\cap B)\). The last subtraction prevents the intersection from being counted twice.</p>
 <p>The familiar favorable-outcomes/total-outcomes formula is valid for a <em>finite equally likely</em> sample space. It is not the definition for every experiment. Long-run relative frequencies provide an interpretation and estimation method under suitable repetition assumptions; they do not require every possible outcome to be equally likely.</p>
+</div>
+</details>
+<div class="ld-teach">
+<h3>Work through two fair, independent coin tosses</h3>
+<figure class="figure-frame">
+<a href="assets/ml-notes/probability-outcomes.svg" target="_blank" rel="noopener" aria-label="Open outcome-mapping diagram at full size">
+<img src="assets/ml-notes/probability-outcomes.svg" width="1000" height="415" alt="The four outcomes of two coin tosses map to the number of heads, with HT and TH both mapping to one.">
+</a>
+<figcaption>A random variable maps individual outcomes, while a probability rule assigns probabilities to events. This makes the lecture's informal “events to numbers” wording precise.</figcaption>
+</figure>
+<ol class="ld-steps">
+<li>There are four equally likely ordered outcomes: HH, HT, TH, TT. Each has probability 1/4.</li>
+<li>Let X count heads: HH → 2; HT and TH → 1; TT → 0.</li>
+<li>The event X=1 contains two outcomes, so P(X=1)=1/4+1/4=1/2.</li>
+</ol>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Notation</span>
+<span>The mapping X and the event X=x</span>
+</summary>
+<div class="ld-detail-body">
 <h3>A random variable maps outcomes to numbers</h3>
 <p>A real-valued random variable is a function \(X:\Omega\to\mathbb R\). For two coin tosses, let X count heads. HH maps to 2, HT and TH map to 1, and TT maps to 0. The event {X=1} is shorthand for the outcomes whose assigned value is 1.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/probability-outcomes.svg" target="_blank" rel="noopener" aria-label="Open outcome-mapping diagram at full size"><img src="assets/ml-notes/probability-outcomes.svg" width="1000" height="415" alt="The four outcomes of two coin tosses map to the number of heads, with HT and TH both mapping to one."></a><figcaption>A random variable maps individual outcomes, while a probability rule assigns probabilities to events. This makes the lecture's informal “events to numbers” wording precise.</figcaption></figure>
 <p>Uppercase X names the random variable; lowercase x names a possible realized value. \(P(X=x)\) means the probability of the event consisting of outcomes that produce x. Different random variables can be defined on the same experiment.</p>
-
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Now change the assumption: each toss independently has head probability 3/4. Is P(X=1) still 1/2? Work from the outcomes.</p>
+<details class="ld-answer" data-solution id="prob-check-biased-coins">
+<summary>Check your reasoning</summary>
+<p>No. P(HT)=(3/4)(1/4)=3/16 and P(TH)=(1/4)(3/4)=3/16. These disjoint outcomes give P(X=1)=3/8. Independence permits the products; equal likelihood no longer holds across the four outcomes.</p>
+<p>
+<strong>Common mistake:</strong> counting two favorable outcomes out of four without checking equal probabilities.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Explain the outcome-to-value map, and state when favorable/total counting is valid.</div>
+</section>
+<section class="ld-unit" aria-labelledby="distributions">
 <h2 id="distributions">3. Mass, density, and a CDF that covers both</h2>
 <p class="section-source">Lecture connection: discrete, continuous, and mixed random variables; PMFs, PDFs, and CDFs.</p>
+<p class="ld-lead">Choose the right object before calculating: a mass at a point, an area under a density, or an accumulated probability.</p>
+<div class="prob-type-grid">
+<div class="ld-definition">
+<div class="ld-label">Discrete · probability mass</div>
+<div class="math-block">\[p_X(x)=P(X=x)\]</div>
+<p>Nonnegative masses add to one. Add the masses of the values in your event.</p>
+</div>
+<div class="ld-definition">
+<div class="ld-label">With a density · probability area</div>
+<div class="math-block">\[P(a\le X\le b)=\int_a^b f_X(x)\,dx\]</div>
+<p>The integral accumulates area over the interval. The density is nonnegative and its total area is one.</p>
+</div>
+</div>
+<div class="ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/mass-versus-density.svg" target="_blank" rel="noopener" aria-label="Open mass-versus-density diagram at full size">
+<img src="assets/ml-notes/mass-versus-density.svg" width="1000" height="367" loading="lazy" alt="A discrete die distribution has masses at points; a continuous normal curve has probability represented by shaded area.">
+</a>
+<figcaption>Masses sum; densities integrate. The normal interval probability shown is an area, not the height of the curve.</figcaption>
+</figure>
+<div class="prob-area-visual" role="group" aria-label="Uniform density example: support width 0.20, height 5; the interval from 0.04 to 0.10 has width 0.06 and probability 0.30.">
+<div class="ld-label">Worked area · uniform on [0, 0.20]</div>
+<div class="prob-area-height">Constant density height = 5</div>
+<div class="prob-area-strip" aria-hidden="true">
+<span>
+</span>
+</div>
+<div class="prob-area-axis" aria-hidden="true">
+<span>0</span>
+<span>0.04</span>
+<span>0.10</span>
+<span>0.20</span>
+</div>
+<p>
+<strong>Shaded interval:</strong> width 0.06 × height 5 = probability 0.30.</p>
+</div>
+<p>A density value is not a point probability. A single point has zero probability in this setting, while the density there can be positive or greater than 1. For a uniform distribution on [0,0.2], the density is 5 and the probability of [0.04,0.10] is \(5(0.10-0.04)=0.30\).</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>PMFs, PDFs, normalization and small-interval notation</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Discrete: attach probability to points</h3>
 <p>For a countable set of possible values, the probability mass function is \(p_X(x)=P(X=x)\). It is nonnegative and sums to one. For a fair die, each face has mass 1/6. For the two-coin count with independent fair tosses, the masses at 0,1,2 are 1/4,1/2,1/4.</p>
 <div class="math-block">\[P(X\in A)=\sum_{x\in A}p_X(x),\qquad\sum_xp_X(x)=1.\]</div>
 <h3>Continuous with a density: probability is area</h3>
 <p>An absolutely continuous distribution has a probability density \(f_X\) such that:</p>
 <div class="math-block">\[P(a\le X\le b)=\int_a^bf_X(x)\,dx,\qquad f_X(x)\ge0,\qquad\int_{-\infty}^{\infty}f_X(x)\,dx=1.\]</div>
-<p>A density value is not a point probability. A single point has zero probability in this setting, while the density there can be positive or greater than 1. For a uniform distribution on [0,0.2], the density is 5 and the probability of [0.04,0.10] is \(5(0.10-0.04)=0.30\).</p>
 <p>For a small interval of width Δx and a sufficiently smooth density, \(P(x\le X\le x+\Delta x)\approx f_X(x)\Delta x\). The exact finite-interval statement is the integral. The lecture's infinitesimal notation is a useful intuition, not an instruction to substitute a density for a probability.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/mass-versus-density.svg" target="_blank" rel="noopener" aria-label="Open mass-versus-density diagram at full size"><img src="assets/ml-notes/mass-versus-density.svg" width="1000" height="367" loading="lazy" alt="A discrete die distribution has masses at points; a continuous normal curve has probability represented by shaded area."></a><figcaption>Masses sum; densities integrate. The normal interval probability shown is an area, not the height of the curve.</figcaption></figure>
-<h3>The cumulative distribution function</h3>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">CDF · accumulated probability through x</div>
 <p>The CDF \(F_X(x)=P(X\le x)\) applies to every real-valued random variable. It is nondecreasing and right-continuous, approaches 0 toward −∞ and 1 toward +∞, and satisfies:</p>
 <div class="math-block">\[P(a&lt;X\le b)=F_X(b)-F_X(a).\]</div>
+</div>
+<div class="ld-teach">
+<h3>Keep the interval endpoints in view</h3>
+<p>For the fair two-toss head count, F(0)=1/4 and F(1)=3/4. Therefore P(0&lt;X≤1)=3/4−1/4=1/2. Including zero instead gives P(0≤X≤1)=3/4. The endpoint matters because zero has positive mass.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>CDF jumps, continuity and the density connection</span>
+</summary>
+<div class="ld-detail-body">
+<h3>The cumulative distribution function</h3>
 <p>For a discrete variable, the CDF jumps at values with positive mass. For a variable with a density, \(F_X(x)=\int_{-\infty}^xf_X(t)\,dt\); differentiating recovers f where appropriate. We use the conventional ≤ definition. The source's occasional strict-&lt; notation makes no difference for a density, but does matter at an atom.</p>
+<p>As x increases, the event X≤x contains more outcomes, so F cannot decrease. Right-continuity means approaching x from larger values approaches F(x). At a jump, F(x) already includes the probability at x because the definition uses ≤.</p>
+</div>
+</details>
+<div class="ld-meaning">
+<div class="ld-label">A mixed distribution needs both parts</div>
+<p>In the lecture-aligned example below, an atom puts probability 0.3 at zero; a continuous component spreads the remaining 0.7 across (0,1). A single ordinary density cannot describe the atom.</p>
+</div>
+<div class="ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/mixed-distribution-cdf.svg" target="_blank" rel="noopener" aria-label="Open mixed-CDF diagram at full size">
+<img src="assets/ml-notes/mixed-distribution-cdf.svg" width="1000" height="397" loading="lazy" alt="A CDF jumps from zero to 0.3 at zero and then increases linearly to one.">
+</a>
+<figcaption>The filled point marks F(0)=0.3. The jump size is exactly P(X=0).</figcaption>
+</figure>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Read the complete mixed CDF and its point mass</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Mixed: a point mass plus a continuous part</h3>
 <p>Suppose X is 0 with probability 0.3, and with probability 0.7 it is drawn uniformly from (0,1). Its CDF is:</p>
 <div class="math-block">\[F_X(x)=\begin{cases}0,&amp;x&lt;0,\\0.3+0.7x,&amp;0\le x&lt;1,\\1,&amp;x\ge1.\end{cases}\]</div>
 <p>The continuous density part is 0.7 on (0,1), with total mass 0.7. The remaining 0.3 sits at zero. An ordinary density alone cannot represent that atom. A mixed distribution is not the same as a singular distribution; the lecture focuses on the discrete, density, and mixed cases.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/mixed-distribution-cdf.svg" target="_blank" rel="noopener" aria-label="Open mixed-CDF diagram at full size"><img src="assets/ml-notes/mixed-distribution-cdf.svg" width="1000" height="397" loading="lazy" alt="A CDF jumps from zero to 0.3 at zero and then increases linearly to one."></a><figcaption>The filled point marks F(0)=0.3. The jump size is exactly P(X=0).</figcaption></figure>
-
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For that mixed example, F(0)=0.3 and F(0.5)=0.65. Complete P(0&lt;X≤0.5)=____. What changes if zero is included?</p>
+<details class="ld-answer" data-solution id="prob-check-cdf-atom">
+<summary>Check your reasoning</summary>
+<p>Subtract F(0): 0.65−0.30=0.35. Including zero adds its atom 0.30, so P(0≤X≤0.5)=0.65. A CDF difference F(b)−F(a) excludes a and includes b.</p>
+<p>
+<strong>Check the distinction:</strong> the uniform density height 5 is allowed even though event probabilities cannot exceed 1.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Convert mass or area into probability, state the CDF convention, and handle a jump at an endpoint.</div>
+</section>
+<section class="ld-unit" aria-labelledby="conditioning">
 <h2 id="conditioning">4. Joint, marginal, and conditional distributions</h2>
 <p class="section-source">Lecture connection: joint distributions, factorization under independence, and conditional density normalization.</p>
+<p class="ld-lead">Marginalize by collecting possibilities. Condition by selecting a context and renormalizing. Reversing the context changes the question.</p>
+<div class="ld-definition">
+<div class="ld-label">Three questions · choose the reference population</div>
+<dl class="ld-vocabulary">
+<dt>Joint</dt>
+<dd>What fraction of all cases has both properties?</dd>
+<dt>Marginal</dt>
+<dd>What fraction has one property, after summing over the other?</dd>
+<dt>Conditional</dt>
+<dd>Within a specified context of positive probability, what fraction has the property?</dd>
+</dl>
+</div>
+<div class="ld-teach">
+<div class="table-scroll" tabindex="0">
+<table class="prob-count-table">
+<caption>One invented set of 100 journeys · counts, not probabilities</caption>
+<thead>
+<tr>
+<th scope="col">Weather</th>
+<th scope="col">Late L=1</th>
+<th scope="col">On time L=0</th>
+<th scope="col">Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">Rain R=1</th>
+<td data-prob-count="rain-late">18</td>
+<td data-prob-count="rain-on-time">12</td>
+<td>30</td>
+</tr>
+<tr>
+<th scope="row">Dry R=0</th>
+<td data-prob-count="dry-late">7</td>
+<td data-prob-count="dry-on-time">63</td>
+<td>70</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th scope="row">Total</th>
+<td>25</td>
+<td>75</td>
+<td>100</td>
+</tr>
+</tfoot>
+</table>
+</div>
+<figure class="prob-populations">
+<div class="prob-case-grid" aria-hidden="true">
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-late" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case rain-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-late" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+<span class="prob-case dry-on-time" aria-hidden="true">
+</span>
+</div>
+<div class="prob-case-legend">
+<div>
+<i class="rain-late" aria-hidden="true">
+</i>
+<span>
+<strong>18</strong> rain &amp; late</span>
+</div>
+<div>
+<i class="rain-on-time" aria-hidden="true">
+</i>
+<span>
+<strong>12</strong> rain &amp; on time</span>
+</div>
+<div>
+<i class="dry-late" aria-hidden="true">
+</i>
+<span>
+<strong>7</strong> dry &amp; late</span>
+</div>
+<div>
+<i class="dry-on-time" aria-hidden="true">
+</i>
+<span>
+<strong>63</strong> dry &amp; on time</span>
+</div>
+</div>
+<figcaption>Each square is one case. “Given rain” selects the 18+12 rainy cases. “Given late” selects the 18+7 late cases. The overlap stays at 18; the reference population changes.</figcaption>
+</figure>
+<div class="ld-facts">
+<div>
+<strong>Joint: rainy and late</strong>
+<span>18 out of all 100 cases</span>
+<b>0.18</b>
+</div>
+<div>
+<strong>Marginal: late</strong>
+<span>18+7 out of all 100 cases</span>
+<b>0.25</b>
+</div>
+<div>
+<strong>Conditional: late given rain</strong>
+<span>18 out of the 18+12 rainy cases</span>
+<b>0.60</b>
+</div>
+</div>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Conditioning · require P(B) &gt; 0</div>
+<div class="math-block">\[P(A\mid B)=\frac{P(A\cap B)}{P(B)}\]</div>
+<p>Restrict to B, then divide the overlap by the probability of B. For late given rain, the denominator is 30/100; for rain given late, it is 25/100.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Joint distributions, marginalization and integration</span>
+</summary>
+<div class="ld-detail-body">
 <h3>A joint distribution describes variables together</h3>
 <p>For discrete X and Y, \(p_{X,Y}(x,y)=P(X=x,Y=y)\). A joint table can be reduced to a <strong>marginal</strong> by summing out the other variable: \(p_X(x)=\sum_yp_{X,Y}(x,y)\). With a joint density, integrate instead:</p>
 <div class="math-block">\[f_X(x)=\int f_{X,Y}(x,y)\,dy,\qquad f_Y(y)=\int f_{X,Y}(x,y)\,dx.\]</div>
 <p>Marginalization averages over possibilities for the unobserved variable. It does not select one particular value of it.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Continuous conditioning normalizes a density slice</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Conditioning selects a context and renormalizes</h3>
 <p>For events A,B with \(P(B)&gt;0\), define \(P(A\mid B)=P(A\cap B)/P(B)\). In a table, restrict attention to the B part and divide by its total mass. For a joint density with \(f_Y(y)&gt;0\), the corresponding conditional density is:</p>
 <div class="math-block">\[f_{X\mid Y=y}(x)=\frac{f_{X,Y}(x,y)}{f_Y(y)}=\frac{f_{X,Y}(x,y)}{\int f_{X,Y}(u,y)\,du}.\]</div>
 <p>The denominator integrates over the variable being predicted, holding the observed value fixed. It normalizes a slice into a density in x. This formula does not divide by \(P(Y=y)\), which is zero for an ordinary continuous Y. Conditional densities provide the appropriate continuous formulation.</p>
+<p>
+<strong>Read the dummy variable:</strong> u runs over possible values of X while y is fixed. The denominator is the marginal density of the observed Y value.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Independence · a property of the whole joint model</div>
+<p>For discrete variables, every joint probability must equal the product of its marginals. Here 0.18 ≠ 0.30×0.25=0.075, so rain and lateness are dependent in this invented table.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Factorization, unchanged conditionals and disjoint events</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Independence is a factorization property</h3>
 <p>Independent variables have \(p_{X,Y}(x,y)=p_X(x)p_Y(y)\), or the analogous density factorization. Conditioning on one then leaves the other's distribution unchanged wherever the conditional expression is defined. Independence is stronger than zero covariance. It is also different from disjoint events: two disjoint events with positive probabilities have intersection probability zero, so they cannot be independent.</p>
+</div>
+</details>
+<h3>Bayes’ rule: express the same overlap in either direction</h3>
+<div class="ld-definition">
+<div class="ld-label">Bayes · require P(B) &gt; 0</div>
+<div class="math-block">\[P(A\mid B)=\frac{P(B\mid A)P(A)}{P(B)}\]</div>
+<p class="ld-symbols">Prior P(A): before observing B · likelihood P(B | A): evidence under A · evidence P(B): normalizer · posterior P(A | B): after observing B.</p>
+</div>
+<div class="ld-teach">
+<ol class="ld-steps">
+<li>
+<strong>Start with rain:</strong> P(R=1)=30/100=0.30.</li>
+<li>
+<strong>Use late given rain:</strong> P(L=1 | R=1)=18/30=0.60. Multiply to recover the joint: 0.30×0.60=0.18.</li>
+<li>
+<strong>Find all late cases:</strong> 18+7=25, so P(L=1)=0.25.</li>
+<li>
+<strong>Reverse the context:</strong> P(R=1 | L=1)=0.18/0.25=0.72. This differs from 0.60 because the denominator has changed.</li>
+</ol>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derive the denominator</span>
+<span>Total probability: enumerate disjoint ways to be late</span>
+</summary>
+<div class="ld-detail-body">
+<p>Rain and dry form a partition: exactly one occurs. The late event can therefore be separated into late-and-rain and late-and-dry, which do not overlap.</p>
+<div class="math-block">\[P(L=1)=P(L=1\mid R=1)P(R=1)+P(L=1\mid R=0)P(R=0)\]</div>
+<p>The two contributions are (18/30)(30/100)=0.18 and (7/70)(70/100)=0.07. Add them: P(L=1)=0.25. Bayes then uses this total as its normalizer.</p>
 <h3>Bayes' rule is the joint distribution written two ways</h3>
 <div class="math-block">\[P(A\cap B)=P(A\mid B)P(B)=P(B\mid A)P(A),\qquad P(A\mid B)=\frac{P(B\mid A)P(A)}{P(B)}.\]</div>
 <p>The density version has the same structure. In ML language, a prior and a likelihood combine into a posterior after normalization. Reversing a conditional generally changes its value; Bayes' rule tells you exactly how the marginal probabilities enter that reversal.</p>
-
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Without looking at the table: why do P(late | rain) and P(rain | late) share a numerator but use different denominators?</p>
+<details class="ld-answer" data-solution id="prob-check-reference-population">
+<summary>Check your reasoning</summary>
+<p>Both count the same intersection: the 18 rainy-and-late cases. The first conditions on the 30 rainy cases; the second on the 25 late cases. Thus the ratios are 18/30 and 18/25.</p>
+<p>
+<strong>Say the context first:</strong> “Among rainy journeys…” versus “Among late journeys…”.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Calculate both conditional directions, derive the normalizer, and distinguish independence from disjointness.</div>
+</section>
+<section class="ld-unit" aria-labelledby="joint-lab">
 <h2 id="joint-lab">5. Explore conditioning in a small joint table</h2>
+<p class="ld-lead">Predict a result before moving a control. Use the output to check the denominator and the assumptions you chose.</p>
+<div class="ld-definition">
+<div class="ld-label">Workbench · one finite probability model</div>
+<p>Enter nonnegative counts or weights with a positive total. Marginals sum cells; conditionals divide by the selected context’s total. A zero context makes that conditional undefined.</p>
+</div>
+<div class="ld-teach">
 <p>The following numbers are an invented example, not measured data. Think of two binary variables: rain R and lateness L. Enter nonnegative counts; the tool divides them by their total. The initial table has 18 rainy/late, 12 rainy/on-time, 7 dry/late, and 63 dry/on-time cases.</p>
-<div class="lab" id="joint-lab-tool"><h3>Joint-probability workbench</h3><div class="table-scroll" tabindex="0"><table class="joint-table"><thead><tr><th></th><th>Late L=1</th><th>On time L=0</th><th>Row total</th></tr></thead><tbody><tr><th scope="row">Rain R=1</th><td><input id="joint-a" aria-label="Rain and late count" type="number" min="0" step="any" value="18"></td><td><input id="joint-b" aria-label="Rain and on-time count" type="number" min="0" step="any" value="12"></td><td id="joint-r1"></td></tr><tr><th scope="row">Dry R=0</th><td><input id="joint-c" aria-label="Dry and late count" type="number" min="0" step="any" value="7"></td><td><input id="joint-d" aria-label="Dry and on-time count" type="number" min="0" step="any" value="63"></td><td id="joint-r0"></td></tr></tbody><tfoot><tr><th scope="row">Column total</th><td id="joint-l1"></td><td id="joint-l0"></td><td id="joint-total"></td></tr></tfoot></table></div><div class="lab-controls"><button id="joint-reset" type="button">Reset</button><button id="joint-independent" type="button">Show an independent example</button></div><div class="lab-result" id="joint-result" aria-live="polite"></div><p class="lab-help">A conditional with a zero conditioning total is undefined, not zero. Fractional counts are allowed as nonnegative weights; their ratios define the same finite probability model.</p></div>
+<div class="ld-task">
+<strong>Predict → inspect → explain</strong>
+<ol>
+<li>Predict P(late | rain) and P(rain | late) for the starting table.</li>
+<li>Try the independent-example button. Check its current marginals before comparing their product with the joint.</li>
+<li>Reset, then set both rainy counts to zero. Which conditional becomes undefined? Which reverse conditional is still defined?</li>
+</ol>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Explore</span>
+<span>Open the joint-probability workbench</span>
+</summary>
+<div class="ld-detail-body">
+<div class="lab" id="joint-lab-tool">
+<h3>Joint-probability workbench</h3>
+<div class="table-scroll" tabindex="0">
+<table class="joint-table">
+<thead>
+<tr>
+<th>
+</th>
+<th>Late L=1</th>
+<th>On time L=0</th>
+<th>Row total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">Rain R=1</th>
+<td>
+<input id="joint-a" aria-label="Rain and late count" type="number" min="0" step="any" value="18">
+</td>
+<td>
+<input id="joint-b" aria-label="Rain and on-time count" type="number" min="0" step="any" value="12">
+</td>
+<td id="joint-r1">
+</td>
+</tr>
+<tr>
+<th scope="row">Dry R=0</th>
+<td>
+<input id="joint-c" aria-label="Dry and late count" type="number" min="0" step="any" value="7">
+</td>
+<td>
+<input id="joint-d" aria-label="Dry and on-time count" type="number" min="0" step="any" value="63">
+</td>
+<td id="joint-r0">
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<th scope="row">Column total</th>
+<td id="joint-l1">
+</td>
+<td id="joint-l0">
+</td>
+<td id="joint-total">
+</td>
+</tr>
+</tfoot>
+</table>
+</div>
+<div class="lab-controls">
+<button id="joint-reset" type="button">Reset</button>
+<button id="joint-independent" type="button">Show an independent example</button>
+</div>
+<div class="lab-result" id="joint-result" aria-live="polite">
+</div>
+<p class="lab-help">A conditional with a zero conditioning total is undefined, not zero. Fractional counts are allowed as nonnegative weights; their ratios define the same finite probability model.</p>
+</div>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Worked feedback</span>
+<span>Default results and the zero-context case</span>
+</summary>
+<div class="ld-detail-body">
 <p>Initially, \(P(R=1)=0.30\), \(P(L=1)=0.25\), and \(P(R=1,L=1)=0.18\). Hence \(P(L=1\mid R=1)=18/30=0.60\), while \(P(R=1\mid L=1)=18/25=0.72\). Under independence, the joint probability would instead be \(0.30\cdot0.25=0.075\).</p>
-<div class="stop-point"><strong>Checkpoint:</strong> Explain why marginalizing a column and conditioning on that column are different operations. Then calculate both directions of a conditional before reading the workbench output.</div>
+<p>After setting both rainy counts to zero while keeping dry counts 7 and 63, P(late | rain) is undefined because the rain total is zero. P(rain | late)=0/7=0 is defined. The denominator, rather than the numerator alone, decides whether conditioning is possible.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Complete an independent model with the same marginals P(rain)=0.30 and P(late)=0.25. What must P(rain and late) be? Is that the initial table’s value?</p>
+<details class="ld-answer" data-solution id="prob-check-independence-completion">
+<summary>Check your reasoning</summary>
+<p>Independence requires 0.30×0.25=0.075. The starting joint value is 0.18, so it is not independent. Checking one discrepant cell disproves independence; checking one matching cell is not a general test for variables with larger supports.</p>
+</details>
+</div>
+<div class="stop-point">
+<strong>Checkpoint:</strong> Explain why marginalizing a column and conditioning on that column are different operations. Then calculate both directions of a conditional before reading the workbench output.</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Use the workbench as feedback, then reproduce the calculation on paper without its output.</div>
+</section>
+<section class="ld-revision" id="prob-language-revision" aria-labelledby="prob-language-revision-title">
+<div class="ld-label">Revision sheet · probability language</div>
+<h3 id="prob-language-revision-title">Rebuild the argument in six moves</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>1 · Define the event</strong>
+<p>Ω is the sample space; an event is a subset. X maps outcomes to numerical values. Counting favorable outcomes requires equal likelihood.</p>
+</div>
+<div>
+<strong>2 · Choose mass or density</strong>
+<p>A PMF gives point probabilities and sums to one. A PDF gives density heights and integrates to one. Interval probability is area.</p>
+</div>
+<div>
+<strong>3 · Keep CDF endpoints</strong>
+<div class="math-block">\[F_X(x)=P(X\le x)\]</div>
+<div class="math-block">\[P(a&lt;X\le b)=F_X(b)-F_X(a)\]</div>
+<p>A jump gives the probability at that point. The left endpoint is excluded in this difference.</p>
+</div>
+<div>
+<strong>4 · Marginalize or condition?</strong>
+<p>Marginalize by summing/integrating out the other variable. Condition by fixing the context and dividing by its probability or density where positive.</p>
+</div>
+<div>
+<strong>5 · Reverse with Bayes</strong>
+<p>Posterior = likelihood × prior / evidence. Derive the evidence by summing disjoint joint cases. Continuous conditioning uses density normalization, not division by a zero point probability.</p>
+</div>
+<div>
+<strong>6 · Check independence</strong>
+<p>Factorization must hold throughout the joint model. Disjoint positive-probability events are dependent. Zero covariance alone does not establish independence.</p>
+</div>
+</div>
+</section>
+<section class="ld-review" id="prob-language-review" aria-labelledby="prob-language-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="prob-language-review-title">Explain it before reopening the notes</h3>
+<p>Try these on paper or aloud. Check the method, conditions and interpretation after your attempt.</p>
+<ol>
+<li>For two independent coins with P(head)=3/4, derive P(exactly one head). Why is simple outcome counting insufficient?</li>
+<li>A uniform density on [0,0.2] has height 5. Find P(0.04≤X≤0.10) and P(X=0.10).</li>
+<li>For the atom-plus-uniform example, compare P(0&lt;X≤0.5) with P(0≤X≤0.5).</li>
+<li>Using the 18/12/7/63 table, derive P(rain | late) through Bayes and total probability.</li>
+<li>Can two disjoint events of positive probability be independent? Explain with the factorization rule.</li>
+<li>In a conditional density f(X | Y=y), what is held fixed and what is integrated in its denominator?</li>
+</ol>
+<details class="ld-answer" data-solution>
+<summary>Review answers and reasoning</summary>
+<ol>
+<li>HT and TH each have probability 3/16, so the total is 3/8. Outcomes are not equally likely; independence justifies multiplication.</li>
+<li>Interval probability is 5×0.06=0.30. A single point has probability zero for this absolutely continuous distribution.</li>
+<li>Excluding zero gives 0.35; including its atom gives 0.65.</li>
+<li>Evidence: 0.60×0.30+0.10×0.70=0.25. Posterior: 0.60×0.30/0.25=0.72.</li>
+<li>No. Their intersection has probability zero, while the product of their two positive probabilities is positive.</li>
+<li>Hold y fixed; integrate the joint density over all candidate x values (using a dummy variable such as u). The result is f_Y(y), required positive for this ratio.</li>
+</ol>
+<p>
+<strong>Self-check:</strong> did you name the reference population, state the needed assumption, and interpret the result? Reopen only the explanation connected to the step you missed.</p>
+</details>
+<details class="ld-record-disclosure">
+<summary>Save your progress or a return date</summary>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your self-reported learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> I read and followed the explanations.</label>
+<label>
+<input type="checkbox" data-learning-progress="attempted"> I attempted a fresh problem before opening its answer.</label>
+<label>
+<input type="checkbox" data-learning-progress="recalled"> On a later visit, I explained the ideas without looking.</label>
+</fieldset>
+<p class="ld-small">These are your own reports. Opening a page or answer does not establish mastery.</p>
+<div class="ld-review-buttons">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p data-learning-review-status aria-live="polite">Choose a suggested return gap after trying the questions.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this block’s record</button>
+</div>
+</details>
+</section>
+<p class="ld-next">Next: <a href="#moments">summarize a distribution with expectation and variance</a>, then connect them through covariance. <a href="#probability-language-path">Back to this block’s controls ↑</a>
+</p>
+</section>
 
 <h2 id="moments">6. Expectation, variance, and useful identities</h2>
 <p class="section-source">Lecture connection: mean, variance, linearity of expectation, and the variance-of-a-sum identities.</p>
