@@ -83,7 +83,7 @@ assert len(page.ids) == len(set(page.ids)), 'Duplicate ID'
 assert not (Counter(old.paragraphs) - Counter(page.paragraphs)), 'An original paragraph was lost'
 assert not (Counter(math(base)) - Counter(math(source))), 'An original equation was lost'
 assert set(old.ids) <= set(page.ids), 'An original anchor was lost'
-assert source[source.index('<h2 id="gaussian-conditioning">'):] == base[base.index('<h2 id="gaussian-conditioning">'):], 'Content after section 12 changed'
+assert source[source.index('<h2 id="connections">'):] == base[base.index('<h2 id="connections">'):], 'Content after section 15 changed'
 prior = subprocess.check_output(['git', 'show', '493a0eb:writing/probability-gaussians.html'], cwd=ROOT, text=True)
 prior_page = Page(prior)
 assert set(prior_page.ids) <= set(page.ids), 'A first-block anchor was lost'
@@ -103,6 +103,25 @@ previous_moments = moments_prior[moments_prior.index(moment_marker):moments_prio
 current_moments = source[source.index(moment_marker):source.index('<section class="ld-pilot prob-language prob-gaussian"')].strip()
 expected_moments = previous_moments.replace('<a href="#normal">Continue to Gaussians</a>', '<a href="#probability-gaussian-path">Continue to Gaussians</a>').replace('<a href="#normal">derive the normal distribution and build Gaussian geometry</a>', '<a href="#probability-gaussian-path">derive the normal distribution and build Gaussian geometry</a>')
 assert current_moments == expected_moments, 'Moments block changed beyond its two forward links'
+gaussian_prior = subprocess.check_output(['git', 'show', '344732a:writing/probability-gaussians.html'], cwd=ROOT, text=True)
+gaussian_prior_page = Page(gaussian_prior)
+assert set(gaussian_prior_page.ids) <= set(page.ids), 'An earlier Gaussian anchor was lost'
+assert not (Counter(gaussian_prior_page.paragraphs) - Counter(page.paragraphs)), 'An earlier Gaussian paragraph was lost'
+assert not (Counter(math(gaussian_prior)) - Counter(math(source))), 'An earlier Gaussian equation was lost'
+gaussian_marker = '<section class="ld-pilot prob-language prob-gaussian" id="probability-gaussian-path"'
+conditioning_marker = '<section class="ld-pilot prob-language prob-gaussian prob-conditioning"'
+previous_gaussian = gaussian_prior[gaussian_prior.index(gaussian_marker):gaussian_prior.index('<h2 id="gaussian-conditioning">')].strip()
+current_gaussian = source[source.index(gaussian_marker):source.index(conditioning_marker)].strip()
+expected_gaussian = previous_gaussian.replace('<a href="#gaussian-conditioning">Continue to Gaussian conditioning</a>', '<a href="#probability-conditioning-path">Continue to Gaussian conditioning</a>').replace('<a href="#gaussian-conditioning">derive Gaussian marginal and conditional distributions</a>', '<a href="#probability-conditioning-path">derive Gaussian marginal and conditional distributions</a>')
+assert current_gaussian == expected_gaussian, 'Earlier Gaussian block changed beyond its two forward links'
+lab_start = gaussian_prior.index('<div class="lab" id="gaussian-lab-tool">')
+lab_end = gaussian_prior.index('<div class="stop-point"><strong>Three predictions to test:')
+assert normalize(gaussian_prior[lab_start:lab_end]) in normalize(source), 'Original Gaussian workbench markup changed'
+previous_styles = subprocess.check_output(['git','show','344732a:writing/assets/ml-probability-learning.css'],cwd=ROOT)
+assert (ROOT/'writing/assets/ml-probability-learning.css').read_bytes().startswith(previous_styles), 'Earlier probability styles changed'
+for asset in ['ml-learning.js','ml-learning.css','ml-notes.js','ml-probability.js']:
+    assert subprocess.check_output(['git','show','344732a:writing/assets/'+asset],cwd=ROOT) == (ROOT/'writing/assets'/asset).read_bytes(), 'Shared behavior changed: '+asset
+
 for pattern, label in [
     (r'<img[^>]+src="([^"]+)"', 'figure asset'),
     (r'<figcaption[^>]*>(.*?)</figcaption>', 'figure caption'),
@@ -123,12 +142,13 @@ for link in page.links:
         if target not in pages:
             pages[target] = Page(target.read_text())
         assert unquote(url.fragment) in pages[target].ids, link
-assert source.count('data-learning-pilot') == 3
-assert source.count('class="ld-unit"') == 12
+assert source.count('data-learning-pilot') == 4
+assert source.count('class="ld-unit"') == 15
 assert source.count('class="exercise"') == base.count('class="exercise"') == 18
 assert 'data-learning-key="probability-language"' in source
 assert 'data-learning-key="probability-moments"' in source
 assert 'data-learning-key="probability-gaussian"' in source
+assert 'data-learning-key="probability-conditioning"' in source
 assert 'assets/ml-learning.js' in source
 expected_counts = {'rain-late': 18, 'rain-on-time': 12, 'dry-late': 7, 'dry-on-time': 63}
 assert page.cases == Counter(expected_counts), '100-case visual differs from the stated model'
@@ -218,9 +238,59 @@ assert quadratic([[F(1),F(-1,2)],[F(-1,2),F(1,4)]],[1,2]) == 0
 for name in ['gaussian-standardization','gaussian-whitening-ellipse','gaussian-whitening-circle','gaussian-normal-marginals']:
     ET.parse(ROOT / ('writing/assets/ml-notes/'+name+'.svg'))
 
+# Conditioning/operations examples: new observations, affine maps and unequal precisions.
+assert F(3,4)*(3-1) == F(3,2)
+assert 9-F(3)**2/4 == F(27,4)
+assert 9*4-3**2 == 27
+assert 1+F(3,9)*(-1-2) == 0
+assert 1+F(3,9)*(2-2) == 1
+assert 1+F(3,9)*(5-2) == 2
+assert 4-F(3)**2/9 == 3
+for rho,observed,expected_mean,expected_var in [
+    (F(3,5),1,F(3,5),F(16,25)),
+    (F(3,5),2,F(6,5),F(16,25)),
+    (F(-3,5),1,F(-3,5),F(16,25)),
+    (F(0),1,F(0),F(1)),
+    (F(19,20),1,F(19,20),F(39,400)),
+]:
+    assert rho*observed == expected_mean and 1-rho*rho == expected_var
+assert F(4,5)*(F(3,2)/F(1,2))*4 == F(48,5) > 6
+assert F(3,2)**2*(1-F(4,5)**2) == F(81,100)
+running_cov = [[4,3],[3,9]]
+assert 1-2 == -1 and quadratic(running_cov,[1,-1]) == 7
+assert 1+2*2 == 5 and quadratic(running_cov,[1,2]) == 52
+for mean,variance in [(F(2),F(4)),(F(-1),F(9))]:
+    precision = 1/variance
+    eta = precision*mean
+    kappa = -.5*(log(2*pi)-log(float(precision))+float(eta*eta/precision))
+    for x in [-4,0,2,7]:
+        direct = -.5*log(2*pi*float(variance))-(x-float(mean))**2/(2*float(variance))
+        canonical = kappa+float(eta)*x-.5*float(precision)*x*x
+        assert isclose(canonical,direct,abs_tol=1e-12)
+A,B,a,b = F(4),F(1),F(0),F(3)
+C = 1/(1/A+1/B)
+c = C*(a/A+b/B)
+assert C == F(4,5) and c == F(12,5)
+assert (1/A)/(1/A+1/B) == F(1,5) and (1/B)/(1/A+1/B) == F(4,5)
+assert a+b == 3 and A+B == 5
+normal_density = lambda x,mean,var: exp(-(x-mean)**2/(2*var))/sqrt(2*pi*var)
+overlap = normal_density(float(a),float(b),float(A+B))
+assert isclose(overlap,0.07253707348392295,abs_tol=1e-12)
+for x in [-6,-1,0,2.4,3,8]:
+    product = normal_density(x,0,4)*normal_density(x,3,1)
+    assert isclose(product,overlap*normal_density(x,float(c),float(C)),abs_tol=1e-12)
+for name in ['gaussian-conditional-update','gaussian-observation-shifts','gaussian-precision-product','gaussian-independent-sum']:
+    ET.parse(ROOT / ('writing/assets/ml-notes/'+name+'.svg'))
+# Structural contract for each independent block; browser rendering is checked separately when available.
+for key in ['probability-language','probability-moments','probability-gaussian','probability-conditioning']:
+    assert source.count('data-learning-key="'+key+'"') == 1
+assert source.count('data-learning-depth') == 52
+assert source.count('data-solution') == 50
+assert source.count('data-hint') == 2
+
 for name in ['cnn-foundations', 'cnn-training', 'statistical-regression-gda', 'naive-bayes', 'factor-models-pca', 'decision-trees-pruning', 'machine-learning']:
     original = subprocess.check_output(['git', 'show', BASELINE + ':writing/' + name + '.html'], cwd=ROOT)
     assert original == (ROOT / 'writing' / (name + '.html')).read_bytes(), 'Unrelated chapter changed: ' + name
-print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 13 onward byte-identical; earlier blocks preserved apart from forward links.')
+print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 16 onward byte-identical; earlier blocks preserved apart from forward links.')
 print('HTML and local references pass:', len(page.ids), 'unique IDs,', len(page.links), 'references,', len(math(source)), 'math expressions.')
-print('Exact examples pass; three blocks, twelve teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')
+print('Exact examples pass; four blocks, fifteen teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')

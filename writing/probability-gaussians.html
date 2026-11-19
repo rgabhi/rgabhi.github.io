@@ -89,6 +89,7 @@
 <span>11</span>Contours &amp; distance</a>
 <a href="#joint-gaussian">
 <span>12</span>Joint-Gaussian pitfalls</a>
+<a href="#probability-conditioning-title"><span>Learn</span>Gaussian inference</a>
 <a href="#gaussian-conditioning">
 <span>13</span>Gaussian conditioning</a>
 <a href="#gaussian-lab">
@@ -122,6 +123,8 @@
 <span>Sections 6–8 · distribution derivations, visual comparisons and recall.</span>
 <a href="#probability-gaussian-path">Learn Gaussians: normalization, geometry and assumptions</a>
 <span>Sections 9–12 · constructions, contours, counterexamples and recall.</span>
+<a href="#probability-conditioning-path">Learn Gaussian inference: conditioning and operations</a>
+<span>Sections 13–15 · observed values, residual reasoning, precision and practice.</span>
 </div>
 <div class="chapter-tools">
 <a href="#learning-goals">Start learning</a>
@@ -1966,7 +1969,7 @@
 <div class="ld-route-links">
 <a href="#prob-gaussian-revision">Revision sheet</a>
 <a href="#prob-gaussian-review">Return-review questions</a>
-<a href="#gaussian-conditioning">Continue to Gaussian conditioning</a>
+<a href="#probability-conditioning-path">Continue to Gaussian conditioning</a>
 </div>
 </div>
 <div class="ld-notation">
@@ -2536,71 +2539,639 @@
 </div>
 </details>
 </section>
-<p class="ld-next">Next: <a href="#gaussian-conditioning">derive Gaussian marginal and conditional distributions</a>, then explore transformations and operations. <a href="#probability-gaussian-path">Back to this block’s controls</a>
+<p class="ld-next">Next: <a href="#probability-conditioning-path">derive Gaussian marginal and conditional distributions</a>, then explore transformations and operations. <a href="#probability-gaussian-path">Back to this block’s controls</a>
 </p>
 </section>
 
+<section class="ld-pilot prob-language prob-gaussian prob-conditioning" id="probability-conditioning-path" data-learning-pilot data-learning-key="probability-conditioning" data-learning-scope="sections 13–15" data-ld-mode="learn" aria-labelledby="probability-conditioning-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 13–15</div>
+<h2 id="probability-conditioning-title">Predict after observing, then combine Gaussian models</h2>
+<p>Choose the probability question first. Derive what an observation changes, test the result, then distinguish transforming a vector, adding random variables and multiplying density functions.</p>
+<nav class="ld-map prob-conditioning-map" aria-label="Gaussian inference concept map">
+<a href="#gaussian-conditioning">
+<span>Condition</span>
+<strong>Update a distribution</strong>
+<small>separates an observed value from remaining uncertainty</small>
+</a>
+<a href="#gaussian-lab">
+<span>Predict &amp; test</span>
+<strong>Explain the workbench</strong>
+<small>changes one assumption at a time</small>
+</a>
+<a href="#operations">
+<span>Combine</span>
+<strong>Choose the operation</strong>
+<small>tracks moments, precision and normalization</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for probability sections 13 to 15">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all explanations</button>
+</div>
+<p class="ld-mode-help" data-learning-mode-help>The full explanations remain available below.</p>
+<div class="ld-route-links">
+<a href="#prob-conditioning-revision">Revision sheet</a>
+<a href="#prob-conditioning-review">Return-review questions</a>
+<a href="statistical-regression-gda.html">Continue to regression &amp; Gaussian classification</a>
+</div>
+</div>
+<div class="ld-notation">
+<strong>Random variable or observed value?</strong>
+<p>X₂ is random before observation; x₂ is the fixed value afterward. N(μ,σ²) uses variance. Matrix multiplication acts from right to left; its order matters.</p>
+<p>Use a jointly Gaussian model and positive-definite covariance for the ordinary conditional-density formulas below. Earlier sections explain covariance, inverse conditions and the Gaussian assumption.</p>
+</div>
+<section class="ld-unit" aria-labelledby="gaussian-conditioning">
 <h2 id="gaussian-conditioning">13. Marginal and conditional Gaussians, with derivations</h2>
 <p class="section-source">Lecture connection: joint/marginal/conditional notation, block covariance, and the conditioning formulas.</p>
+<p class="ld-lead">Marginalization removes an unobserved coordinate. Conditioning uses its observed value. In a joint Gaussian model, both results are Gaussian, but their parameters differ.</p>
+<div class="prob-query-pair ld-teach">
+<div>
+<strong>Marginal: before seeing X₂</strong>
+<p>Collect all possible values of the other coordinate by integration. Retain the matching mean and covariance blocks.</p>
+</div>
+<div>
+<strong>Conditional: after X₂=x₂</strong>
+<p>Fix the observed coordinate and normalize that density slice over the variable still being predicted.</p>
+</div>
+</div>
+<div class="prob-block-guide ld-teach">
+<h3>Read a block matrix by its job</h3>
+<p>For a two-coordinate target X₁ and a one-coordinate observation X₂, these are the block shapes:</p>
+<div class="table-scroll" tabindex="0">
+<table class="prob-block-table">
+<caption>Rows and columns identify which variables vary together</caption>
+<thead>
+<tr>
+<th scope="col">Covariance block</th>
+<th scope="col">Target X₁ · length 2</th>
+<th scope="col">Observed X₂ · length 1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">Target X₁</th>
+<td class="prob-target-block">Σ₁₁ · 2 × 2</td>
+<td>Σ₁₂ · 2 × 1</td>
+</tr>
+<tr>
+<th scope="row">Observed X₂</th>
+<td>Σ₂₁ · 1 × 2</td>
+<td class="prob-observed-block">Σ₂₂ · 1 × 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The gain B=Σ₁₂Σ₂₂⁻¹ is 2×1. It maps an observed deviation (1×1) to a target-mean correction (2×1). The covariance reduction BΣ₂₁ is 2×2.</p>
+<p>The worked calculation below uses scalar blocks (d₁=d₂=1), so matrix products become ordinary products.</p>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Marginal · retain the matching blocks</div>
+<div class="math-block">\[X_1\sim\mathcal N(\mu_1,\Sigma_{11})\]</div>
+<p>Selecting coordinates preserves joint Gaussianity. No value of X₂ has been observed in this question.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Partition the vector and justify marginalization</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Partition the vector and keep the blocks straight</h3>
 <div class="math-block">\[\begin{bmatrix}X_1\\X_2\end{bmatrix}\sim\mathcal N\!\left(\begin{bmatrix}\mu_1\\\mu_2\end{bmatrix},\begin{bmatrix}\Sigma_{11}&amp;\Sigma_{12}\\\Sigma_{21}&amp;\Sigma_{22}\end{bmatrix}\right).\]</div>
 <p>X₁ and X₂ can themselves be vectors. If their lengths are d₁ and d₂, Σ₁₂ is d₁×d₂ and Σ₂₁=Σ₁₂ᵀ. Assume the full covariance is positive definite for the ordinary-density formulas below.</p>
 <h3>Marginalization retains the matching blocks</h3>
 <p>The marginal X₁ is \(\mathcal N(\mu_1,\Sigma_{11})\), and X₂ is \(\mathcal N(\mu_2,\Sigma_{22})\). One explanation is that selecting coordinates preserves the defining Gaussian property: every linear combination of the selected coordinates is also a linear combination of the original vector. Its mean and covariance are the corresponding subvector and submatrix.</p>
 <p>Do not invert the whole covariance and then select a block to get the marginal covariance. A block of a matrix's inverse is generally not the inverse of the matching block. Marginalization and conditioning have different algebra.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Conditional · apply the gain to the observed deviation</div>
+<div class="math-block">\[\begin{aligned}\mu_{1\mid2}&amp;=\mu_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\mu_2),\\\Sigma_{1\mid2}&amp;=\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21},\\X_1\mid X_2=x_2&amp;\sim\mathcal N(\mu_{1\mid2},\Sigma_{1\mid2}).\end{aligned}\]</div>
+<p>Matrix order matters. The mean correction has dimension d₁×1; the covariance correction is d₁×d₁. The covariance does not depend on the observed value x₂ in this jointly Gaussian model, although the mean does. The correction is positive semidefinite, so conditioning cannot increase covariance in the matrix order here.</p>
+</div>
+<div class="ld-teach">
+<h3>A complete numerical example</h3>
+<p>Let μ=[1,2]ᵀ and Σ=[4,3;3,9]. The marginal X₁ is N(1,4). Observing X₂=5 gives:</p>
+<div class="math-block">\[\mu_{1\mid2}=1+\frac39(5-2)=2,\qquad\sigma_{1\mid2}^2=4-\frac{3^2}{9}=3.\]</div>
+<div class="prob-update-steps">
+<div>
+<span>Observed deviation</span>
+<strong>5 − 2 = 3</strong>
+<p>Measure the observation relative to its own mean.</p>
+</div>
+<div>
+<span>Gain</span>
+<strong>3 / 9 = 1/3</strong>
+<p>Convert that deviation into a target correction.</p>
+</div>
+<div>
+<span>Updated mean</span>
+<strong>1 + 1 = 2</strong>
+<p>Add the correction to the target’s original mean.</p>
+</div>
+<div>
+<span>Remaining variance</span>
+<strong>4 − 1 = 3</strong>
+<p>Subtract the explained variation, not the observed value.</p>
+</div>
+</div>
+<p>Therefore X₁|X₂=5 is N(2,3). The observation moves the conditional mean and reduces its uncertainty. If the cross-covariance were zero in a jointly Gaussian model, the mean correction would vanish and the conditional distribution would equal the marginal.</p>
+<div class="prob-conditioning-plot-pair">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-conditional-update.svg" target="_blank" rel="noopener" aria-label="Open gaussian conditional update at full size">
+<img src="assets/ml-notes/gaussian-conditional-update.svg" width="500" height="400" loading="lazy" alt="The marginal normal with mean one and variance four compared with the conditional normal after observing Y equal to five, with mean two and variance three.">
+</a>
+<figcaption>For μ=(1,2) and Σ=[[4,3],[3,9]], observing Y=5 moves the X mean from 1 to 2 and reduces its variance from 4 to 3. Both curves integrate to one.</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-observation-shifts.svg" target="_blank" rel="noopener" aria-label="Open gaussian observation shifts at full size">
+<img src="assets/ml-notes/gaussian-observation-shifts.svg" width="500" height="400" loading="lazy" alt="Three conditional normal curves for observed Y values minus one, two and five have means zero, one and two and the same variance three.">
+</a>
+<figcaption>Change only the observed value: Y=−1, 2 or 5 gives conditional X means 0, 1 or 2. All three conditional variances remain 3. Same width does not mean the distributions are identical.</figcaption>
+</figure>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Construct a residual that is independent of the observation</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Derive the conditional through a residual</h3>
 <p>Let \(B=\Sigma_{12}\Sigma_{22}^{-1}\) and define the centered residual \(R=X_1-\mu_1-B(X_2-\mu_2)\). It is an affine function of a Gaussian vector, so it is Gaussian. Its cross-covariance with X₂ is:</p>
 <div class="math-block">\[\operatorname{Cov}(R,X_2)=\Sigma_{12}-B\Sigma_{22}=0.\]</div>
 <p>The pair (R,X₂) is jointly Gaussian, so this zero cross-covariance implies independence. Expanding R's covariance and using B gives:</p>
 <div class="math-block">\[\begin{aligned}\operatorname{Cov}(R)&amp;=\Sigma_{11}-B\Sigma_{21}-\Sigma_{12}B^\top+B\Sigma_{22}B^\top\\&amp;=\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21}.\end{aligned}\]</div>
 <p>After observing X₂=x₂, the remaining uncertainty is R, whose distribution is unchanged by that observation. Therefore:</p>
-<div class="math-block">\[\begin{aligned}\mu_{1\mid2}&amp;=\mu_1+\Sigma_{12}\Sigma_{22}^{-1}(x_2-\mu_2),\\\Sigma_{1\mid2}&amp;=\Sigma_{11}-\Sigma_{12}\Sigma_{22}^{-1}\Sigma_{21},\\X_1\mid X_2=x_2&amp;\sim\mathcal N(\mu_{1\mid2},\Sigma_{1\mid2}).\end{aligned}\]</div>
-<p>Matrix order matters. The mean correction has dimension d₁×1; the covariance correction is d₁×d₁. The covariance does not depend on the observed value x₂ in this jointly Gaussian model, although the mean does. The correction is positive semidefinite, so conditioning cannot increase covariance in the matrix order here.</p>
+<p>
+<strong>Why this works:</strong> choose B so that the residual’s cross-covariance with X₂ cancels. The pair (R,X₂) remains jointly Gaussian because it is an affine transformation of the original joint vector. That joint assumption upgrades zero cross-covariance to independence. Reassemble X₁=μ₁+B(X₂−μ₂)+R after fixing X₂=x₂.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For μ=(0,1) and Σ=[[9,3],[3,4]], find the marginal X₁ and the conditional distribution after observing X₂=3. State the variance, not just the mean.</p>
+<details class="ld-answer" data-solution id="prob-conditioning-check-fresh-conditional">
+<summary>Check your reasoning</summary>
+<p>Marginal X₁ is N(0,9). Gain 3/4 times innovation 3−1=2 gives mean 3/2. Conditional variance is 9−9/4=27/4=6.75. Thus X₁ | X₂=3 is N(1.5,6.75). The determinant 36−9=27 is positive.</p>
+</details>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Complete the bivariate square and read its center and variance</span>
+</summary>
+<div class="ld-detail-body">
 <h3>See the same result by completing a bivariate square</h3>
 <p>For scalar coordinates, let \(u=(x-\mu_X)/\sigma_X\) and \(v=(y-\mu_Y)/\sigma_Y\). The joint quadratic form is:</p>
 <div class="math-block">\[\frac{u^2-2\rho uv+v^2}{1-\rho^2}=\frac{(u-\rho v)^2}{1-\rho^2}+v^2.\]</div>
 <p>With y fixed, v² is constant in x. The remaining factor is a Gaussian-shaped function centered at u=ρv. Dividing the joint slice by the marginal fY(y) normalizes it. Thus:</p>
 <div class="math-block">\[X\mid Y=y\sim\mathcal N\!\left(\mu_X+\rho\frac{\sigma_X}{\sigma_Y}(y-\mu_Y),\;\sigma_X^2(1-\rho^2)\right).\]</div>
-<figure class="figure-frame"><a href="assets/ml-notes/gaussian-conditioning.svg" target="_blank" rel="noopener" aria-label="Open marginal-and-conditional diagram at full size"><img src="assets/ml-notes/gaussian-conditioning.svg" width="1000" height="300" loading="lazy" alt="A slice through a bivariate Gaussian is divided by its area to obtain a conditional density, which differs from the marginal."></a><figcaption>Marginalization integrates out Y. Conditioning fixes Y and normalizes the resulting slice. A raw joint-density slice is not already a probability density in X.</figcaption></figure>
-<h3>A complete numerical example</h3>
-<p>Let μ=[1,2]ᵀ and Σ=[4,3;3,9]. The marginal X₁ is N(1,4). Observing X₂=5 gives:</p>
-<div class="math-block">\[\mu_{1\mid2}=1+\frac39(5-2)=2,\qquad\sigma_{1\mid2}^2=4-\frac{3^2}{9}=3.\]</div>
-<p>Therefore X₁|X₂=5 is N(2,3). The observation moves the conditional mean and reduces its uncertainty. If the cross-covariance were zero in a jointly Gaussian model, the mean correction would vanish and the conditional distribution would equal the marginal.</p>
-
+<p>For |ρ|&lt;1 and σX,σY&gt;0, the coefficient of (u−ρv)² determines conditional variance 1−ρ² in standardized X units. Converting back multiplies the variance by σX², not σX.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Density bridge</span>
+<span>Why conditioning on a continuous value does not divide by zero</span>
+</summary>
+<div class="ld-detail-body">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-conditioning.svg" target="_blank" rel="noopener" aria-label="Open marginal-and-conditional diagram at full size">
+<img src="assets/ml-notes/gaussian-conditioning.svg" width="1000" height="300" loading="lazy" alt="A slice through a bivariate Gaussian is divided by its area to obtain a conditional density, which differs from the marginal.">
+</a>
+<figcaption>Marginalization integrates out Y. Conditioning fixes Y and normalizes the resulting slice. A raw joint-density slice is not already a probability density in X.</figcaption>
+</figure>
+<div class="math-block">\[f_{X_1\mid X_2=x_2}(x_1)=\frac{f_{X_1,X_2}(x_1,x_2)}{f_{X_2}(x_2)}\]</div>
+<p>The denominator is a marginal density value, obtained by integrating the joint slice over x₁. It is not P(X₂=x₂), which is zero for a nonsingular continuous Gaussian. This density formula applies where fX₂(x₂)&gt;0; a nonsingular Gaussian marginal is positive at every finite observation.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Matrix reasoning</span>
+<span>Explain why the conditional covariance cannot increase here</span>
+</summary>
+<div class="ld-detail-body">
+<p>The removed covariance is K=Σ₁₂Σ₂₂⁻¹Σ₂₁=BΣ₂₂Bᵀ. For any fixed target-space vector v, vᵀKv=(Bᵀv)ᵀΣ₂₂(Bᵀv)≥0 because Σ₂₂ is positive definite. Thus K is positive semidefinite and Σ₁|₂=Σ₁₁−K is no larger than Σ₁₁ in this matrix sense. The covariance formula is valid for any observed value under this fixed jointly Gaussian model; its numerical value does not depend on x₂.</p>
+<p>This pointwise conclusion is special to this model. For a general distribution, conditional variance can depend on the observation and can exceed marginal variance for some values. Do not turn the Gaussian result into a claim about every possible conditioning event.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>If a residual is uncorrelated with the observation, does that alone establish independence and the conditional formula?</p>
+<details class="ld-answer" data-solution id="prob-conditioning-check-assumption">
+<summary>Check your reasoning</summary>
+<p>No. Here independence follows because the residual and observation are jointly Gaussian. Outside that setting, the random-sign counterexample shows that zero covariance can coexist with dependence. The affine moment calculation alone does not establish a Gaussian conditional distribution.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Choose marginal or conditional, track the block dimensions, derive the residual argument and interpret the mean correction and remaining covariance.</div>
+</section>
+<section class="ld-unit" aria-labelledby="gaussian-lab">
 <h2 id="gaussian-lab">14. Explore covariance and conditioning</h2>
+<p class="ld-lead">Use the workbench to test a prediction, then explain the result using the conditional formula. The chart is feedback for reasoning about a fixed model.</p>
 <p>Change the correlation and the observed Y value. Watch the joint contours and compare the marginal distribution of X with its conditional distribution. The plotted contours have Mahalanobis radii 1, 2, and 3; they are not labels for one-dimensional “sigma percentages.”</p>
-<div class="lab" id="gaussian-lab-tool"><h3>Bivariate Gaussian workbench</h3><div class="lab-controls"><label>Mean μX<input id="gauss-mx" type="number" min="-1" max="1" step="0.25" value="0"></label><label>Mean μY<input id="gauss-my" type="number" min="-1" max="1" step="0.25" value="0"></label><label>Std. dev. σX<input id="gauss-sx" type="number" min="0.5" max="1.5" step="0.1" value="1"></label><label>Std. dev. σY<input id="gauss-sy" type="number" min="0.5" max="1.5" step="0.1" value="1"></label><label>Correlation ρ<input id="gauss-rho" type="range" min="-0.95" max="0.95" step="0.05" value="0.6"><output id="gauss-rho-value" for="gauss-rho">0.6</output></label><label>Observed Y<input id="gauss-observed" type="number" min="-4" max="4" step="0.25" value="1"></label><label>Probe X<input id="gauss-probe" type="number" min="-4" max="4" step="0.25" value="1"></label><button id="gauss-reset" type="button">Reset</button></div><p class="chart-scroll-help">On a small screen, scroll the chart horizontally to inspect both panels.</p><div class="gaussian-figure" tabindex="0" role="region" aria-label="Gaussian charts, horizontally scrollable on small screens"><svg id="gauss-plot" viewBox="0 0 800 520" role="img" aria-labelledby="gauss-plot-title gauss-plot-desc"><title id="gauss-plot-title">Joint contours and marginal-versus-conditional density</title><desc id="gauss-plot-desc">An interactive bivariate Gaussian contour plot and a density comparison controlled by the fields above.</desc></svg></div><div class="lab-result" id="gauss-result" aria-live="polite"></div><p class="lab-help">The axes use a fixed −6 to 6 range; portions of curves outside that window are clipped. The joint plot's horizontal line is the observed Y; the point also uses the probe X. The density value is a height, not a point probability. Controls stay within the nonsingular |ρ|&lt;1 case; the text explains the singular boundary.</p></div>
-<div class="stop-point"><strong>Three predictions to test:</strong> At ρ=0, conditioning should leave the X distribution unchanged. Changing the observed Y should move the conditional mean but not its variance. Changing the sign of ρ should reverse the direction of the mean correction.</div>
-
+<div class="ld-teach">
+<h3>Predict first; reveal feedback after trying</h3>
+<p>Start from the workbench defaults: μX=μY=0, σX=σY=1, ρ=0.6, observed Y=1. Write a mean and variance before opening the chart. Reset before each case.</p>
+<ol class="prob-experiment-list">
+<li>
+<strong>Observe Y=2:</strong> which conditional parameter moves, and which stays fixed?</li>
+<li>
+<strong>Use ρ=−0.6 with Y=1:</strong> what reverses sign? Does the conditional variance change?</li>
+<li>
+<strong>Use ρ=0:</strong> compare the conditional distribution with the marginal.</li>
+<li>
+<strong>Use ρ=0.95:</strong> does a very thin contour already imply a singular covariance?</li>
+</ol>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Explore</span>
+<span>Open the covariance and conditioning workbench</span>
+</summary>
+<div class="ld-detail-body">
+<div class="lab" id="gaussian-lab-tool">
+<h3>Bivariate Gaussian workbench</h3>
+<div class="lab-controls">
+<label>Mean μX<input id="gauss-mx" type="number" min="-1" max="1" step="0.25" value="0">
+</label>
+<label>Mean μY<input id="gauss-my" type="number" min="-1" max="1" step="0.25" value="0">
+</label>
+<label>Std. dev. σX<input id="gauss-sx" type="number" min="0.5" max="1.5" step="0.1" value="1">
+</label>
+<label>Std. dev. σY<input id="gauss-sy" type="number" min="0.5" max="1.5" step="0.1" value="1">
+</label>
+<label>Correlation ρ<input id="gauss-rho" type="range" min="-0.95" max="0.95" step="0.05" value="0.6">
+<output id="gauss-rho-value" for="gauss-rho">0.6</output>
+</label>
+<label>Observed Y<input id="gauss-observed" type="number" min="-4" max="4" step="0.25" value="1">
+</label>
+<label>Probe X<input id="gauss-probe" type="number" min="-4" max="4" step="0.25" value="1">
+</label>
+<button id="gauss-reset" type="button">Reset</button>
+</div>
+<p class="chart-scroll-help">On a small screen, scroll the chart horizontally to inspect both panels.</p>
+<div class="gaussian-figure" tabindex="0" role="region" aria-label="Gaussian charts, horizontally scrollable on small screens">
+<svg id="gauss-plot" viewBox="0 0 800 520" role="img" aria-labelledby="gauss-plot-title gauss-plot-desc">
+<title id="gauss-plot-title">Joint contours and marginal-versus-conditional density</title>
+<desc id="gauss-plot-desc">An interactive bivariate Gaussian contour plot and a density comparison controlled by the fields above.</desc>
+</svg>
+</div>
+<div class="lab-result" id="gauss-result" aria-live="polite">
+</div>
+<p class="lab-help">The axes use a fixed −6 to 6 range; portions of curves outside that window are clipped. The joint plot's horizontal line is the observed Y; the point also uses the probe X. The density value is a height, not a point probability. Controls stay within the nonsingular |ρ|&lt;1 case; the text explains the singular boundary.</p>
+</div>
+</div>
+</details>
+<details class="ld-answer" data-solution>
+<summary>Check the workbench predictions</summary>
+<div class="table-scroll" tabindex="0">
+<table class="prob-workbench-table">
+<caption>Unit marginal variances and zero means; each row starts from reset</caption>
+<thead>
+<tr>
+<th scope="col">Change</th>
+<th scope="col">Conditional mean</th>
+<th scope="col">Conditional variance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">Default: ρ=0.6, Y=1</th>
+<td>0.6</td>
+<td>0.64</td>
+</tr>
+<tr>
+<th scope="row">Observe Y=2</th>
+<td>1.2</td>
+<td>0.64</td>
+</tr>
+<tr>
+<th scope="row">ρ=−0.6, Y=1</th>
+<td>−0.6</td>
+<td>0.64</td>
+</tr>
+<tr>
+<th scope="row">ρ=0, Y=1</th>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<th scope="row">ρ=0.95, Y=1</th>
+<td>0.95</td>
+<td>0.0975</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For this unit-scale model, the conditional mean is ρy and variance is 1−ρ². At ρ=0.95 the determinant is 0.0975&gt;0, so the density is still nonsingular. Changing ρ also changes the joint model; changing only the observation does not.</p>
+</details>
+<div class="stop-point">
+<strong>Three predictions to test:</strong> At ρ=0, conditioning should leave the X distribution unchanged. Changing the observed Y should move the conditional mean but not its variance. Changing the sign of ρ should reverse the direction of the mean correction.</div>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Set both means to 0, σX=1.5, σY=0.5, ρ=0.8 and observed Y=4. Compute the conditional mean and variance before inspecting the plot. What if its peak is outside the plotted window?</p>
+<details class="ld-answer" data-solution id="prob-conditioning-check-clipped-chart">
+<summary>Check your reasoning</summary>
+<p>Mean is 0.8×(1.5/0.5)×4=9.6 and variance is 1.5²×(1−0.8²)=0.81. The chart stops at X=6, so the peak lies outside it. Clipping is not zero probability or an invalid conditional distribution. The numeric output and fixed-axis note matter. Reset after exploring.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Change one input at a time, distinguish a changed observation from a changed model, and check numerical results against the plot’s range.</div>
+</section>
+<section class="ld-unit" aria-labelledby="operations">
 <h2 id="operations">15. Transform, add, and multiply Gaussian descriptions</h2>
 <p class="section-source">Lecture connection: affine transformations, independent sums, products of Gaussian functions, and the canonical parameterization.</p>
+<p class="ld-lead">The same Gaussian algebra appears in several different operations. Say what is being transformed or combined before choosing a formula.</p>
+<nav class="prob-operation-nav ld-teach" aria-label="Choose a Gaussian operation">
+<a href="#gaussian-affine">
+<strong>Transform</strong>
+<span>One vector X becomes AX+b.</span>
+</a>
+<a href="#gaussian-add">
+<strong>Add variables</strong>
+<span>Two random outcomes are added.</span>
+</a>
+<a href="#gaussian-precision">
+<strong>Rewrite</strong>
+<span>Use precision to organize a log density.</span>
+</a>
+<a href="#gaussian-density-product">
+<strong>Multiply densities</strong>
+<span>Two functions score the same argument x.</span>
+</a>
+</nav>
+<section class="prob-operation" aria-labelledby="gaussian-affine">
+<h3 id="gaussian-affine">Transform one Gaussian vector</h3>
+<div class="ld-definition">
+<div class="ld-label">Affine map · fixed A and b</div>
+<div class="math-block">\[X\sim\mathcal N(\mu,\Sigma)\quad\Longrightarrow\quad AX+b\sim\mathcal N(A\mu+b,A\Sigma A^\top).\]</div>
+<p>The mean is transformed by A and shifted by b. Covariance is multiplied by A on the left and Aᵀ on the right; b adds no random spread.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Center the affine transform to derive its covariance</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Mean and covariance under any affine transformation</h3>
 <p>For deterministic A∈ℝᵐˣᵈ and b∈ℝᵐ, define Y=AX+b. Linearity gives E[Y]=Aμ+b. Centering removes b, and the outer-product definition gives:</p>
 <div class="math-block">\[\operatorname{Cov}(Y)=\mathbb E[A(X-\mu)(X-\mu)^\top A^\top]=A\Sigma A^\top.\]</div>
 <p>These moment identities hold for any X with the required finite moments, not only a Gaussian. If X is jointly Gaussian, every linear combination of Y is also a linear combination of X, so Y is Gaussian:</p>
-<div class="math-block">\[X\sim\mathcal N(\mu,\Sigma)\quad\Longrightarrow\quad AX+b\sim\mathcal N(A\mu+b,A\Sigma A^\top).\]</div>
+</div>
+</details>
 <p>A need not be square or invertible for this forward statement. An inverse transformation is a different matter. The result can be singular when A loses rank or creates more coordinates than the random vector can vary independently.</p>
+<div class="ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-affine-transform.svg" target="_blank" rel="noopener" aria-label="Open affine-Gaussian diagram at full size">
+<img src="assets/ml-notes/gaussian-affine-transform.svg" width="1000" height="435" loading="lazy" alt="Standard-normal samples and circular contours become correlated Gaussian samples and ellipses after an affine transformation.">
+</a>
+<figcaption>With A=[2,1;0,1] and μ=[1,−1]ᵀ, the covariance is AAᵀ=[5,1;1,1]. The plotted sample cloud is an illustration, while the covariance identity is exact.</figcaption>
+</figure>
+<p>
+<strong>A smaller output:</strong> for the running μ=(1,2), Σ=[[4,3],[3,9]], choose A=[1,−1] and b=0. The scalar X₁−X₂ has mean −1 and variance 4+9−2×3=7, hence N(−1,7). This forward map is valid even though A is rectangular.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Invert only a square, invertible transformation</span>
+</summary>
+<div class="ld-detail-body">
 <p>If A is square and invertible and Y∼N(ν,C), then solving Y=AX+b gives X=A⁻¹(Y−b). Applying the same forward rule to this solved expression gives:</p>
 <div class="math-block">\[X\sim\mathcal N\!\left(A^{-1}(\nu-b),\;A^{-1}CA^{-\top}\right).\]</div>
 <p>Here A⁻ᵀ means (A⁻¹)ᵀ. This inverse rule requires an actual inverse; it does not extend unchanged to a rectangular or rank-deficient A.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/gaussian-affine-transform.svg" target="_blank" rel="noopener" aria-label="Open affine-Gaussian diagram at full size"><img src="assets/ml-notes/gaussian-affine-transform.svg" width="1000" height="435" loading="lazy" alt="Standard-normal samples and circular contours become correlated Gaussian samples and ellipses after an affine transformation."></a><figcaption>With A=[2,1;0,1] and μ=[1,−1]ᵀ, the covariance is AAᵀ=[5,1;1,1]. The plotted sample cloud is an illustration, while the covariance identity is exact.</figcaption></figure>
+<p>For rectangular or rank-deficient A there is no ordinary two-sided inverse. A covariance can remain valid while becoming singular, for example when one scalar is copied into two output coordinates.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Using the same running μ and Σ, find the distribution of X₁+2X₂. Is independence needed for this affine Gaussian result?</p>
+<details class="ld-answer" data-solution id="prob-conditioning-check-affine">
+<summary>Check your reasoning</summary>
+<p>The mean is 1+2×2=5. Variance is 4+4×9+4×3=52, so the result is N(5,52). Independence is not needed: joint Gaussianity gives the shape, and AΣAᵀ already includes the cross-covariance.</p>
+</details>
+</div>
+</section>
+<section class="prob-operation" aria-labelledby="gaussian-add">
+<h3 id="gaussian-add">Add random variables: uncertainty accumulates</h3>
+<div class="ld-definition">
+<div class="ld-label">Independent Gaussian sum · compatible vector dimensions</div>
+<div class="math-block">\[X+Y\sim\mathcal N(\mu_X+\mu_Y,\Sigma_X+\Sigma_Y).\]</div>
+<p>Independence removes the cross-covariance terms. Joint Gaussianity ensures that the linear combination is Gaussian.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Stack independent vectors, or keep dependent cross terms</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Add independent Gaussian random variables</h3>
 <p>For independent Gaussian vectors with compatible dimensions, stacking them gives a joint Gaussian with block-diagonal covariance. Apply the linear map [I I] to sum them:</p>
-<div class="math-block">\[X+Y\sim\mathcal N(\mu_X+\mu_Y,\Sigma_X+\Sigma_Y).\]</div>
 <p>If they are jointly Gaussian but dependent, the sum is still Gaussian, with covariance \(\Sigma_X+\Sigma_Y+\operatorname{Cov}(X,Y)+\operatorname{Cov}(Y,X)\). Merely having Gaussian marginals is insufficient, as the random-sign example showed.</p>
 <p>A direct scalar check uses \(\mathbb E[e^{tZ}]=e^{t^2/2}\) for a standard normal Z, obtained by completing the square in its integral. For independent Gaussian terms, expectations of products factor, giving the exponential of a quadratic in t with the summed mean and variance. This is another way to establish the sum's Gaussian form.</p>
+<div class="math-block">\[tz-\frac{z^2}{2}=-\frac{(z-t)^2}{2}+\frac{t^2}{2}\]</div>
+<p>For a standard normal, this completed square factors the moment-generating integral into exp(t²/2) times a translated normal integral equal to 1. Independence factors the generating function for a sum; multiplying the exponentials adds their quadratic exponents. This identifies the summed mean and variance. Without independence, retain the cross terms; with only Gaussian marginals, even the Gaussian shape can fail.</p>
+</div>
+</details>
+</section>
+<section class="prob-operation" aria-labelledby="gaussian-precision">
+<h3 id="gaussian-precision">Precision makes log densities easier to combine</h3>
+<div class="ld-definition">
+<div class="ld-label">Canonical parameters · positive-definite covariance</div>
+<div class="math-block">\[\Lambda=\Sigma^{-1},\qquad\eta=\Lambda\mu\]</div>
+<div class="math-block">\[\log f(x)=\kappa+\eta^\top x-\tfrac12 x^\top\Lambda x\]</div>
+<p>Λ is precision, the coefficient of the quadratic penalty. η is the precision-weighted mean. κ is the scalar that makes the density integrate to one. In one dimension, precision is 1/variance.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Expand the quadratic and derive the full normalizing constant</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Expand the log density: precision and canonical parameters</h3>
 <p>Let Λ=Σ⁻¹, called the precision matrix, and η=Λμ. Expanding the centered quadratic form gives:</p>
 <div class="math-block">\[\log f(x)=\kappa+\eta^\top x-\frac12x^\top\Lambda x,\qquad\kappa=-\frac12\left(d\log(2\pi)-\log|\Lambda|+\eta^\top\Lambda^{-1}\eta\right).\]</div>
 <p>To derive the constant, expand \((x-\mu)^\top\Lambda(x-\mu)=x^\top\Lambda x-2\mu^\top\Lambda x+\mu^\top\Lambda\mu\), and use log|Σ|=−log|Λ|. Since μ=Λ⁻¹η, the last term is ηᵀΛ⁻¹η.</p>
-<div class="aside-note"><p><strong>A source typo to resolve by algebra:</strong> the canonical-parameter slide prints ηᵀΛη in its constant. With the slide's own definition η=Λμ, the correct term is ηᵀΛ⁻¹η. Both expressions are scalars, so dimensions alone do not catch this error. Substitution into the expanded quadratic does.</p></div>
+<div class="aside-note">
+<p>
+<strong>A source typo to resolve by algebra:</strong> the canonical-parameter slide prints ηᵀΛη in its constant. With the slide's own definition η=Λμ, the correct term is ηᵀΛ⁻¹η. Both expressions are scalars, so dimensions alone do not catch this error. Substitution into the expanded quadratic does.</p>
+</div>
+<p>
+<strong>Check a scalar:</strong> N(2,4) gives Λ=1/4 and η=1/2. Since η²/Λ=1, κ=−[log(8π)+1]/2. Substituting these values reconstructs −log(8π)/2−(x−2)²/8. The corrected constant is required for a normalized density.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For N(−1,9), find Λ, η and κ. Which quadratic term belongs in the constant?</p>
+<details class="ld-answer" data-solution id="prob-conditioning-check-canonical">
+<summary>Check your reasoning</summary>
+<p>Λ=1/9 and η=−1/9. The term η²/Λ is 1/9, giving κ=−log(18π)/2−1/18. Using η²Λ would give 1/729 and would not reproduce the original normal density.</p>
+</details>
+</div>
+</section>
+<section class="prob-operation" aria-labelledby="gaussian-density-product">
+<h3 id="gaussian-density-product">Multiply densities: precision accumulates</h3>
+<div class="ld-definition">
+<div class="ld-label">Same argument x · normalize the product afterward</div>
+<p>For scalar N(x;a,A) and N(x;b,B), with positive variances A and B, the normalized product has:</p>
+<div class="math-block">\[C=\frac{1}{A^{-1}+B^{-1}},\qquad c=\frac{a/A+b/B}{1/A+1/B}\]</div>
+<p>In the vector case, replace reciprocal variances with inverse covariance matrices and retain matrix order. This operation combines Gaussian functions; it does not describe the random-variable product XY.</p>
+</div>
+<div class="ld-teach">
+<h4>Complete an unequal-precision example</h4>
+<p>Use N(x;0,4) and N(x;3,1). Their precisions are 1/4 and 1, so combined precision is 5/4 and variance C=4/5. Fill in the mean c before checking below.</p>
+<details class="ld-answer" data-solution>
+<summary>Finish the precision-weighted mean</summary>
+<p>c=(4/5)[(1/4)×0+1×3]=12/5=2.4. The normalized weights are 0.2 and 0.8. The result is N(2.4,0.8), narrower than either input. Adding independent variables with the same input distributions instead gives N(3,5).</p>
+</details>
+</div>
+<div class="prob-conditioning-plot-pair ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-precision-product.svg" target="_blank" rel="noopener" aria-label="Open gaussian precision product at full size">
+<img src="assets/ml-notes/gaussian-precision-product.svg" width="500" height="400" loading="lazy" alt="Two input normal densities N zero four and N three one, compared with their normalized product N two point four zero point eight.">
+</a>
+<figcaption>Multiplying functions at the same x and then normalizing gives N(2.4,0.8). The more precise input N(3,1) receives weight 0.8 in the new mean.</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-independent-sum.svg" target="_blank" rel="noopener" aria-label="Open gaussian independent sum at full size">
+<img src="assets/ml-notes/gaussian-independent-sum.svg" width="500" height="400" loading="lazy" alt="The same input normal densities compared with the density of an independent random sum, N three five.">
+</a>
+<figcaption>Adding independent random variables gives N(3,5). Variance adds because this is the distribution of a sum of random outcomes, rather than a product of functions at one x.</figcaption>
+</figure>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Add precision matrices and complete the vector square</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Multiply Gaussian density functions of the same argument</h3>
 <p>Let f₁(x)=N(x;a,A) and f₂(x)=N(x;b,B), with positive-definite covariance matrices A and B. Adding their log densities adds quadratic and linear coefficients:</p>
 <div class="math-block">\[C^{-1}=A^{-1}+B^{-1},\qquad c=C(A^{-1}a+B^{-1}b),\qquad f_1(x)f_2(x)\propto\mathcal N(x;c,C).\]</div>
 <p>This is completing the square in precision form. The product is generally not normalized. In fact its integral is \(\mathcal N(a;b,A+B)\), so the exact identity is that scalar times N(x;c,C). The multiplication combines functions evaluated at the same x; it is not the distribution of the random product XY.</p>
+<p>With Λ=A⁻¹+B⁻¹ and η=A⁻¹a+B⁻¹b, set C=Λ⁻¹ and c=Cη. Then −xᵀΛx/2+ηᵀx=−(x−c)ᵀΛ(x−c)/2+cᵀΛc/2. The term independent of x contributes to the scale; the remaining shape is Gaussian.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Normalization</span>
+<span>Recover the overlap constant and compare with a random sum</span>
+</summary>
+<div class="ld-detail-body">
 <p>One way to verify the normalization constant is to introduce independent U∼N(a,A) and V∼N(b,B). The difference U−V is N(a−b,A+B). Its density at zero is the overlap integral \(\int f_U(x)f_V(x)\,dx\), which equals \(\mathcal N(0;a-b,A+B)=\mathcal N(a;b,A+B)\). This supplies the missing scalar after completing the square.</p>
 <p>For N(x;0,1)×N(x;2,1), the combined precision is 2, so C=1/2 and c=1. The normalized product is N(1,1/2). In contrast, adding independent variables with those two distributions gives N(2,2). Their variances move in opposite directions because the operations are different.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/gaussian-product-versus-sum.svg" target="_blank" rel="noopener" aria-label="Open Gaussian product-versus-sum diagram at full size"><img src="assets/ml-notes/gaussian-product-versus-sum.svg" width="1000" height="387" loading="lazy" alt="The normalized product of two Gaussian densities is narrower, while the distribution of an independent Gaussian sum has added variance."></a><figcaption>Density-function multiplication and random-variable addition are different operations. The random-variable product of independent normals is generally not normal.</figcaption></figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-product-versus-sum.svg" target="_blank" rel="noopener" aria-label="Open Gaussian product-versus-sum diagram at full size">
+<img src="assets/ml-notes/gaussian-product-versus-sum.svg" width="1000" height="387" loading="lazy" alt="The normalized product of two Gaussian densities is narrower, while the distribution of an independent Gaussian sum has added variance.">
+</a>
+<figcaption>Density-function multiplication and random-variable addition are different operations. The random-variable product of independent normals is generally not normal.</figcaption>
+</figure>
+<p>For the unequal-variance example above, the overlap integral is N(0;3,5)=exp(−9/10)/√(10π), approximately 0.072537. Dividing the raw product by this positive scalar makes its total area one. The product’s precision rule describes its normalized shape; the constant is still needed for equality of densities.</p>
+</div>
+</details>
+</section>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Choose the operation, state joint Gaussianity or independence where needed, track covariance versus precision, and distinguish proportionality from a normalized equality.</div>
+</section>
+<section class="ld-revision" id="prob-conditioning-revision" aria-labelledby="prob-conditioning-revision-title">
+<div class="ld-label">Revision sheet · sections 13–15</div>
+<h3 id="prob-conditioning-revision-title">Choose the operation and carry its assumptions</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>Marginalize</strong>
+<p>Keep μ₁ and Σ₁₁. No value of X₂ is fixed. Take Σ₁₁ directly; do not invert the whole covariance and select a precision block.</p>
+</div>
+<div>
+<strong>Condition</strong>
+<p>Mean = original mean + gain × observed deviation. Gain B=Σ₁₂Σ₂₂⁻¹; covariance = Σ₁₁−BΣ₂₁. Matrix order and dimensions matter.</p>
+</div>
+<div>
+<strong>Justify the update</strong>
+<p>The residual R=X₁−μ₁−B(X₂−μ₂) is uncorrelated with X₂. Joint Gaussianity makes them independent; its distribution supplies the remaining uncertainty.</p>
+</div>
+<div>
+<strong>Read the model</strong>
+<p>In a fixed jointly Gaussian model, conditional covariance does not depend on the observed value. A slice must be normalized by its marginal density. A zero point probability is not the denominator.</p>
+</div>
+<div>
+<strong>Transform</strong>
+<p>AX+b has mean Aμ+b and covariance AΣAᵀ. These moment rules need finite moments; Gaussian output shape additionally needs joint Gaussianity. A forward map can be rectangular; an inverse needs invertibility.</p>
+</div>
+<div>
+<strong>Add variables</strong>
+<p>Independent Gaussian vectors: add means and covariances. For dependent jointly Gaussian vectors retain both cross-covariance terms. Normal marginals alone do not guarantee a Gaussian sum.</p>
+</div>
+<div>
+<strong>Canonical form</strong>
+<p>Λ=Σ⁻¹, η=Λμ, log f=κ+ηᵀx−xᵀΛx/2. The constant contains ηᵀΛ⁻¹η, with the inverse. It must agree with the expanded centered quadratic.</p>
+</div>
+<div>
+<strong>Multiply functions</strong>
+<p>Add precisions and precision-weighted means at the same x. The result is proportional to a Gaussian; divide by its overlap integral to normalize. This differs from both a random sum and a random product.</p>
+</div>
+</div>
+</section>
+<section class="ld-review" id="prob-conditioning-review" aria-labelledby="prob-conditioning-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="prob-conditioning-review-title">Explain an update without the formula sheet</h3>
+<p>Try these on paper or aloud. State the random quantities, observed values, dimensions and assumptions before the calculation.</p>
+<ol>
+<li>For a target of length 2 and observation of length 3, give the dimensions of Σ₁₂, B and the covariance correction.</li>
+<li>For μ=(0,1), Σ=[[9,3],[3,4]] and X₂=3, derive the marginal and conditional of X₁.</li>
+<li>Explain the exact step where joint Gaussianity is needed in the residual derivation.</li>
+<li>Why can a continuous observation have point probability zero while its Gaussian conditional density is well defined?</li>
+<li>At unit marginal scales and ρ=0.6, compare observations Y=1 and Y=2, then change ρ to −0.6.</li>
+<li>For μ=(1,2), Σ=[[4,3],[3,9]], derive the distribution of X₁+2X₂.</li>
+<li>Can a rectangular affine map preserve Gaussianity? Can you always invert it?</li>
+<li>For N(−1,9), reconstruct the canonical parameters and constant.</li>
+<li>Compare the independent random sum of N(0,4) and N(3,1) with the normalized product of their density functions.</li>
+<li>For two dependent jointly Gaussian vectors, which terms must be added to the independent-sum covariance? What if only their marginals are Gaussian?</li>
+</ol>
+<details class="ld-answer" data-solution>
+<summary>Review answers and reasoning</summary>
+<ol>
+<li>Σ₁₂ and B are 2×3; Σ₂₂⁻¹ is 3×3; BΣ₂₁ is 2×2. Multiplication order maps a 3×1 innovation to a 2×1 target correction.</li>
+<li>Marginal N(0,9); gain 3/4 and innovation 2 give mean 1.5. Covariance is 9−9/4=6.75, giving N(1.5,6.75).</li>
+<li>The covariance calculation produces Cov(R,X₂)=0. The pair is jointly Gaussian because it is an affine image of the original vector, so the zero cross-covariance establishes independence. Uncorrelatedness alone is insufficient.</li>
+<li>The conditional density divides a joint-density slice by its integral over the target variable, the marginal density at the observation. It does not divide by the observation’s point probability.</li>
+<li>Means are 0.6 and 1.2, with variance 0.64 in both. For ρ=−0.6 and Y=1 the mean is −0.6 and variance is still 0.64. Changing correlation changes the model; changing only the observation does not.</li>
+<li>The affine map [1,2] gives mean 5 and variance 4+36+12=52, hence N(5,52). The covariance term matters; independence is not assumed.</li>
+<li>Every linear combination of its output is a linear combination of the input, so Gaussianity is preserved. A rectangular or rank-deficient map lacks an ordinary two-sided inverse and can create singular output covariance.</li>
+<li>Λ=1/9, η=−1/9, κ=−log(18π)/2−1/18. The constant uses η²/Λ=1/9. Expand the log density to verify.</li>
+<li>The sum is N(3,5). The normalized product is N(2.4,0.8): precision 1/4+1=5/4, weighted mean (3)/(5/4)=2.4. The raw product integrates to N(0;3,5), not 1.</li>
+<li>Add Cov(X,Y)+Cov(Y,X). Joint Gaussianity gives the sum’s Gaussian shape. With only Gaussian marginals, the random-sign counterexample can produce a nonnormal sum even when covariance is zero.</li>
+</ol>
+<p>
+<strong>Self-check:</strong> correct operation; correct observation and matrix order; assumptions present; normalized distribution distinguished from a proportional function.</p>
+</details>
+<details class="ld-record-disclosure">
+<summary>Save your progress or a return date</summary>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your self-reported learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> I followed the explanations and required derivations.</label>
+<label>
+<input type="checkbox" data-learning-progress="attempted"> I attempted a fresh conditional or operation problem before revealing feedback.</label>
+<label>
+<input type="checkbox" data-learning-progress="recalled"> On a later visit, I reconstructed the update and its assumptions without looking.</label>
+</fieldset>
+<p class="ld-small">These are your own reports. Opening an answer does not establish mastery.</p>
+<div class="ld-review-buttons">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p data-learning-review-status aria-live="polite">Choose a suggested return gap after trying the questions.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this block’s record</button>
+</div>
+</details>
+</section>
+<p class="ld-next">Next: <a href="#connections">connect these tools to regression and classification</a>. <a href="#probability-conditioning-path">Back to this block’s controls</a>
+</p>
+</section>
 
 <h2 id="connections">16. What this prepares you to learn next</h2>
 <p>The next model-building step is to estimate distribution parameters from data, then use the fitted distribution to predict. A likelihood regards observed data as fixed and varies parameters; a density regards parameters as fixed and varies the possible observation. They can use the same algebraic expression while asking different questions.</p>
