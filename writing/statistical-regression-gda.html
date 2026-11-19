@@ -1,56 +1,529 @@
 <!doctype html>
 <html lang="en" data-accent="blue"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Statistical regression and Gaussian classification — Abhinav Gupta</title><meta name="description" content="Derive Gaussian parameter estimates, statistical regression and least squares, then learn Gaussian discriminant analysis, posteriors and decision boundaries with worked examples and practice."><link rel="canonical" href="https://rgabhi.github.io/writing/statistical-regression-gda.html"><meta property="og:type" content="article"><meta property="og:title" content="Statistical regression and Gaussian classification — Abhinav Gupta"><meta property="og:description" content="Derive Gaussian parameter estimates, statistical regression and least squares, then learn Gaussian discriminant analysis, posteriors and decision boundaries with worked examples and practice."><meta property="og:url" content="https://rgabhi.github.io/writing/statistical-regression-gda.html"><meta name="twitter:card" content="summary"><link rel="icon" href="../assets/portrait.jpg">
-<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="assets/article-notes.css"><link rel="stylesheet" href="assets/ml-notes.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script defer src="assets/vendor/katex/katex.min.js"></script><script defer src="assets/vendor/katex/contrib/auto-render.min.js"></script><script defer src="assets/article-guide.js"></script><script defer src="assets/ml-notes.js"></script><link rel="stylesheet" href="assets/ml-regression.css"><script defer src="assets/ml-regression.js"></script></head><body>
+<script>try{document.documentElement.dataset.accent=localStorage.getItem('learning-guide-accent')==='orange'?'orange':'blue'}catch{}</script><link rel="stylesheet" href="assets/fonts/fonts.css"><link rel="stylesheet" href="assets/article-notes.css"><link rel="stylesheet" href="assets/ml-notes.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script defer src="assets/vendor/katex/katex.min.js"></script><script defer src="assets/vendor/katex/contrib/auto-render.min.js"></script><script defer src="assets/article-guide.js"></script><script defer src="assets/ml-notes.js"></script><link rel="stylesheet" href="assets/ml-regression.css"><script defer src="assets/ml-regression.js"></script><link rel="stylesheet" href="assets/ml-learning.css"><link rel="stylesheet" href="assets/ml-regression-learning.css"><script defer src="assets/ml-learning.js"></script></head><body>
 <a class="skip-link" href="#article">Skip to notes</a>
 <header class="topbar"><a class="brand" href="../index.html">Abhinav Gupta<span class="brand-dot">.</span></a><div class="header-tools"><nav class="links" aria-label="Article links"><a href="../index.html#writing">Writing</a><a href="machine-learning.html">ML notes</a><a href="#references">Sources</a></nav><div class="palette-toggle" role="group" aria-label="Article colour palette"><button type="button" data-accent-option="blue" aria-pressed="true" aria-label="Blue palette" title="Blue palette"><span class="palette-dot blue" aria-hidden="true"></span></button><button type="button" data-accent-option="orange" aria-pressed="false" aria-label="Orange palette" title="Orange palette"><span class="palette-dot orange" aria-hidden="true"></span></button></div></div></header><div class="progress" aria-hidden="true"></div>
-<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#modeling"><span>01</span>Models &amp; learning routes</a><a href="#likelihood"><span>02</span>Likelihood foundations</a><a href="#joint-regression"><span>03</span>Joint Gaussian regression</a><a href="#prediction-loss"><span>04</span>Prediction &amp; loss</a><a href="#gaussian-mean-mle"><span>05</span>Gaussian mean MLE</a><a href="#gaussian-covariance-mle"><span>06</span>Covariance MLE &amp; trace</a><a href="#regression-example"><span>07</span>A complete regression fit</a><a href="#least-squares"><span>08</span>Least-squares connection</a><a href="#joint-versus-conditional"><span>09</span>Joint vs conditional fits</a><a href="#regression-lab"><span>10</span>Regression workbench</a><a href="#mixtures"><span>11</span>Mixtures &amp; limitations</a><a href="#logistic-bridge"><span>12</span>Logistic connection</a><a href="#gda-model"><span>13</span>Gaussian class model</a><a href="#gda-estimation"><span>14</span>GDA parameter estimates</a><a href="#gda-prediction"><span>15</span>Posterior probabilities</a><a href="#linear-boundary"><span>16</span>Derive the boundary</a><a href="#gda-lab"><span>17</span>Classification workbench</a><a href="#extensions"><span>18</span>Extensions &amp; assumptions</a><a href="#practice"><span>19</span>Twenty practice problems</a><a href="#interviews"><span>20</span>Interview explanations</a><a href="#revision"><span>21</span>Revision &amp; checklist</a><a href="#references"><span>22</span>Sources &amp; continuation</a></nav><div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div></aside><main id="article"><p class="breadcrumb"><a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Regression &amp; Gaussian classification</p>
+<div class="layout"><aside class="rail" aria-label="Article navigation"><div class="eyebrow">On this page</div><nav><a href="#regression-models-title"><span>Learn</span>Model to prediction</a><a href="#modeling"><span>01</span>Models &amp; learning routes</a><a href="#likelihood"><span>02</span>Likelihood foundations</a><a href="#joint-regression"><span>03</span>Joint Gaussian regression</a><a href="#prediction-loss"><span>04</span>Prediction &amp; loss</a><a href="#gaussian-mean-mle"><span>05</span>Gaussian mean MLE</a><a href="#gaussian-covariance-mle"><span>06</span>Covariance MLE &amp; trace</a><a href="#regression-example"><span>07</span>A complete regression fit</a><a href="#least-squares"><span>08</span>Least-squares connection</a><a href="#joint-versus-conditional"><span>09</span>Joint vs conditional fits</a><a href="#regression-lab"><span>10</span>Regression workbench</a><a href="#mixtures"><span>11</span>Mixtures &amp; limitations</a><a href="#logistic-bridge"><span>12</span>Logistic connection</a><a href="#gda-model"><span>13</span>Gaussian class model</a><a href="#gda-estimation"><span>14</span>GDA parameter estimates</a><a href="#gda-prediction"><span>15</span>Posterior probabilities</a><a href="#linear-boundary"><span>16</span>Derive the boundary</a><a href="#gda-lab"><span>17</span>Classification workbench</a><a href="#extensions"><span>18</span>Extensions &amp; assumptions</a><a href="#practice"><span>19</span>Twenty practice problems</a><a href="#interviews"><span>20</span>Interview explanations</a><a href="#revision"><span>21</span>Revision &amp; checklist</a><a href="#references"><span>22</span>Sources &amp; continuation</a></nav><div class="note">Understand the idea.<br>Work through the calculation.<br>Explain it without looking.</div></aside><main id="article"><p class="breadcrumb"><a href="../index.html#writing">Writing</a> / <a href="machine-learning.html">Machine learning notes</a> / Regression &amp; Gaussian classification</p>
 <div class="eyebrow hero-kicker">Machine learning notes · 04</div>
 <h1>Statistical regression and<br>Gaussian classification</h1>
 <p class="chapter-deck">Learn a distribution from data, turn it into a prediction, and derive the boundary between classes. Follow the path from Gaussian conditioning to least squares and discriminant analysis.</p>
-<div class="chapter-meta">Abhinav Gupta · October 2026 · Foundations, derivations &amp; practice</div>
+<div class="chapter-meta">Abhinav Gupta · October 2026 · Foundations, derivations &amp; practice</div><div class="ld-pilot-entry"><a href="#regression-models-path">Learn statistical regression: model, fit and prediction</a><span>Sections 1–4 · visual examples, full explanations and return-review questions.</span></div>
 <div class="chapter-tools"><a href="#learning-goals">Start learning</a><a href="#practice">Practice</a><a href="#revision">Quick revision</a><button type="button" data-toggle-solutions>Reveal solutions</button><button type="button" data-print>Print with solutions</button></div><a class="resume-link" data-resume hidden></a>
 <p>The <a href="probability-gaussians.html">probability and Gaussian chapter</a> explained what a model implies when its parameters are known. Now we learn those parameters from observations. The same Gaussian machinery will predict a numerical response in regression and a discrete label in classification.</p>
 <p>This chapter combines the statistical-regression lecture and its Gaussian discriminant analysis continuation. It expands the estimation calculations, the handwritten question about joint versus conditional likelihood, and the decision-boundary derivation. Gaussian mixtures appear as a limitation of a single bell-shaped model. Logistic regression, unequal covariances, and cost-sensitive decisions are clearly identified connections beyond the core shared-covariance classifier.</p>
 <div class="learning-goals" id="learning-goals"><p><strong>What you should be able to do afterward</strong></p><ul><li>Distinguish a generative model, a conditional model, a likelihood, and a prediction rule.</li><li>Derive Gaussian maximum-likelihood estimates of the mean and covariance, including their conditions of existence.</li><li>Use a joint Gaussian to derive regression coefficients and residual variance; connect the fitted result to ordinary least squares.</li><li>Explain when joint and conditional likelihood fitting agree and why Bayes' rule alone does not establish that agreement.</li><li>Derive the prior, class means, and pooled covariance of Gaussian discriminant analysis.</li><li>Normalize class scores into posteriors, derive the linear decision boundary, and explain the effect of priors and covariance assumptions.</li></ul></div>
 <p><strong>Reading route:</strong> sections 1–6 build statistical estimation; 7–10 complete regression and its worked example. Sections 11–12 explain mixtures and the logistic connection. Sections 13–18 develop Gaussian classification. Work through one route at a time and return to the revision sheet after attempting the problems.</p>
 <details class="mobile-contents"><summary>Contents · choose a section</summary><nav aria-label="Chapter contents"><ul><li><a href="#modeling">01 · Models &amp; learning routes</a></li><li><a href="#likelihood">02 · Likelihood foundations</a></li><li><a href="#joint-regression">03 · Joint Gaussian regression</a></li><li><a href="#prediction-loss">04 · Prediction &amp; loss</a></li><li><a href="#gaussian-mean-mle">05 · Gaussian mean MLE</a></li><li><a href="#gaussian-covariance-mle">06 · Covariance MLE &amp; trace</a></li><li><a href="#regression-example">07 · A complete regression fit</a></li><li><a href="#least-squares">08 · Least-squares connection</a></li><li><a href="#joint-versus-conditional">09 · Joint vs conditional fits</a></li><li><a href="#regression-lab">10 · Regression workbench</a></li><li><a href="#mixtures">11 · Mixtures &amp; limitations</a></li><li><a href="#logistic-bridge">12 · Logistic connection</a></li><li><a href="#gda-model">13 · Gaussian class model</a></li><li><a href="#gda-estimation">14 · GDA parameter estimates</a></li><li><a href="#gda-prediction">15 · Posterior probabilities</a></li><li><a href="#linear-boundary">16 · Derive the boundary</a></li><li><a href="#gda-lab">17 · Classification workbench</a></li><li><a href="#extensions">18 · Extensions &amp; assumptions</a></li><li><a href="#practice">19 · Twenty practice problems</a></li><li><a href="#interviews">20 · Interview explanations</a></li><li><a href="#revision">21 · Revision &amp; checklist</a></li><li><a href="#references">22 · Sources &amp; continuation</a></li></ul></nav></details>
+<section class="ld-pilot reg-foundations" id="regression-models-path" data-learning-pilot data-learning-key="regression-models" data-learning-scope="sections 1–4" data-ld-mode="learn" aria-labelledby="regression-models-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 1–4</div>
+<h2 id="regression-models-title">From a statistical model to a prediction</h2>
+<p>Separate what the model assumes, how its parameters are fitted, and what a prediction should optimize. Follow the same Gaussian model from conditioning to a line and then to a loss-dependent decision.</p>
+<nav class="ld-map reg-model-map" aria-label="Regression foundations concept map">
+<a href="#modeling">
+<span>Specify</span>
+<strong>Choose the model</strong>
+<small>defines the possible distributions or functions</small>
+</a>
+<a href="#likelihood">
+<span>Fit</span>
+<strong>Vary parameters</strong>
+<small>holds the observed dataset fixed</small>
+</a>
+<a href="#joint-regression">
+<span>Condition</span>
+<strong>Obtain a response distribution</strong>
+<small>uses a fixed model at an observed input</small>
+</a>
+<a href="#prediction-loss">
+<span>Decide</span>
+<strong>Choose a prediction</strong>
+<small>depends on the loss being minimized</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for regression sections 1 to 4">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all explanations</button>
+</div>
+<p class="ld-mode-help" data-learning-mode-help>Full explanations remain available below.</p>
+<div class="ld-route-links">
+<a href="#reg-models-revision">Revision sheet</a>
+<a href="#reg-models-review">Return-review questions</a>
+<a href="#gaussian-mean-mle">Continue to Gaussian parameter estimation</a>
+</div>
+</div>
+<div class="ld-notation">
+<strong>Read the symbols by their job.</strong>
+<p>X is a random input; x is its observed value. Y is a random response; y is one possible or observed response. D is the training dataset, θ a model parameter, and c a candidate numerical prediction.</p>
+<p>The <a href="probability-gaussians.html#probability-conditioning-path">Gaussian conditioning guide</a> supplies the covariance and conditional-distribution prerequisites. Here we explain dimensions and loss as they arise.</p>
+</div>
+<section class="ld-unit" aria-labelledby="modeling">
 <h2 id="modeling">1. A model, a fitting rule, and a prediction rule</h2>
 <p class="section-source">Lecture connection: the statistical/non-statistical model-building map and generative/discriminative branches.</p>
+<p class="ld-lead">A model family, a fitting criterion and a prediction rule answer different questions. Identify all three before deciding what an equation means.</p>
+<div class="ld-definition">
+<div class="ld-label">Three choices · model, fit, decision</div>
+<p>The model states possible relationships or distributions. Fitting selects its parameters from data. A prediction rule uses the fitted model and a chosen loss.</p>
+</div>
+<div class="reg-choice-grid ld-teach">
+<div>
+<span>Model family</span>
+<strong>What can vary?</strong>
+<p>Example: Y | X=x is normal with mean a+βᵀx and variance τ².</p>
+</div>
+<div>
+<span>Fitting criterion</span>
+<strong>How are parameters selected?</strong>
+<p>Example: maximize the conditional likelihood of the observed training responses.</p>
+</div>
+<div>
+<span>Prediction rule</span>
+<strong>What decision is useful?</strong>
+<p>Example: choose the conditional mean to minimize expected squared error.</p>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Notation bridge</span>
+<span>Separate examples, features and parameters</span>
+</summary>
+<div class="ld-detail-body">
 <p>A supervised dataset consists of pairs \(D=\{(x_i,y_i)\}_{i=1}^N\), where the input is a column vector \(x_i\in\mathbb R^d\). For regression, yᵢ is a real number; for the binary classifier later, yᵢ is 0 or 1. N counts observations, while d counts features. A parameter θ describes what the model learns. We use different letters for specialized parameters once their roles are clear.</p>
+<p>For example, three journeys with two measured features give N=3 and d=2. The dataset is three input/response pairs, not two examples. A fitted parameter vector is different from the measured feature vector x.</p>
+</div>
+</details>
+<figure class="figure-frame">
+<a href="assets/ml-notes/statistical-modeling-routes.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size">
+<img width="1000" height="345" loading="lazy" src="assets/ml-notes/statistical-modeling-routes.svg" alt="A generative route models a joint distribution; a discriminative probabilistic route models the conditional distribution. Both can predict a target from features.">
+</a>
+<figcaption>The distinction concerns what is modeled and fitted. Both routes may ultimately predict the same type of target.</figcaption>
+</figure>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Compare function fitting, joint modeling and conditional modeling</span>
+</summary>
+<div class="ld-detail-body">
 <p>There are three separate choices. A <strong>model family</strong> states what distributions or functions are possible. A <strong>fitting criterion</strong> chooses parameters from the data. A <strong>prediction rule</strong> turns the fitted model into an action. A straight line can be fitted by squared error without first stating a noise distribution. Alternatively, a Gaussian-noise model can lead to that same squared-error criterion by maximum likelihood. The algebra may coincide while the interpretation and additional predictions differ.</p>
 <p>A <strong>generative approach</strong> models a joint distribution. In classification it commonly uses p(x|y) together with p(y): how features vary within a class and how frequent each class is. These define p(x,y)=p(x|y)p(y), from which Bayes' rule gives p(y|x). A <strong>discriminative approach</strong> can model p(y|x) directly without specifying the feature distribution p(x). Discriminative methods can also learn a decision function without a full conditional probability model.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/statistical-modeling-routes.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="345" loading="lazy" src="assets/ml-notes/statistical-modeling-routes.svg" alt="A generative route models a joint distribution; a discriminative probabilistic route models the conditional distribution. Both can predict a target from features."></a><figcaption>The distinction concerns what is modeled and fitted. Both routes may ultimately predict the same type of target.</figcaption></figure>
 <p>A generative model can also generate synthetic pairs: sample a label from its prior, then sample features from the corresponding class density. A conditional predictor can generate a response given an input, but it does not thereby supply a model for generating the inputs. Neither label promises that its assumptions match a particular dataset.</p>
+<p>A joint generative classifier commonly supplies both p(x|y) and p(y). Specifying only p(x|y) does not yet specify the class prior or the posterior p(y|x). A directly specified p(y|x) can predict labels without modeling how inputs themselves are generated.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>A classifier specifies p(x|y) but no class prior. Can it already give a unique posterior p(y|x)? Which extra quantity is missing?</p>
+<details class="ld-answer" data-solution id="reg-models-check-model-route">
+<summary>Check your reasoning</summary>
+<p>It needs the class prior p(y), as well as a positive normalizing feature density at the query. Bayes’ rule combines class density and prior. A class-conditional density alone does not fix the relative class frequencies.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Identify the data, model family, fitting objective and prediction rule; explain exactly which distribution a generative or conditional route specifies.</div>
+</section>
+<section class="ld-unit" aria-labelledby="likelihood">
 <h2 id="likelihood">2. Maximum likelihood: vary parameters, hold observations fixed</h2>
 <p class="section-source">Lecture connection: estimating parameters through products over independent examples.</p>
-<p>For independent and identically distributed observations \(z_1,\ldots,z_N\), a likelihood is the joint mass or density evaluated at the observed data, regarded as a function of θ:</p>
+<p class="ld-lead">During fitting, the observed data do not move; candidate parameters do. A likelihood evaluates how well each candidate accounts for the same data.</p>
+<div class="ld-definition">
+<div class="ld-label">Likelihood · a function of parameters at fixed data</div>
 <div class="math-block">\[L(\theta;D)=\prod_{i=1}^N p_\theta(z_i),\qquad \hat\theta\in\operatorname*{arg\,max}_\theta L(\theta;D).\]</div>
+</div>
+<div class="reg-plot-pair ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/regression-density-view.svg" target="_blank" rel="noopener" aria-label="Open regression density view at full size">
+<img src="assets/ml-notes/regression-density-view.svg" width="500" height="400" loading="lazy" alt="A normal density with fixed mean one and variance one varies with the possible observation z.">
+</a>
+<figcaption>Density view: hold μ=1 fixed and vary a possible observation z. The curve integrates to one over z.</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/regression-likelihood-view.svg" target="_blank" rel="noopener" aria-label="Open regression likelihood view at full size">
+<img src="assets/ml-notes/regression-likelihood-view.svg" width="500" height="400" loading="lazy" alt="The likelihood for fixed observations zero and two varies with the candidate mean and peaks at mean one.">
+</a>
+<figcaption>Likelihood view: hold observations D={0,2} fixed and vary μ with known variance 1. L(μ)=φ(0−μ)φ(2−μ); it is not defined as a probability density over μ.</figcaption>
+</figure>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Why the iid likelihood is a product</span>
+</summary>
+<div class="ld-detail-body">
+<p>For independent and identically distributed observations \(z_1,\ldots,z_N\), a likelihood is the joint mass or density evaluated at the observed data, regarded as a function of θ:</p>
 <p>“Independent” justifies the product; “identically distributed” says each observation uses the same distributional parameters. Dependencies across examples require a different factorization. A continuous observation contributes a <em>density</em>, not a positive probability of exactly that point. A likelihood is not a normalized probability distribution over θ. A Bayesian posterior over parameters would additionally need a parameter prior and normalization.</p>
-<p>Taking logarithms changes multiplication into addition. Because log is strictly increasing on positive values, it preserves the maximizer:</p>
+</div>
+</details>
+<div class="ld-teach">
+<h3>Fit one parameter to two observed values</h3>
+<p>For this small example only, assume independent Zᵢ~N(μ,1) and observe D={0,2}. The variance is known; the candidate mean μ is the only parameter being varied.</p>
+<div class="math-block">\[L(\mu)=\frac{1}{2\pi}\exp\left[-\frac{(0-\mu)^2+(2-\mu)^2}{2}\right]\]</div>
+<div class="table-scroll" tabindex="0">
+<table class="reg-likelihood-table">
+<caption>Compare candidates using the same fixed observations</caption>
+<thead>
+<tr>
+<th scope="col">Candidate μ</th>
+<th scope="col">L(μ)</th>
+<th scope="col">log L(μ)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">0</th>
+<td>≈ 0.021539</td>
+<td>≈ −3.837877</td>
+</tr>
+<tr>
+<th scope="row">1</th>
+<td>≈ 0.058550</td>
+<td>≈ −2.837877</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Both likelihood and log-likelihood prefer μ=1. A density value at an observed continuous point contributes to this calculation even though that exact point has probability zero.</p>
+</div>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For D={0,2} and variance 1, fill in L(2) and compare it with L(0). Does taking a logarithm change which candidate is preferred?</p>
+<details class="ld-answer" data-solution id="reg-models-check-likelihood-symmetry">
+<summary>Check your reasoning</summary>
+<p>The squared distances are the same in reverse order, so L(2)=L(0)≈0.021539 and log L(2)≈−3.837877. Log is strictly increasing on positive likelihoods, so μ=1 is still preferred.</p>
+</details>
+</div>
+<div class="ld-definition">
+<div class="ld-label">Log-likelihood · preserve the maximizer</div>
 <div class="math-block">\[\ell(\theta;D)=\sum_{i=1}^N\log p_\theta(z_i),\qquad \hat\theta\in\operatorname*{arg\,max}_\theta\ell(\theta;D).\]</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Numerical and algebraic reasoning</span>
+<span>What logarithms change, and when constants can be dropped</span>
+</summary>
+<div class="ld-detail-body">
+<p>Taking logarithms changes multiplication into addition. Because log is strictly increasing on positive values, it preserves the maximizer:</p>
 <p>This is also numerically useful: products of many small densities can underflow. Minimizing the negative log-likelihood gives the same answer. A term can be dropped only if it is constant in the variable being optimized. A density's normalizer may depend on a variance that is being learned.</p>
+<p>For the example, log L(μ)=−log(2π)−1−(μ−1)². The first two terms are constant in μ, so maximizing log L reduces to minimizing (μ−1)². If variance is also unknown, the density normalizer depends on it and cannot be dropped from that optimization. Zero likelihood corresponds to log-likelihood −∞; logarithms do not make an impossible observation positive.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture distinction</span>
+<span>Write the conditional direction and the optimized variable</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Write the conditional direction explicitly</h3>
 <div class="math-block">\[\begin{aligned}\ell_{\rm joint}(\theta)&amp;=\sum_i\log p_\theta(x_i,y_i),\\\ell_{Y\mid X}(\theta)&amp;=\sum_i\log p_\theta(y_i\mid x_i),\\\ell_{X\mid Y}(\theta)&amp;=\sum_i\log p_\theta(x_i\mid y_i).\end{aligned}\]</div>
 <p>These are three different objectives. The first can be factored as either conditional plus the relevant marginal. Fixing observed xᵢ does not make pθ(xᵢ) constant in θ. Later we will find a particular Gaussian parameterization in which joint fitting separates, and a particular GDA parameterization in which fitting class densities separates from fitting class priors. Those are properties to establish, not consequences of merely writing Bayes' rule.</p>
-<div class="stop-point"><strong>Checkpoint:</strong> In an expression such as pθ(y|x), identify the observation, the conditioning value, and the parameters. Then say which object changes during prediction and which changes during fitting.</div>
+<div class="math-block">\[\ell_{\rm joint}(\theta)=\ell_{Y\mid X}(\theta)+\sum_i\log p_\theta(x_i)\]</div>
+<p>An observed x is fixed as a number, but its density can still change when θ changes. The later <a href="#joint-versus-conditional">joint-versus-conditional fitting section</a> proves agreement only for a particular model and parameterization; this identity alone does not prove identical maximizers.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>When xᵢ is observed and fixed, can the term log pθ(xᵢ) always be removed while maximizing over θ?</p>
+<details class="ld-answer" data-solution id="reg-models-check-fixed-input">
+<summary>Check your reasoning</summary>
+<p>No. Fixed input does not mean fixed density as the parameter changes. A term is removable only if it is constant in the variables actually being optimized. Agreement of joint and conditional fits requires a separate argument about the model’s parameterization and constraints.</p>
+</details>
+</div>
+<div class="stop-point">
+<strong>Checkpoint:</strong> In an expression such as pθ(y|x), identify the observation, the conditioning value, and the parameters. Then say which object changes during prediction and which changes during fitting.</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> State what is fixed, what is optimized, why observations factor, and which terms are constant in that optimization.</div>
+</section>
+<section class="ld-unit" aria-labelledby="joint-regression">
 <h2 id="joint-regression">3. A joint Gaussian becomes a regression model</h2>
 <p class="section-source">Lecture connection: the joint model for [Y,X], the parameter-count annotation, and Gaussian conditioning.</p>
+<p class="ld-lead">Condition a joint Gaussian on an observed input. Its conditional mean is affine in that input, with residual response uncertainty around the line.</p>
+<div class="ld-definition">
+<div class="ld-label">Conditional Gaussian · known positive-definite joint covariance</div>
+<div class="math-block">\[\begin{aligned}Y\mid X=x&amp;\sim\mathcal N(m(x),\tau^2),\\m(x)&amp;=\mu_Y+\Sigma_{YX}\Sigma_{XX}^{-1}(x-\mu_X),\\\tau^2&amp;=\sigma_Y^2-\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}.\end{aligned}\]</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Partition response and input blocks, with their dimensions</span>
+</summary>
+<div class="ld-detail-body">
 <p>Assume that a scalar response Y and d-dimensional input X are jointly Gaussian:</p>
 <div class="math-block">\[\begin{bmatrix}Y\\X\end{bmatrix}\sim\mathcal N\!\left(\begin{bmatrix}\mu_Y\\\mu_X\end{bmatrix},\begin{bmatrix}\sigma_Y^2&amp;\Sigma_{YX}\\\Sigma_{XY}&amp;\Sigma_{XX}\end{bmatrix}\right).\]</div>
 <p>The cross-covariance ΣYX is a 1×d row; ΣXY is its d×1 transpose. Assume the full covariance is positive definite. Then ΣXX is invertible and the conditional Gaussian from the previous chapter gives:</p>
-<div class="math-block">\[\begin{aligned}Y\mid X=x&amp;\sim\mathcal N(m(x),\tau^2),\\m(x)&amp;=\mu_Y+\Sigma_{YX}\Sigma_{XX}^{-1}(x-\mu_X),\\\tau^2&amp;=\sigma_Y^2-\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}.\end{aligned}\]</div>
+</div>
+</details>
+<div class="ld-teach">
+<h3>Use a joint model whose parameters are known</h3>
+<p>Take μY=2.5, μX=1.5, Var(Y)=2.25, Var(X)=1.25 and Cov(Y,X)=1.5, in [Y,X] order. Their covariance determinant is 0.5625&gt;0. Treat these as given here; <a href="#regression-example">section 7 fits this same model from four observations</a>.</p>
+<div class="reg-derive-grid">
+<div>
+<span>Slope</span>
+<strong>β = 1.2</strong>
+<p>1.5 / 1.25 converts input deviation into a response-mean correction.</p>
+</div>
+<div>
+<span>Intercept</span>
+<strong>a = 0.7</strong>
+<p>2.5 − 1.2×1.5 puts the line through the joint mean.</p>
+</div>
+<div>
+<span>Residual variance</span>
+<strong>τ² = 0.45</strong>
+<p>2.25 − 1.5²/1.25 is the remaining response variance.</p>
+</div>
+<div>
+<span>At x = 2.5</span>
+<strong>Y | x ~ N(3.7,0.45)</strong>
+<p>0.7 + 1.2×2.5 gives the center; the response still varies around it.</p>
+</div>
+</div>
+<figure class="figure-frame">
+<a href="assets/ml-notes/joint-gaussian-regression.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size">
+<img width="1000" height="407" loading="lazy" src="assets/ml-notes/joint-gaussian-regression.svg" alt="A line of conditional Gaussian means passes through joint contours. At an observed input, the conditional response density is shifted and narrower than the marginal response density.">
+</a>
+<figcaption>The orange line is a conditional mean. At X=2.5 in the worked model, the response is N(3.7,0.45), with a distribution around the predicted value.</figcaption>
+</figure>
+</div>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Keep the worked model fixed and observe x=0. Complete the conditional mean and variance. Does moving x change the residual variance?</p>
+<details class="ld-answer" data-solution id="reg-models-check-new-input">
+<summary>Check your reasoning</summary>
+<p>The mean is 0.7+1.2×0=0.7 and variance remains 0.45. In this fixed joint Gaussian, the conditional mean changes with x but the conditional variance does not. The response is N(0.7,0.45), not a deterministic value.</p>
+</details>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Rewrite the centered conditional mean as an intercept and slope</span>
+</summary>
+<div class="ld-detail-body">
 <p>Define a d×1 coefficient vector \(\beta=\Sigma_{XX}^{-1}\Sigma_{XY}\), and intercept \(a=\mu_Y-\beta^\top\mu_X\). The conditional mean becomes \(m(x)=a+\beta^\top x\). A linear prediction function has emerged from a distributional assumption. The conditional variance is constant in x in this model, while the mean moves with x.</p>
+<div class="math-block">\[m(x)=\mu_Y+\beta^\top(x-\mu_X)=(\mu_Y-\beta^\top\mu_X)+\beta^\top x\]</div>
+<p>Because a symmetric positive-definite ΣXX has a symmetric inverse, βᵀ=ΣYXΣXX⁻¹. Thus β is d×1, βᵀx is a scalar, and a is a scalar. This algebra transforms known joint parameters into a conditional predictor; estimating those joint parameters is a separate step.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Count distinct parameters · symmetry avoids duplicate entries</div>
+<div class="ld-facts">
+<div>
+<strong>Means</strong>
+<span>Response plus d input coordinates</span>
+<b>d + 1</b>
+</div>
+<div>
+<strong>Covariance</strong>
+<span>Symmetric (d+1) × (d+1) matrix</span>
+<b>(d+1)(d+2)/2</b>
+</div>
+<div>
+<strong>For d = 2</strong>
+<span>3 means + 6 covariance entries</span>
+<b>9 total</b>
+</div>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Assumptions and notation</span>
+<span>Keep the intercept, parameter count and noise-model distinction</span>
+</summary>
+<div class="ld-detail-body">
 <p>The intercept matters: “linear regression” commonly includes this affine offset. It can be folded into a dot product by augmenting each input with a leading 1. The joint model has d+1 means and (d+1)(d+2)/2 distinct covariance entries. The latter count is 1 response variance, d cross-covariances, and d(d+1)/2 input-covariance entries. Symmetry means we do not learn both copies of each off-diagonal entry.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/joint-gaussian-regression.svg" target="_blank" rel="noopener" aria-label="Open diagram at full size"><img width="1000" height="407" loading="lazy" src="assets/ml-notes/joint-gaussian-regression.svg" alt="A line of conditional Gaussian means passes through joint contours. At an observed input, the conditional response density is shifted and narrower than the marginal response density."></a><figcaption>The orange line is a conditional mean. At X=2.5 in the worked model, the response is N(3.7,0.45), with a distribution around the predicted value.</figcaption></figure>
 <p>The earlier additive-noise model \(Y=a+\beta^\top X+\varepsilon\), with ε independent of X and ε∼N(0,τ²), gives the same conditional Gaussian. It does not require X itself to be Gaussian. Joint Gaussianity is the stronger assumption used when we also model the distribution of X.</p>
+<p>For the additive-noise statement, ε has zero mean, constant variance τ², and a normal distribution independent of X. X may have a non-Gaussian distribution, so this conditional model is less restrictive than a full joint Gaussian model. Conversely, in the joint Gaussian model, the centered residual is jointly Gaussian and uncorrelated with X, hence independent.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>In a fresh scalar-input model, let μY=2, μX=1, Var(Y)=9, Var(X)=4 and Cov(Y,X)=3. Find β, a, τ² and the response distribution at x=3.</p>
+<details class="ld-answer" data-solution id="reg-models-check-fresh-joint">
+<summary>Check your reasoning</summary>
+<p>β=3/4, a=2−(3/4)×1=5/4, and τ²=9−9/4=27/4. At x=3 the mean is 5/4+9/4=7/2=3.5, so Y | X=3 is N(3.5,6.75). The covariance determinant is 27&gt;0.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Track row and column shapes, derive the affine mean, retain the residual variance, and distinguish known parameters from fitting them.</div>
+</section>
+<section class="ld-unit" aria-labelledby="prediction-loss">
 <h2 id="prediction-loss">4. Why predict the conditional mean?</h2>
 <p class="section-source">Lecture connection: predicting by the peak of a conditional density and the sketches of non-Gaussian conditional shapes.</p>
-<p>A fitted distribution is not yet a unique prediction rule. Under squared-error loss, choose a number c minimizing the conditional expected loss. Let m=E[Y|X=x]. Expanding around m gives:</p>
+<p class="ld-lead">A response distribution contains more than a point prediction. The loss tells you which feature of that distribution should become your prediction.</p>
+<div class="ld-definition">
+<div class="ld-label">Squared-error decision · finite conditional second moment</div>
 <div class="math-block">\[\mathbb E[(Y-c)^2\mid X=x]=\operatorname{Var}(Y\mid X=x)+(m-c)^2.\]</div>
+<p>At fixed x, the variance term is independent of c. The nonnegative squared distance (m−c)² is smallest at c=m.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Expand around the conditional mean and cancel the cross term</span>
+</summary>
+<div class="ld-detail-body">
+<p>A fitted distribution is not yet a unique prediction rule. Under squared-error loss, choose a number c minimizing the conditional expected loss. Let m=E[Y|X=x]. Expanding around m gives:</p>
 <p>The cross term vanishes because E[Y−m|X=x]=0. The variance term does not change with c, so the minimum is attained at c=m. This argument needs a finite second moment but does not need a Gaussian. Absolute-error loss instead leads to a conditional median. Different losses answer different prediction questions.</p>
+<div class="math-block">\[(Y-c)^2=(Y-m)^2+2(Y-m)(m-c)+(m-c)^2\]</div>
+<p>Take conditional expectations at X=x. Since m and c are fixed numbers in this calculation, the cross term becomes 2(m−c)E[Y−m|x]=0. The two remaining terms are the conditional variance and (m−c)². This establishes a minimum rather than merely a stationary point.</p>
+</div>
+</details>
+<div class="ld-teach">
+<h3>Change the Gaussian assumption: two conditional peaks</h3>
+<p>For one fixed input, suppose the conditional response density is an equally weighted mixture of N(−2,0.25) and N(2,0.25). In words: choose either component with probability 1/2, then draw a response from that component. This is a changed-assumption example, not one Gaussian; mixture models are developed later in <a href="#mixtures">section 11</a>.</p>
+<div class="reg-plot-pair">
+<figure class="figure-frame">
+<a href="assets/ml-notes/regression-bimodal-conditional.svg" target="_blank" rel="noopener" aria-label="Open regression bimodal conditional at full size">
+<img src="assets/ml-notes/regression-bimodal-conditional.svg" width="500" height="400" loading="lazy" alt="An equal mixture of normals centered at minus two and two has two high peaks but mean zero in the low-density valley.">
+</a>
+<figcaption>This conditional has mean 0, variance 4.25 and modes near −2 and 2. Its mean need not be a high-density response value.</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/regression-squared-risk.svg" target="_blank" rel="noopener" aria-label="Open regression squared risk at full size">
+<img src="assets/ml-notes/regression-squared-risk.svg" width="500" height="400" loading="lazy" alt="The expected squared-error risk is four point two five plus c squared and is minimized at prediction zero, rather than the locations of the density peaks.">
+</a>
+<figcaption>For the same conditional distribution, risk R(c)=4.25+c². Predicting 0 gives expected squared error 4.25; predicting either −2 or 2 gives 8.25.</figcaption>
+</figure>
+</div>
+<p>The mean is 0 by symmetry. Its second moment is 0.25+2²=4.25, so its variance is 4.25. The prediction minimizing expected squared error lies between the peaks. A different loss can choose a different action.</p>
+</div>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>In the two-peak conditional example, compare predictions c=0 and c=1 under squared error. Does a low density at the mean invalidate the squared-error optimum?</p>
+<details class="ld-answer" data-solution id="reg-models-check-risk">
+<summary>Check your reasoning</summary>
+<p>R(0)=4.25 and R(1)=5.25. The mean still minimizes expected squared error. Density height at one response value is a different criterion from averaging a loss over all possible responses.</p>
+</details>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture distinction</span>
+<span>Separate a conditional mean, median and mode</span>
+</summary>
+<div class="ld-detail-body">
 <p>The lecture also writes a density maximizer: \(\operatorname*{arg\,max}_y p(y\mid x)\). This selects a <strong>conditional mode</strong>. For an ordinary Gaussian, mode, mean, and median coincide, so both routes give a+βᵀx. For a multimodal distribution, the mean can lie between peaks. Maximizing a continuous density is not the same as maximizing the probability of an exact real-valued response, which is zero in a density model.</p>
+<p>Under absolute-error loss, moving c a little changes how much mass lies on either side. A conditional median balances those sides and minimizes expected absolute error when it is finite; medians need not be unique. Under squared error the mean is optimal when the conditional second moment is finite. A conditional mode maximizes density; it is not automatically the optimal choice for every loss.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Response uncertainty</span>
+<span>Interpret a Gaussian response range without calling it parameter certainty</span>
+</summary>
+<div class="ld-detail-body">
 <p>If parameters were known, a Gaussian conditional puts about 95% of future responses in m(x)±1.96τ. Substituting fitted parameters gives a <em>plug-in conditional range</em>. It does not account for uncertainty in the fitted mean or variance and is not a confidence interval for a regression coefficient. The figures use it only to visualize residual response variation.</p>
+<p>For the worked model at x=2.5, τ=√0.45≈0.6708. The known-parameter 95% response range is 3.7±1.96×0.6708, approximately [2.3852,5.0148]. If the parameters were fitted, the same plug-in calculation would still omit their estimation uncertainty. The range is about future response variation, not a confidence interval for β.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For Y | x ~ N(3.7,0.45), should the 1.96 response half-width use 0.45 or √0.45? Which uncertainty is still absent if these parameters were fitted?</p>
+<details class="ld-answer" data-solution id="reg-models-check-variance-or-sd">
+<summary>Check your reasoning</summary>
+<p>Use the standard deviation √0.45, giving half-width about 1.3148. A plug-in calculation omits uncertainty in the fitted parameters, including the estimated conditional mean and variance.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Name the loss, derive its best prediction, distinguish a density peak from a mean, and state what the response range accounts for.</div>
+</section>
+<section class="ld-revision" id="reg-models-revision" aria-labelledby="reg-models-revision-title">
+<div class="ld-label">Revision sheet · sections 1–4</div>
+<h3 id="reg-models-revision-title">Say what changes before choosing a formula</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>Model / fit / predict</strong>
+<p>A model family states possibilities; a fitting rule chooses parameters; a prediction rule chooses an action under a loss. Coinciding algebra does not make these the same choice.</p>
+</div>
+<div>
+<strong>Joint / conditional</strong>
+<p>A joint model specifies p(x,y). A conditional predictor can specify p(y|x) without p(x). A generative class model needs both p(x|y) and p(y).</p>
+</div>
+<div>
+<strong>Likelihood</strong>
+<p>The dataset is fixed and θ varies. Independence supports the product over examples; a likelihood is not automatically a normalized distribution over θ.</p>
+</div>
+<div>
+<strong>Log and constants</strong>
+<p>Log preserves positive-likelihood maximizers. Drop a term only when constant in the optimized variable. Fixed observed x does not imply pθ(x) is constant in θ.</p>
+</div>
+<div>
+<strong>Gaussian regression</strong>
+<p>β=ΣXX⁻¹ΣXY, a=μY−βᵀμX, m(x)=a+βᵀx. Residual variance is σY²−ΣYXΣXX⁻¹ΣXY. Joint positive-definiteness gives the ordinary conditional formula.</p>
+</div>
+<div>
+<strong>Dimensions and counts</strong>
+<p>X and β are d×1; ΣYX is 1×d. A joint [Y,X] Gaussian has d+1 means and (d+1)(d+2)/2 distinct covariance entries. The intercept is separate unless inputs are augmented.</p>
+</div>
+<div>
+<strong>Loss selects the prediction</strong>
+<p>Finite second moment: squared-error risk = conditional variance + (m−c)², minimized at the mean. Absolute error selects a median. Density maximization selects a mode.</p>
+</div>
+<div>
+<strong>Response variation</strong>
+<p>The Gaussian range m(x)±1.96τ uses standard deviation τ. With fitted parameters it is a plug-in response range, omitting parameter-estimation uncertainty.</p>
+</div>
+</div>
+</section>
+<section class="ld-review" id="reg-models-review" aria-labelledby="reg-models-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="reg-models-review-title">Explain the modeling choices without the notes</h3>
+<p>Try on paper or aloud before checking. Include the optimized variable, assumptions, dimensions and interpretation.</p>
+<ol>
+<li>Give one model family, one fitting rule and one prediction rule for numerical responses.</li>
+<li>For N=3 examples with d=2 features, what shapes do xᵢ and β have? What does θ represent?</li>
+<li>For independent N(μ,1) observations D={0,2}, compare μ=0,1,2 and explain the log-likelihood maximum.</li>
+<li>Why can a likelihood at continuous observations be positive even though exact point probabilities are zero?</li>
+<li>Explain why observed x does not automatically let you discard pθ(x) in fitting.</li>
+<li>For the worked joint model, derive β, a and τ², then predict at x=0 and x=2.5.</li>
+<li>With three input features, count the distinct mean and covariance parameters of the joint [Y,X] Gaussian.</li>
+<li>Derive the squared-error risk decomposition and explain where the cross term goes.</li>
+<li>For the equal two-peak mixture, compare the mean with its density peaks and risks at predictions 0 and 2.</li>
+<li>Does an independent Gaussian-noise regression require X to be Gaussian? What does a plug-in response range omit?</li>
+</ol>
+<details class="ld-answer" data-solution>
+<summary>Review answers and reasoning</summary>
+<ol>
+<li>Example: conditional Gaussian with mean a+βᵀx and variance τ²; conditional maximum likelihood; conditional mean under squared-error loss. A function can also be fitted by squared error without first specifying Gaussian noise.</li>
+<li>Each input and coefficient vector is 2×1. θ collects model parameters; it is not the feature vector. Three paired observations are the training sample.</li>
+<li>The likelihoods are about 0.021539, 0.058550 and 0.021539. log L=−log(2π)−1−(μ−1)² is maximized at μ=1. The observations stay fixed.</li>
+<li>The likelihood evaluates density values at the observations. Those heights contribute to joint density, not positive probabilities of exact real-valued points.</li>
+<li>The number x is fixed, but its model density can change with θ. A parameter-dependent term is not constant in that optimization. Joint/conditional maximizer agreement needs a model-specific proof.</li>
+<li>β=1.5/1.25=1.2; a=2.5−1.2×1.5=0.7; τ²=2.25−1.5²/1.25=0.45. Conditional responses are N(0.7,0.45) and N(3.7,0.45).</li>
+<li>The joint dimension is 4. There are 4 means and 4×5/2=10 distinct covariance entries: 14 total, subject to covariance validity.</li>
+<li>Expand Y−c=(Y−m)+(m−c). Conditional centering gives E[Y−m|x]=0, so risk=Var(Y|x)+(m−c)². Finite conditional second moment is needed; Gaussianity is not.</li>
+<li>Mean 0 lies in a low-density valley; modes are near ±2. Variance is 4.25, so risks are 4.25 at c=0 and 8.25 at c=2. The mean remains optimal for squared error.</li>
+<li>A conditional Gaussian noise model does not require a Gaussian input distribution. Joint Gaussianity is stronger. A plug-in response range omits uncertainty from estimating the model parameters.</li>
+</ol>
+<p>
+<strong>Self-check:</strong> correct variable being varied; clear conditional direction; consistent dimensions; loss and uncertainty interpreted correctly.</p>
+</details>
+<details class="ld-record-disclosure">
+<summary>Save your progress or a return date</summary>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your self-reported learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> I followed the explanations and required derivations.</label>
+<label>
+<input type="checkbox" data-learning-progress="attempted"> I attempted a fresh modeling or prediction problem before revealing feedback.</label>
+<label>
+<input type="checkbox" data-learning-progress="recalled"> On a later visit, I explained the model, likelihood and loss without looking.</label>
+</fieldset>
+<p class="ld-small">These are your own reports. Opening an answer does not establish mastery.</p>
+<div class="ld-review-buttons">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p data-learning-review-status aria-live="polite">Choose a suggested return gap after trying the questions.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this block’s record</button>
+</div>
+</details>
+</section>
+<p class="ld-next">Next: <a href="#gaussian-mean-mle">estimate Gaussian means and covariances from data</a>. <a href="#regression-models-path">Back to this block’s controls</a>
+</p>
+</section>
+
 <h2 id="gaussian-mean-mle">5. Estimate a Gaussian mean from data</h2>
 <p class="section-source">Lecture connection: the multivariate Gaussian maximum-likelihood slide, repeated in both lectures.</p>
 <p>Temporarily use zᵢ∈ℝᵖ for any p-dimensional Gaussian observation. For regression, zᵢ=[yᵢ,xᵢᵀ]ᵀ and p=d+1. Assume independent observations with common mean μ and positive-definite covariance Σ. Taking logs of their Gaussian densities gives:</p>

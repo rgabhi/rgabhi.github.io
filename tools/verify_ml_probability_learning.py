@@ -288,7 +288,8 @@ assert source.count('data-learning-depth') == 52
 assert source.count('data-solution') == 50
 assert source.count('data-hint') == 2
 
-for name in ['cnn-foundations', 'cnn-training', 'statistical-regression-gda', 'naive-bayes', 'factor-models-pca', 'decision-trees-pruning', 'machine-learning']:
+# Regression now has a dedicated preservation audit in verify_ml_regression_learning.py.
+for name in ['cnn-foundations', 'cnn-training', 'naive-bayes', 'factor-models-pca', 'decision-trees-pruning', 'machine-learning']:
     original = subprocess.check_output(['git', 'show', BASELINE + ':writing/' + name + '.html'], cwd=ROOT)
     assert original == (ROOT / 'writing' / (name + '.html')).read_bytes(), 'Unrelated chapter changed: ' + name
 print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 16 onward byte-identical; earlier blocks preserved apart from forward links.')
