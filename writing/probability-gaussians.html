@@ -80,6 +80,7 @@
 <span>07</span>Distribution derivations</a>
 <a href="#covariance">
 <span>08</span>Covariance &amp; matrices</a>
+<a href="#probability-gaussian-title"><span>Learn</span>Gaussian models</a>
 <a href="#normal">
 <span>09</span>Normal normalization</a>
 <a href="#multivariate">
@@ -119,6 +120,8 @@
 <span>Sections 1–5 · guided examples, full explanations and return-review questions.</span>
 <a href="#probability-moments-path">Learn moments: expectation, spread and covariance</a>
 <span>Sections 6–8 · distribution derivations, visual comparisons and recall.</span>
+<a href="#probability-gaussian-path">Learn Gaussians: normalization, geometry and assumptions</a>
+<span>Sections 9–12 · constructions, contours, counterexamples and recall.</span>
 </div>
 <div class="chapter-tools">
 <a href="#learning-goals">Start learning</a>
@@ -1118,7 +1121,7 @@
 <div class="ld-route-links">
 <a href="#prob-moments-revision">Revision sheet</a>
 <a href="#prob-moments-review">Return-review questions</a>
-<a href="#normal">Continue to Gaussians</a>
+<a href="#probability-gaussian-path">Continue to Gaussians</a>
 </div>
 </div>
 <div class="ld-notation">
@@ -1922,71 +1925,620 @@
 </div>
 </details>
 </section>
-<p class="ld-next">Next: <a href="#normal">derive the normal distribution and build Gaussian geometry</a>. <a href="#probability-moments-path">Back to this block’s controls ↑</a>
+<p class="ld-next">Next: <a href="#probability-gaussian-path">derive the normal distribution and build Gaussian geometry</a>. <a href="#probability-moments-path">Back to this block’s controls ↑</a>
 </p>
 </section>
 
+<section class="ld-pilot prob-language prob-gaussian" id="probability-gaussian-path" data-learning-pilot data-learning-key="probability-gaussian" data-learning-scope="sections 9–12" data-ld-mode="learn" aria-labelledby="probability-gaussian-title">
+<div class="ld-intro">
+<div class="ld-label">Guided learning · sections 9–12</div>
+<h2 id="probability-gaussian-title">From a bell curve to Gaussian geometry</h2>
+<p>Normalize the scalar density, construct a Gaussian vector, then use covariance to read its contours. Finish by testing which assumptions the formulas need.</p>
+<nav class="ld-map prob-gaussian-map" aria-label="Gaussian concept map">
+<a href="#normal">
+<span>Normalize</span>
+<strong>One scalar Gaussian</strong>
+<small>standardization connects values to area</small>
+</a>
+<a href="#multivariate">
+<span>Construct</span>
+<strong>A joint model</strong>
+<small>linear combinations define Gaussianity</small>
+</a>
+<a href="#geometry">
+<span>Measure</span>
+<strong>Covariance geometry</strong>
+<small>rescales distances and density volume</small>
+</a>
+<a href="#joint-gaussian">
+<span>Question</span>
+<strong>Marginals &amp; singularity</strong>
+<small>counterexamples expose missing assumptions</small>
+</a>
+</nav>
+<div class="ld-controls" data-learning-controls hidden role="group" aria-label="Reading depth for probability sections 9 to 12">
+<button type="button" data-learning-mode="learn" aria-pressed="true">Learn</button>
+<button type="button" data-learning-mode="revise" aria-pressed="false">Revise</button>
+<button type="button" data-learning-mode="deep" aria-pressed="false">Go deeper</button>
+<button type="button" data-learning-expand>Open all explanations</button>
+</div>
+<p class="ld-mode-help" data-learning-mode-help>These controls apply to sections 9–12 only.</p>
+<div class="ld-route-links">
+<a href="#prob-gaussian-revision">Revision sheet</a>
+<a href="#prob-gaussian-review">Return-review questions</a>
+<a href="#gaussian-conditioning">Continue to Gaussian conditioning</a>
+</div>
+</div>
+<div class="ld-notation">
+<strong>Keep shape and units in view.</strong>
+<p>μ: mean · σ: scalar standard deviation · Σ: covariance matrix · |Σ|: determinant · superscript T: transpose · Φ: standard-normal CDF.</p>
+<p>A covariance is positive semidefinite. The ordinary full-dimensional Gaussian density needs positive definiteness so that Σ has an inverse and a positive determinant.</p>
+</div>
+<section class="ld-unit" aria-labelledby="normal">
 <h2 id="normal">9. The normal distribution from its normalization to its moments</h2>
 <p class="section-source">Lecture connection: the normal-density plot and the requested mean/variance derivation.</p>
+<p class="ld-lead">The Gaussian density has a particular shape and a normalizing constant. Derive that constant, then use standardization to turn an interval into a probability.</p>
+<div class="ld-definition">
+<div class="ld-label">Scalar normal · variance is the second parameter</div>
 <p>We write \(X\sim\mathcal N(\mu,\sigma^2)\), where the second parameter is <strong>variance</strong>, not standard deviation. For σ&gt;0:</p>
 <div class="math-block">\[f_X(x)=\frac1{\sigma\sqrt{2\pi}}\exp\!\left(-\frac{(x-\mu)^2}{2\sigma^2}\right).\]</div>
+</div>
+<div class="ld-facts">
+<div>
+<strong>Mean</strong>
+<span>Where the curve is centered</span>
+<b>μ</b>
+</div>
+<div>
+<strong>Standard deviation</strong>
+<span>Spread in the original units</span>
+<b>σ > 0</b>
+</div>
+<div>
+<strong>Variance</strong>
+<span>Squared spread</span>
+<b>σ²</b>
+</div>
+</div>
+<div class="ld-teach">
 <p>The exponent penalizes squared standardized distance. Moving μ shifts the curve. Increasing σ broadens it and lowers its peak because its total area must remain one. A narrow Gaussian can have a density height greater than one.</p>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-standardization.svg?v=1" target="_blank" rel="noopener" aria-label="Open gaussian standardization diagram at full size">
+<img src="assets/ml-notes/gaussian-standardization.svg?v=1" width="500" height="390" loading="lazy" alt="Normal density with mean two and variance nine. The shaded interval minus one to five standardizes to minus one to one and has probability about 0.6827.">
+</a>
+<figcaption>For N(2,9), σ=3. The interval [−1,5] becomes [−1,1] after standardization; its probability is an area, approximately 0.6827.</figcaption>
+</figure>
+<ol class="ld-steps">
+<li>
+<strong>Read N(2,9):</strong> mean 2, variance 9, standard deviation 3.</li>
+<li>
+<strong>Standardize:</strong> Z=(X−2)/3. The lower bound −1 becomes −1; the upper bound 5 becomes 1.</li>
+<li>
+<strong>Integrate:</strong> P(−1≤X≤5)=Φ(1)−Φ(−1)≈0.6827.</li>
+</ol>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Normalize the bell shape using a two-dimensional integral</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Where √(2π) comes from</h3>
 <p>Let \(I=\int_{-\infty}^{\infty}e^{-z^2/2}\,dz\). Its square is a two-dimensional integral with a circularly symmetric integrand. Convert to polar coordinates, where the area element is r dr dθ:</p>
 <div class="math-block">\[I^2=\int_{\mathbb R^2}e^{-(x^2+y^2)/2}\,dx\,dy=\int_0^{2\pi}\int_0^{\infty}e^{-r^2/2}r\,dr\,d\theta=2\pi.\]</div>
 <p>The radial integral is 1 after substituting u=r²/2. Since I is positive, I=√(2π), so the standard-normal density \(\phi(z)=e^{-z^2/2}/\sqrt{2\pi}\) integrates to one.</p>
+<p>
+<strong>Why switch to two dimensions?</strong> Multiplying I by itself produces an integral of a radial function over the plane. In polar coordinates, a thin ring of radius r and width dr has area approximately 2πr dr. The radial substitution u=r²/2 leaves the simple integral of e⁻ᵘ, equal to one. This establishes the constant rather than assuming the density already integrates to one.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Use symmetry and integration by parts for the moments</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Derive the standard normal's mean and variance</h3>
 <p>The function zφ(z) is odd, so its integral across the real line is zero: E[Z]=0. Also φ′(z)=−zφ(z). Integration by parts gives:</p>
 <div class="math-block">\[\mathbb E[Z^2]=\int z^2\phi(z)\,dz=-\int z\phi'(z)\,dz=\left[-z\phi(z)\right]_{-\infty}^{\infty}+\int\phi(z)\,dz=1.\]</div>
 <p>The boundary term vanishes because the exponential tail dominates the linear factor. Thus Var(Z)=1. For X=μ+σZ, the affine identities already derived give E[X]=μ and Var(X)=σ². This also explains the 1/σ factor in the general density: stretching an interval by σ requires lowering its density by the same factor to preserve probability.</p>
+<p>The standard-normal density is even: φ(−z)=φ(z). Multiplying by z makes an odd function, whose opposite contributions cancel. For the second moment, φ′(z)=−zφ(z) converts the integral into an integration-by-parts calculation. The Gaussian tail makes the boundary term vanish.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Standardization · divide by σ, not σ²</div>
+<div class="math-block">\[Z=\frac{X-\mu}{\sigma}\sim\mathcal N(0,1)\]</div>
+<p>This statement assumes X is Gaussian and σ&gt;0. Centering and scaling an arbitrary distribution do not make its shape Gaussian.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Convert bounds with Φ and distinguish height from area</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Turn values into probabilities</h3>
 <p>Define \(\Phi(z)=\int_{-\infty}^z\phi(t)\,dt\). Standardizing X gives:</p>
 <div class="math-block">\[P(a\le X\le b)=\Phi\!\left(\frac{b-\mu}{\sigma}\right)-\Phi\!\left(\frac{a-\mu}{\sigma}\right).\]</div>
 <p>Φ has no elementary antiderivative formula; software or tables evaluate it. For a standard normal, P(−1≤Z≤1)≈0.6827. That one-dimensional interval probability will not automatically be the probability inside a two-dimensional covariance ellipse.</p>
-
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>Let X be N(1,4). Express P(−1≤X≤5) using the standard-normal CDF. Which quantity belongs in the denominator?</p>
+<details class="ld-answer" data-solution id="prob-gaussian-check-scalar-probability">
+<summary>Check your reasoning</summary>
+<p>Use σ=2. The standardized bounds are −1 and 2, so the probability is Φ(2)−Φ(−1)≈0.8186. Dividing by 4 would confuse variance with standard deviation.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Derive the normalizer and moments, read the parameter convention and standardize bounds before using Φ.</div>
+</section>
+<section class="ld-unit" aria-labelledby="multivariate">
 <h2 id="multivariate">10. What makes a vector jointly Gaussian?</h2>
 <p class="section-source">Lecture connection: independent and dependent Gaussian coordinates, the joint density, and moment parameterization.</p>
+<p class="ld-lead">A Gaussian vector is defined by its one-dimensional linear combinations. Its covariance can describe a full-dimensional density or a distribution confined to a smaller set.</p>
+<div class="ld-definition">
+<div class="ld-label">Definition · test every fixed linear combination</div>
+<p>A vector is jointly Gaussian when every scalar vᵀX is normal, allowing a constant as a zero-variance normal. Separate normal-looking coordinates do not establish this property.</p>
+</div>
+<div class="ld-teach">
+<div class="ld-pipeline">
+<div>
+<strong>Start with Z</strong>
+<span>Independent standard-normal coordinates, mean 0 and covariance I.</span>
+</div>
+<div>
+<strong>Apply a fixed map L</strong>
+<span>Mix and rescale those coordinates; covariance becomes LLᵀ.</span>
+</div>
+<div>
+<strong>Add μ</strong>
+<span>Set X=μ+LZ. Its mean becomes μ.</span>
+</div>
+</div>
+<h3>Construct one concrete joint model</h3>
+<div class="prob-spread-compare">
+<div>
+<strong>A possible construction</strong>
+<div class="math-block">\[L=\begin{bmatrix}2&amp;0\\1&amp;1\end{bmatrix}\]</div>
+<p>Use μ=(1,−1). Then X₁=1+2Z₁ and X₂=−1+Z₁+Z₂.</p>
+</div>
+<div>
+<strong>Check the covariance</strong>
+<div class="math-block">\[LL^\top=\begin{bmatrix}4&amp;2\\2&amp;2\end{bmatrix}\]</div>
+<p>Variances are 4 and 2; covariance is 2. det(L)=2 and det(Σ)=4, so this is nonsingular.</p>
+</div>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Read the Gaussian-vector definition and construction</span>
+</summary>
+<div class="ld-detail-body">
 <p>A Gaussian random vector has the property that every scalar linear combination \(v^\top X\) is normally distributed, allowing zero-variance constants as degenerate normals. A useful construction is \(X=\mu+LZ\), where Z has independent standard-normal coordinates and \(LL^\top=\Sigma\). With a square invertible L, this produces a nonsingular covariance.</p>
+<p>Because the standard coordinates are independent, their covariance is I. Centering X gives LZ, and E[(LZ)(LZ)ᵀ]=LE[ZZᵀ]Lᵀ=LLᵀ. This moment calculation is an instance of the affine covariance rule explained later in <a href="#operations">Gaussian operations</a>.</p>
+</div>
+</details>
+<div class="ld-definition">
+<div class="ld-label">Ordinary density · requires positive-definite Σ</div>
 <p>For positive-definite Σ, the ordinary density on \(\mathbb R^d\) is:</p>
 <div class="math-block">\[f_X(x)=\frac1{(2\pi)^{d/2}|\Sigma|^{1/2}}\exp\!\left[-\frac12(x-\mu)^\top\Sigma^{-1}(x-\mu)\right].\]</div>
+</div>
+<div class="ld-facts">
+<div>
+<strong>μ</strong>
+<span>Location vector</span>
+<b>d × 1</b>
+</div>
+<div>
+<strong>Σ</strong>
+<span>Spread and dependence</span>
+<b>d × d</b>
+</div>
+<div>
+<strong>Exponent</strong>
+<span>A squared standardized distance</span>
+<b>One scalar</b>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Track dimensions and the volume factor in a change of variables</span>
+</summary>
+<div class="ld-detail-body">
 <p>Check the dimensions: x−μ is d×1, its transpose is 1×d, and Σ⁻¹ is d×d. The entire quadratic expression is a scalar. Σ contains d(d+1)/2 distinct entries because it is symmetric, while μ has d entries. Positive definiteness restricts which covariance entries can be chosen together.</p>
 <h3>Derive the normalization factor by a change of variables</h3>
 <p>The independent standard-normal vector has density \((2\pi)^{-d/2}e^{-z^\top z/2}\). Set x=μ+Lz, so z=L⁻¹(x−μ). A linear transformation scales volume by |det L|, so the transformed density divides by this factor:</p>
 <div class="math-block">\[z^\top z=(x-\mu)^\top L^{-\top}L^{-1}(x-\mu)=(x-\mu)^\top\Sigma^{-1}(x-\mu),\qquad |\det L|=|\Sigma|^{1/2}.\]</div>
 <p>The second equality follows from \(|LL^\top|=(\det L)^2\). This gives the Gaussian prefactor and exponent together. The square root of the determinant is a volume scale, not another arbitrary constant to memorize.</p>
+<p>
+<strong>Read the determinant factor:</strong> x=μ+Lz stretches a small volume by |det L|. The transformed density must divide by that volume change to preserve its total probability. Since Σ=LLᵀ, |Σ|=(det L)², so |det L|=√|Σ|.</p>
+</div>
+</details>
+<div class="ld-caution">
+<strong>A valid Gaussian vector need not have an ordinary density on the full space.</strong>
+<p>When a nonzero linear combination is constant, covariance is singular. The Gaussian vector can still be well defined, but the inverse/determinant density formula cannot be used.</p>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Singular Gaussian vectors and the density restriction</span>
+</summary>
+<div class="ld-detail-body">
 <h3>The inverse/determinant formula has a condition</h3>
 <p>Every covariance is positive semidefinite, but an ordinary full-dimensional Gaussian density needs positive definiteness. If X₂=X₁ or X₂=−X₁/2, the pair can still be a jointly Gaussian vector, yet it lies on a line, has determinant zero, and has no ordinary density with respect to two-dimensional area. Do not substitute a singular Σ into the inverse formula.</p>
 <p>This distinction reconciles the lecture's dependent-coordinate examples with its density expression. Gaussian distributions include degenerate cases; the displayed nonsingular density does not cover them without a different formulation.</p>
-
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>In the worked construction, are X₁ and X₂ independent? How many mean and covariance entries specify a two-dimensional Gaussian model?</p>
+<details class="ld-answer" data-solution id="prob-gaussian-check-construction">
+<summary>Check your reasoning</summary>
+<p>They are not independent: their covariance is 2. A two-dimensional mean has 2 entries; a symmetric covariance has 3 distinct entries, making 5 parameters constrained by covariance validity. In this example the determinant is 4&gt;0.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> State joint Gaussianity, compute LLᵀ, check dimensions and distinguish a Gaussian vector from the existence of a full-dimensional density.</div>
+</section>
+<section class="ld-unit" aria-labelledby="geometry">
 <h2 id="geometry">11. Read a Gaussian as geometry</h2>
 <p class="section-source">Lecture connection: bivariate surfaces, equal-density contours, and changing variances/correlations.</p>
+<p class="ld-lead">A point is far away relative to the distribution’s spread. Whitening makes this distance an ordinary Euclidean distance in transformed coordinates.</p>
+<div class="ld-definition">
+<div class="ld-label">Mahalanobis distance · positive-definite covariance</div>
 <p>Define the squared Mahalanobis distance from the mean:</p>
 <div class="math-block">\[D_M^2(x)=(x-\mu)^\top\Sigma^{-1}(x-\mu).\]</div>
+<p>Center the point, express it in directions of variation and divide each direction by its standard deviation. Squaring and summing gives D².</p>
+</div>
+<div class="ld-teach">
 <p>The density depends on x only through this quadratic form. Points with the same D² have the same density. Unlike Euclidean distance, Mahalanobis distance accounts for how much variation is expected in each direction and how the coordinates vary together.</p>
+<div class="ld-pipeline">
+<div>
+<strong>Center</strong>
+<span>Subtract μ from x.</span>
+</div>
+<div>
+<strong>Rotate</strong>
+<span>Use the covariance eigenvectors as coordinate directions.</span>
+</div>
+<div>
+<strong>Rescale</strong>
+<span>Divide by the square roots of the matching eigenvalues.</span>
+</div>
+</div>
+<div class="prob-gaussian-plot-pair ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-whitening-ellipse.svg?v=1" target="_blank" rel="noopener" aria-label="Open gaussian whitening ellipse diagram at full size">
+<img src="assets/ml-notes/gaussian-whitening-ellipse.svg?v=1" width="500" height="390" loading="lazy" alt="An ellipse with semiaxes two and one. Points A at two zero and B at zero one both have squared Mahalanobis distance one for covariance diag four one.">
+</a>
+<figcaption>Before whitening, A=(2,0) and B=(0,1) are at Euclidean distances 2 and 1 from the mean. Both lie on D²=1 for Σ=diag(4,1).</figcaption>
+</figure>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-whitening-circle.svg?v=1" target="_blank" rel="noopener" aria-label="Open gaussian whitening circle diagram at full size">
+<img src="assets/ml-notes/gaussian-whitening-circle.svg?v=1" width="500" height="390" loading="lazy" alt="The same points after dividing the first coordinate by two lie at one zero and zero one on a unit circle.">
+</a>
+<figcaption>After whitening with z=(x₁/2,x₂), both points have ordinary squared distance 1. The covariance has become I.</figcaption>
+</figure>
+</div>
+<p>For Σ=diag(4,1), A gives D²=2²/4+0²/1=1; B gives D²=0²/4+1²/1=1. They therefore have equal density, even though their raw Euclidean distances differ.</p>
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-covariance.svg" target="_blank" rel="noopener" aria-label="Open covariance-contour diagram at full size">
+<img src="assets/ml-notes/gaussian-covariance.svg" width="1000" height="351" loading="lazy" alt="Negative, zero, and positive correlations change the orientation of Gaussian contours; unequal marginal variances produce unequal axis spreads.">
+</a>
+<figcaption>The contours correspond to Mahalanobis radii 1, 2, and 3. Zero correlation gives axis-aligned contours, but unequal variances need not give a circle.</figcaption>
+</figure>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture derivation</span>
+<span>Eigenvectors set orientation; eigenvalues set axes and volume</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Principal directions explain the ellipses</h3>
 <p>A symmetric positive-definite covariance can be written \(\Sigma=QDQ^\top\). Q contains orthonormal eigenvectors, and D is diagonal with positive eigenvalues λᵢ. An eigenvector is a direction that the matrix scales without rotating into another direction. In coordinates \(u=Q^\top(x-\mu)\):</p>
 <div class="math-block">\[D_M^2=\sum_i\frac{u_i^2}{\lambda_i}.\]</div>
 <p>The level D²=c² therefore has semiaxis lengths c√λᵢ along the eigenvectors. Large variance means a longer axis and a smaller distance penalty per unit movement in that direction. Equal eigenvalues give a sphere; unequal ones give ellipsoids. In two dimensions, these are circles or ellipses.</p>
-<figure class="figure-frame"><a href="assets/ml-notes/gaussian-covariance.svg" target="_blank" rel="noopener" aria-label="Open covariance-contour diagram at full size"><img src="assets/ml-notes/gaussian-covariance.svg" width="1000" height="351" loading="lazy" alt="Negative, zero, and positive correlations change the orientation of Gaussian contours; unequal marginal variances produce unequal axis spreads."></a><figcaption>The contours correspond to Mahalanobis radii 1, 2, and 3. Zero correlation gives axis-aligned contours, but unequal variances need not give a circle.</figcaption></figure>
 <h3>The determinant controls volume and peak height</h3>
 <p>Since \(|\Sigma|=\prod_i\lambda_i\), the square root of the determinant multiplies the principal standard deviations. In two dimensions, the ellipse D²≤c² has area \(\pi c^2\sqrt{|\Sigma|}\). A Gaussian with a larger covariance volume spreads its unit probability over more space, reducing the peak \(f(\mu)=1/((2\pi)^{d/2}\sqrt{|\Sigma|})\).</p>
+<p>In this decomposition, D is the diagonal eigenvalue matrix; it is distinct from the scalar distance D_M. If a contour has D_M²=c², each semiaxis has length c√λᵢ. Equal determinants can give the same peak density while having different axis lengths or orientations.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture comparisons</span>
+<span>Read correlation, unequal scales and near-singularity</span>
+</summary>
+<div class="ld-detail-body">
+<div class="table-scroll" tabindex="0">
+<table class="prob-gaussian-case-table">
+<caption>Read the covariance examples used in the slides</caption>
+<thead>
+<tr>
+<th scope="col">Covariance</th>
+<th scope="col">Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[[1,0],[0,1]]</td>
+<td>Equal variances and zero correlation give circular Gaussian contours.</td>
+</tr>
+<tr>
+<td>[[1,0.8],[0.8,1]]</td>
+<td>Positive correlation tilts the long axis upward.</td>
+</tr>
+<tr>
+<td>[[0.03,0],[0,1]]</td>
+<td>Coordinates are independent in this joint Gaussian model, but unequal variances give a narrow, tall ellipse.</td>
+</tr>
+<tr>
+<td>[[1,−0.8],[−0.8,1]]</td>
+<td>Negative correlation tilts the long axis downward.</td>
+</tr>
+<tr>
+<td>[[1,−0.99],[−0.99,1]]</td>
+<td>det(Σ)=0.0199: very thin, but still nonsingular.</td>
+</tr>
+<tr>
+<td>[[1,−0.95],[−0.95,1]]</td>
+<td>det(Σ)=0.0975: less nearly singular than the −0.99 case.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For unit diagonal variances, determinant is 1−ρ². Approaching |ρ|=1 shrinks one eigenvalue toward zero. The inverse formula remains valid for the −0.99 and −0.95 examples; it fails at the exact singular boundary.</p>
+</div>
+</details>
+<div class="ld-caution">
+<strong>A contour is a set of equal density; an enclosed region has probability.</strong>
+<p>For a nonsingular two-dimensional Gaussian, the radius needed for a given probability differs from the one-dimensional standard-normal interval rule.</p>
+</div>
+<div class="ld-facts">
+<div>
+<strong>One-dimensional normal</strong>
+<span>Within one standard deviation of its mean</span>
+<b>≈ 68.27%</b>
+</div>
+<div>
+<strong>Two-dimensional Gaussian</strong>
+<span>Inside Mahalanobis radius 1</span>
+<b>≈ 39.35%</b>
+</div>
+<div>
+<strong>Two-dimensional Gaussian</strong>
+<span>Inside Mahalanobis radius 2.448</span>
+<b>≈ 95%</b>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Derivation</span>
+<span>Integrate radial probability and find a 95% ellipse</span>
+</summary>
+<div class="ld-detail-body">
 <p>For a standard bivariate Gaussian, use polar coordinates to find the mass inside radius c:</p>
 <div class="math-block">\[P(D_M\le c)=\int_0^ce^{-r^2/2}r\,dr=1-e^{-c^2/2}.\]</div>
 <p>This also holds for a nonsingular affine transformation into a bivariate Gaussian. Radius 1 encloses about 39.35%, not the one-dimensional 68.27%. A 95% probability ellipse needs \(c=\sqrt{-2\log(0.05)}\approx2.448\). A contour is a set of equal density; the probability belongs to an enclosed region.</p>
-
+<p>For c≥0, the standard bivariate density on a ring is e⁻ʳ²⁄²/(2π), while ring area is 2πr dr. The angular factor cancels and leaves the radial integral. For 95% probability, solve 1−e⁻ᶜ²⁄²=0.95. A nonsingular whitening transformation preserves probability, so the same radius applies to ellipses in the original coordinates.</p>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For Σ=diag(9,1) and mean zero, compare A=(3,0) with B=(0,2). Which has higher density? Use squared Mahalanobis distances.</p>
+<details class="ld-answer" data-solution id="prob-gaussian-check-distance">
+<summary>Check your reasoning</summary>
+<p>A has D²=9/9=1; B has D²=4/1=4. A has higher density. The ratio f(B)/f(A)=exp[−(4−1)/2]=e⁻¹⋅⁵≈0.2231. Raw Euclidean distance would incorrectly make A look farther away.</p>
+</details>
+</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Compute a standardized distance, read contour axes and volume, and state the dimension before assigning an enclosed probability.</div>
+</section>
+<section class="ld-unit" aria-labelledby="joint-gaussian">
 <h2 id="joint-gaussian">12. Gaussian coordinates do not guarantee a Gaussian joint model</h2>
 <p class="section-source">Lecture connection: the independent/dependent cases and the prompt to find Gaussian marginals that are not jointly Gaussian.</p>
+<p class="ld-lead">A Gaussian assumption concerns the whole joint distribution. Check a linear combination when separate marginals or a covariance matrix do not settle the question.</p>
+<div class="ld-definition">
+<div class="ld-label">Keep three claims separate</div>
+<p>Normal marginals, zero covariance and joint Gaussianity are different claims. For a jointly Gaussian vector, zero cross-covariance gives independence; without joint Gaussianity that implication fails.</p>
+</div>
+<div class="prob-gaussian-cases">
+<div>
+<strong>Independent standard normals</strong>
+<p>(Z₁,Z₂), with independent Z₁ and Z₂.</p>
+<dl>
+<dt>Covariance</dt>
+<dd>I</dd>
+<dt>Joint Gaussian?</dt>
+<dd>Yes</dd>
+<dt>Ordinary plane density?</dt>
+<dd>Yes</dd>
+</dl>
+</div>
+<div>
+<strong>A dependent Gaussian line</strong>
+<p>(Z,−Z/2), with Z standard normal.</p>
+<dl>
+<dt>Covariance</dt>
+<dd>[[1,−1/2],[−1/2,1/4]]</dd>
+<dt>Joint Gaussian?</dt>
+<dd>Yes</dd>
+<dt>Ordinary plane density?</dt>
+<dd>No: singular</dd>
+</dl>
+</div>
+<div>
+<strong>Normal marginals on a cross</strong>
+<p>(Z,SZ), with an independent fair sign S.</p>
+<dl>
+<dt>Covariance</dt>
+<dd>I</dd>
+<dt>Joint Gaussian?</dt>
+<dd>No</dd>
+<dt>Ordinary plane density?</dt>
+<dd>No: support on two lines</dd>
+</dl>
+</div>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture core</span>
+<span>Independent Gaussian coordinates and the converse with diagonal covariance</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Independent Gaussian coordinates are jointly Gaussian</h3>
 <p>For independent \(X_i\sim\mathcal N(\mu_i,\sigma_i^2)\), multiplying the scalar densities gives a joint density with diagonal covariance. Conversely, for a nonsingular jointly Gaussian vector whose covariance is diagonal, its exponent and normalizer factor into scalar Gaussian densities. Thus its coordinates are independent.</p>
 <p>More generally, zero cross-covariance between two blocks of a jointly Gaussian vector implies independence of those blocks. The joint-Gaussian assumption is what makes this stronger conclusion possible. It is not a general theorem about arbitrary uncorrelated data.</p>
+<p>Independence allows the joint density to factor into scalar normal densities. Under the jointly Gaussian assumption, a diagonal covariance makes the exponent and normalizer factor in the reverse direction. The Gaussian assumption is doing essential work.</p>
+</div>
+</details>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture example</span>
+<span>Verify a dependent singular pair using every projection</span>
+</summary>
+<div class="ld-detail-body">
 <h3>Dependent can still be jointly Gaussian</h3>
 <p>If Z is standard normal and X=[Z,−Z/2]ᵀ, every linear combination is \((a-b/2)Z\), which is Gaussian or constant. The vector is jointly Gaussian, but singular. Its covariance is [1,−1/2;−1/2,1/4], with determinant zero. This is the line-supported case, not an ordinary two-dimensional bell-shaped density.</p>
+<p>The vector (1,2) projects this pair to Z+2(−Z/2)=0. Other projections can remain nondegenerate normals. A zero projection variance explains singularity without contradicting joint Gaussianity.</p>
+</div>
+</details>
+<div class="ld-teach">
+<figure class="figure-frame">
+<a href="assets/ml-notes/gaussian-normal-marginals.svg?v=1" target="_blank" rel="noopener" aria-label="Open gaussian normal marginals diagram at full size">
+<img src="assets/ml-notes/gaussian-normal-marginals.svg?v=1" width="500" height="390" loading="lazy" alt="For X standard normal and an independent fair sign S, Y equals S times X. The joint support lies on the two diagonals despite both coordinates being standard normal and their covariance being zero.">
+</a>
+<figcaption>The plotted portions of y=x and y=−x show the support of (Z,SZ), not a two-dimensional density or uniform mass on the lines. Along each branch Z is normal; each sign is chosen with probability 1/2.</figcaption>
+</figure>
+<ol class="ld-steps">
+<li>
+<strong>Check the marginals:</strong> Z is standard normal; SZ has the same symmetric distribution.</li>
+<li>
+<strong>Check covariance:</strong> the independent sign has mean zero, so E[SZ²]=0.</li>
+<li>
+<strong>Test a linear combination:</strong> Z+SZ equals 0 whenever S=−1, giving an atom of probability 1/2.</li>
+<li>
+<strong>Conclude:</strong> that sum is neither a nondegenerate normal nor a constant. The pair cannot be jointly Gaussian.</li>
+</ol>
+</div>
+<details class="ld-depth" data-learning-depth>
+<summary>
+<span class="ld-tag">Lecture counterexample</span>
+<span>Work through the covariance, atom and joint-distribution distinction</span>
+</summary>
+<div class="ld-detail-body">
 <h3>A counterexample with normal marginals and zero covariance</h3>
 <p>Let Z be standard normal and let S independently be +1 or −1 with equal probability. Define X=Z and Y=SZ. Both X and Y are standard normal because changing the sign of a symmetric normal leaves its distribution unchanged. Also:</p>
 <div class="math-block">\[\operatorname{Cov}(X,Y)=\mathbb E[SZ^2]=\mathbb E[S]\mathbb E[Z^2]=0.\]</div>
 <p>Yet |X|=|Y| always, so the variables are dependent. The sum X+Y is zero whenever S=−1, giving a point mass of 1/2 at zero. When S=+1, it is 2Z. A nondegenerate normal has no point mass; this sum is not normal. Therefore the pair is not jointly Gaussian despite normal marginals and covariance I.</p>
 <p>The example separates three statements: each coordinate is normal; coordinates have zero covariance; the vector is jointly Gaussian. None of the first two, even together, replaces the third. It also shows why a positive-definite covariance alone does not establish that a vector has a full-dimensional density.</p>
-<div class="stop-point"><strong>Checkpoint:</strong> Give one dependent pair that is jointly Gaussian and one uncorrelated pair with Gaussian marginals that is not jointly Gaussian. Explain the difference using a linear combination, not just a picture.</div>
+</div>
+</details>
+<div class="ld-recall">
+<div class="ld-label">Pause &amp; retrieve</div>
+<p>For X=Z and Y=SZ, consider H=(X+Y)/√2. Its mean is 0 and variance is 1. Must H be standard normal?</p>
+<details class="ld-answer" data-solution id="prob-gaussian-check-standardized-counterexample">
+<summary>Check your reasoning</summary>
+<p>No. With probability 1/2, S=−1 and H=0. With probability 1/2, H=√2Z, which has variance 2. Thus H has variance (1/2)×0+(1/2)×2=1 but has a point mass of 1/2 at zero. Matching mean and variance, or standardizing, does not establish a Gaussian distribution.</p>
+</details>
+</div>
+<div class="stop-point">
+<strong>Checkpoint:</strong> Give one dependent pair that is jointly Gaussian and one uncorrelated pair with Gaussian marginals that is not jointly Gaussian. Explain the difference using a linear combination, not just a picture.</div>
+<div class="ld-exit">
+<strong>Before moving on:</strong> Use a projection or counterexample to justify joint Gaussianity; never infer a joint density from the covariance matrix alone.</div>
+</section>
+<section class="ld-revision" id="prob-gaussian-revision" aria-labelledby="prob-gaussian-revision-title">
+<div class="ld-label">Revision sheet · sections 9–12</div>
+<h3 id="prob-gaussian-revision-title">Reconstruct the model and its conditions</h3>
+<div class="ld-revision-grid">
+<div>
+<strong>Scalar normal</strong>
+<p>N(μ,σ²) uses variance as its second parameter. For σ&gt;0, standardize using (X−μ)/σ and compute a difference of Φ values.</p>
+</div>
+<div>
+<strong>Normalization and moments</strong>
+<p>Square the unnormalized scalar integral, integrate radially in two dimensions and take the positive square root. Symmetry gives E[Z]=0; integration by parts gives E[Z²]=1.</p>
+</div>
+<div>
+<strong>Gaussian vector</strong>
+<p>Every fixed linear combination is normal, including a possible constant. The construction X=μ+LZ uses independent standard normals and covariance LLᵀ.</p>
+</div>
+<div>
+<strong>Density conditions</strong>
+<p>The full-dimensional inverse/determinant formula needs positive-definite Σ. A singular Gaussian remains a Gaussian vector but has no ordinary full-space density.</p>
+</div>
+<div>
+<strong>Distances and contours</strong>
+<div class="math-block">\[D_M^2=(x-\mu)^\top\Sigma^{-1}(x-\mu)\]</div>
+<p>Eigenvectors set orientation; a D_M²=c² contour has semiaxes c√λᵢ. The determinant controls covariance volume and the peak normalizer.</p>
+</div>
+<div>
+<strong>Enclosed mass needs a dimension</strong>
+<div class="math-block">\[P(D_M\le c)=1-e^{-c^2/2}\quad(d=2,\ c\ge0)\]</div>
+<p>In two dimensions, radius 1 gives about 39.35%, while radius 2.448 gives about 95%. The 68.27% one-standard-deviation rule is one-dimensional.</p>
+</div>
+<div>
+<strong>Do not replace the joint assumption with its moments</strong>
+<p>Zero covariance implies independence for jointly Gaussian blocks. Normal marginals and covariance I can still describe a dependent, non-Gaussian pair such as (Z,SZ).</p>
+</div>
+</div>
+</section>
+<section class="ld-review" id="prob-gaussian-review" aria-labelledby="prob-gaussian-review-title">
+<div class="ld-label">Return &amp; recall</div>
+<h3 id="prob-gaussian-review-title">Test the assumption behind each formula</h3>
+<p>Work on paper or aloud before opening the feedback. State dimensions, units and the density conditions.</p>
+<ol>
+<li>Reconstruct the scalar normalizing integral using polar coordinates. Why is the radial area factor r needed?</li>
+<li>Derive E[Z]=0 and E[Z²]=1 for a standard normal without quoting the moment table.</li>
+<li>For X~N(1,4), standardize the interval [−1,5]. Could a normal density have a peak above 1?</li>
+<li>For L=[[2,0],[1,1]] and μ=(1,−1), find the covariance, determinant and number of distinct mean/covariance parameters.</li>
+<li>For Σ=diag(4,1), compare the Euclidean and Mahalanobis distances of (2,0) and (0,1). Describe the whitened coordinates.</li>
+<li>State the two-dimensional probability inside radius 1 and the radius enclosing 95%. Why does a thin ellipse at correlation −0.99 still have a density?</li>
+<li>Show that (Z,−Z/2) is jointly Gaussian and singular using linear combinations.</li>
+<li>Explain why (Z,SZ) has normal marginals and covariance I but is not jointly Gaussian. Does scaling its sum to variance 1 fix this?</li>
+</ol>
+<details class="ld-answer" data-solution>
+<summary>Review answers and reasoning</summary>
+<ol>
+<li>Square I=∫e⁻ᶻ²⁄²dz. In the plane, a ring contributes circumference 2πr times width dr, giving I²=2π∫₀∞r e⁻ʳ²⁄²dr=2π and I=√(2π).</li>
+<li>zφ(z) is odd, so its integral is zero. Use φ′(z)=−zφ(z) and integration by parts; the boundary term vanishes and the remaining integral of φ is 1.</li>
+<li>σ=2 gives bounds −1 and 2; probability Φ(2)−Φ(−1)≈0.8186. A density peak can exceed 1: N(0,0.01) has σ=0.1 and peak about 3.9894. Its point probabilities are still zero.</li>
+<li>Covariance [[4,2],[2,2]], determinant 4. The mean has 2 entries and symmetric covariance has 3, giving 5 parameters constrained by validity.</li>
+<li>Euclidean distances are 2 and 1; both Mahalanobis distances are 1. Whitening z=(x₁/2,x₂) sends the points to (1,0) and (0,1).</li>
+<li>Radius 1 gives 1−e⁻¹⁄²≈0.3935; radius √(−2log0.05)≈2.4477 gives 0.95. At ρ=−0.99 and unit variances, determinant 0.0199 is positive; singularity occurs at the exact boundary |ρ|=1.</li>
+<li>Every projection is (a−b/2)Z, normal or constant. The projection with weights (1,2) is zero, so covariance is singular.</li>
+<li>An independent sign preserves the symmetric normal marginal and makes cross-covariance zero, yet the sum has probability 1/2 of being zero. Scaling retains that atom and cannot make it normal.</li>
+</ol>
+<p>
+<strong>Self-check:</strong> parameter convention correct; matrix dimensions consistent; positive-definiteness restriction stated; a joint claim supported by more than marginal moments.</p>
+</details>
+<details class="ld-record-disclosure">
+<summary>Save your progress or a return date</summary>
+<div class="ld-tracker" data-learning-tracker hidden>
+<fieldset>
+<legend>Your self-reported learning record</legend>
+<label>
+<input type="checkbox" data-learning-progress="read"> I followed the explanations and required derivations.</label>
+<label>
+<input type="checkbox" data-learning-progress="attempted"> I attempted a fresh probability or geometry problem before revealing feedback.</label>
+<label>
+<input type="checkbox" data-learning-progress="recalled"> On a later visit, I reconstructed the model and its conditions without looking.</label>
+</fieldset>
+<p class="ld-small">These are your own reports. Opening an explanation does not establish mastery.</p>
+<div class="ld-review-buttons">
+<button type="button" data-learning-review="1">Again · tomorrow</button>
+<button type="button" data-learning-review="3">Some help · 3 days</button>
+<button type="button" data-learning-review="7">Unaided · 7 days</button>
+</div>
+<p data-learning-review-status aria-live="polite">Choose a suggested return gap after trying the questions.</p>
+<button type="button" class="ld-reset" data-learning-reset>Reset this block’s record</button>
+</div>
+</details>
+</section>
+<p class="ld-next">Next: <a href="#gaussian-conditioning">derive Gaussian marginal and conditional distributions</a>, then explore transformations and operations. <a href="#probability-gaussian-path">Back to this block’s controls</a>
+</p>
+</section>
 
 <h2 id="gaussian-conditioning">13. Marginal and conditional Gaussians, with derivations</h2>
 <p class="section-source">Lecture connection: joint/marginal/conditional notation, block covariance, and the conditioning formulas.</p>

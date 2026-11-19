@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Preservation and exact-example audit for the probability-language and moments redesign.
+"""Preservation and exact-example audit for the probability-language, moments and Gaussian redesign.
 
 Run from any directory. Requires only Python's standard library and Git.
 Browser checks cover interaction, responsive layout and printing separately.
@@ -83,7 +83,7 @@ assert len(page.ids) == len(set(page.ids)), 'Duplicate ID'
 assert not (Counter(old.paragraphs) - Counter(page.paragraphs)), 'An original paragraph was lost'
 assert not (Counter(math(base)) - Counter(math(source))), 'An original equation was lost'
 assert set(old.ids) <= set(page.ids), 'An original anchor was lost'
-assert source[source.index('<h2 id="normal">'):] == base[base.index('<h2 id="normal">'):], 'Content after section 8 changed'
+assert source[source.index('<h2 id="gaussian-conditioning">'):] == base[base.index('<h2 id="gaussian-conditioning">'):], 'Content after section 12 changed'
 prior = subprocess.check_output(['git', 'show', '493a0eb:writing/probability-gaussians.html'], cwd=ROOT, text=True)
 prior_page = Page(prior)
 assert set(prior_page.ids) <= set(page.ids), 'A first-block anchor was lost'
@@ -93,6 +93,16 @@ first_marker = '<section class="ld-pilot prob-language" id="probability-language
 old_first = prior[prior.index(first_marker):prior.index('<h2 id="moments">')].strip()
 new_first = source[source.index(first_marker):source.index('<section class="ld-pilot prob-language prob-moments"')].strip()
 assert new_first == old_first.replace('href="#moments"', 'href="#probability-moments-path"'), 'First block changed beyond its two forward links'
+moments_prior = subprocess.check_output(['git', 'show', '72a74af:writing/probability-gaussians.html'], cwd=ROOT, text=True)
+moments_prior_page = Page(moments_prior)
+assert set(moments_prior_page.ids) <= set(page.ids), 'An earlier guided anchor was lost'
+assert not (Counter(moments_prior_page.paragraphs) - Counter(page.paragraphs)), 'An earlier paragraph was lost'
+assert not (Counter(math(moments_prior)) - Counter(math(source))), 'An earlier equation was lost'
+moment_marker = '<section class="ld-pilot prob-language prob-moments"'
+previous_moments = moments_prior[moments_prior.index(moment_marker):moments_prior.index('<h2 id="normal">')].strip()
+current_moments = source[source.index(moment_marker):source.index('<section class="ld-pilot prob-language prob-gaussian"')].strip()
+expected_moments = previous_moments.replace('<a href="#normal">Continue to Gaussians</a>', '<a href="#probability-gaussian-path">Continue to Gaussians</a>').replace('<a href="#normal">derive the normal distribution and build Gaussian geometry</a>', '<a href="#probability-gaussian-path">derive the normal distribution and build Gaussian geometry</a>')
+assert current_moments == expected_moments, 'Moments block changed beyond its two forward links'
 for pattern, label in [
     (r'<img[^>]+src="([^"]+)"', 'figure asset'),
     (r'<figcaption[^>]*>(.*?)</figcaption>', 'figure caption'),
@@ -113,11 +123,12 @@ for link in page.links:
         if target not in pages:
             pages[target] = Page(target.read_text())
         assert unquote(url.fragment) in pages[target].ids, link
-assert source.count('data-learning-pilot') == 2
-assert source.count('class="ld-unit"') == 8
+assert source.count('data-learning-pilot') == 3
+assert source.count('class="ld-unit"') == 12
 assert source.count('class="exercise"') == base.count('class="exercise"') == 18
 assert 'data-learning-key="probability-language"' in source
 assert 'data-learning-key="probability-moments"' in source
+assert 'data-learning-key="probability-gaussian"' in source
 assert 'assets/ml-learning.js' in source
 expected_counts = {'rain-late': 18, 'rain-on-time': 12, 'dry-late': 7, 'dry-on-time': 63}
 assert page.cases == Counter(expected_counts), '100-case visual differs from the stated model'
@@ -182,9 +193,34 @@ import xml.etree.ElementTree as ET
 for name in ['linear','nonlinear']:
     ET.parse(ROOT / ('writing/assets/ml-notes/probability-covariance-'+name+'.svg'))
 
+# New Gaussian examples: independent scalar integration, matrix and geometry checks.
+from math import erf,exp,log,pi,sqrt,isclose
+Phi = lambda x: (1+erf(x/sqrt(2)))/2
+assert isclose(Phi(1)-Phi(-1),0.6826894921370859,abs_tol=1e-12)
+assert isclose(Phi(2)-Phi(-1),0.8185946141203637,abs_tol=1e-12)
+assert isclose(1/(0.1*sqrt(2*pi)),3.989422804014327,abs_tol=1e-12)
+L = [[F(2),F(0)],[F(1),F(1)]]
+Sigma = [[sum(L[i][k]*L[j][k] for k in range(2))for j in range(2)]for i in range(2)]
+assert Sigma == [[4,2],[2,2]]
+assert Sigma[0][0]*Sigma[1][1]-Sigma[0][1]**2 == 4
+assert F(2)**2/4 == F(1)**2 == 1
+assert F(3)**2/9 == 1 and F(2)**2 == 4
+assert isclose(exp(-F(3,2)),0.22313016014842982,abs_tol=1e-12)
+assert isclose(1-exp(-0.5),0.3934693402873666,abs_tol=1e-12)
+radius95 = sqrt(-2*log(0.05))
+assert isclose(radius95,2.4477468306808166,abs_tol=1e-12)
+assert isclose(1-exp(-radius95**2/2),0.95,abs_tol=1e-12)
+assert 1-F(99,100)**2 == F(199,10000)
+assert 1-F(95,100)**2 == F(39,400)
+# The sign-mixture standardized sum has variance one but retains a half-mass atom.
+assert F(1,2)*0 + F(1,2)*2 == 1
+assert quadratic([[F(1),F(-1,2)],[F(-1,2),F(1,4)]],[1,2]) == 0
+for name in ['gaussian-standardization','gaussian-whitening-ellipse','gaussian-whitening-circle','gaussian-normal-marginals']:
+    ET.parse(ROOT / ('writing/assets/ml-notes/'+name+'.svg'))
+
 for name in ['cnn-foundations', 'cnn-training', 'statistical-regression-gda', 'naive-bayes', 'factor-models-pca', 'decision-trees-pruning', 'machine-learning']:
     original = subprocess.check_output(['git', 'show', BASELINE + ':writing/' + name + '.html'], cwd=ROOT)
     assert original == (ROOT / 'writing' / (name + '.html')).read_bytes(), 'Unrelated chapter changed: ' + name
-print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 9 onward byte-identical; first block preserved apart from forward links.')
+print('Source preserved:', len(old.paragraphs), 'paragraphs,', len(math(base)), 'math expressions,', len(old.ids), 'anchors; section 13 onward byte-identical; earlier blocks preserved apart from forward links.')
 print('HTML and local references pass:', len(page.ids), 'unique IDs,', len(page.links), 'references,', len(math(source)), 'math expressions.')
-print('Exact examples pass; two blocks, eight teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')
+print('Exact examples pass; three blocks, twelve teaching units, 100 correctly grouped cases, and all 18 original exercises retained.')
